@@ -1,0 +1,7 @@
+Nomemclatura:
+    Variáveis:
+        Camelcase (thisIsAVariable)
+    Funções:
+        Camelcase (thisIsAFuntion)
+    Ficheiros:
+        Camelcase (thisIsAFile)
