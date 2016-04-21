@@ -5,3 +5,5 @@ Nomemclatura:
         Camelcase (thisIsAFuntion)
     Ficheiros:
         Camelcase (thisIsAFile)
+
+Temos de fazer uma makefile
