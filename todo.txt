@@ -1,0 +1,7 @@
+TODO:
+@Create data structs
+  -Cards
+  -List Players
+  -Players
+@Create EA Matrix
+@Create Graphical Interface Helper Functions
