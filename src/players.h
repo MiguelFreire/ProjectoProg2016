@@ -22,8 +22,7 @@ typedef enum {STANDARD, BLACKJACK, BUSTED, BROKE} playerState;
  */
 typedef struct {
 	Player *head;
-	int totalPlayers;
-	int playersInGame;
+	int totalPlayers, playersInGame;
 } playerList;
 
 /**
@@ -31,11 +30,9 @@ typedef struct {
  */
 typedef struct {
 	playerType type;
-	int money;
-	int bet;
-	int handValue;
+	int money, bet;
 	state state;
-	int numCards;
+	int numCards, handValue;
 	Card *hand;
 	Player *nextPlayer;
 } Player;
