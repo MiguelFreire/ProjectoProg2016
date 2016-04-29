@@ -1,4 +1,11 @@
 /**
+ * Card related data structures and functions to handle this structures
+ */
+
+#ifndef CARDS_H
+#define	CARDS_H
+
+/**
  * Enum type of suit
  */
 enum Suit{club=1, diamonds, hearts, spades}
@@ -42,3 +49,6 @@ Hand* pushCard(Hand* top, Player owner) {
 Hand* popCard() {
 
 }
+
+
+#endif /* end include guard */

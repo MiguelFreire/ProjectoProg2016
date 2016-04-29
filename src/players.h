@@ -5,6 +5,10 @@
  * structures
  */
 
+#ifndef PLAYERS_H
+#define	PLAYERS_H
+
+#include "config.h"
 
 /**
  * Player possible types: Human or CPU (AI)
@@ -30,6 +34,7 @@ typedef struct {
  */
 typedef struct {
 	playerType type;
+	char *name[MAX_NAME_SIZE + 1];
 	int money, bet;
 	state state;
 	int numCards, handValue;
@@ -52,3 +57,5 @@ typedef struct {
 	int numCards;
 	Card *hand;
 } House;
+
+#endif /* end include guard */
