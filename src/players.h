@@ -25,23 +25,39 @@ typedef enum {STANDARD, BLACKJACK, BUSTED, BROKE} playerState;
  * The player list structure (points to linked list)
  */
 typedef struct {
-	Player *head;
+	playerNode *head;
 	int totalPlayers, playersInGame;
 } playerList;
 
 /**
- * Player structure (linked list node and points to other linked list)
+ * Player list node structure
+ */
+typedef struct playerNode {
+	Player player;
+	struct playerNode *next;
+} playerNode;
+
+/**
+ * PLayer payload structure
  */
 typedef struct {
 	playerType type;
 	char *name[MAX_NAME_SIZE + 1];
 	int money, bet;
-	state state;
+	playerState state;
 	int numCards, handValue;
 	Card *hand;
-	Player *nextPlayer;
+	playerStats stats;
 } Player;
 
+/**
+ * Player stats
+ */
+typedef struct {
+	int won;
+	int lost;
+	int tied;
+} playerStats;
 
 /**
  * House possible states: STANDARD(no special state), has a BLACKJACK or is
