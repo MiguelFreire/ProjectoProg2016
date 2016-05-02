@@ -43,7 +43,7 @@ Hand* initHand() {
 }
 
 Hand* pushCard(Hand* top, Player owner) {
-  
+
 }
 
 Hand* popCard() {
