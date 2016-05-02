@@ -19,6 +19,11 @@
 #include "cards.h"
 
 int main(int argc, char *argv[]){
+	/**********************
+	 * READ SETTINGS BLOCK
+	 * Settings *stg = readSettings();
+	 * DONT FORGET TO FREE THE SETTINGS STRUCT!!!!!
+	 ***********************/
 	SDL_Event event;
 	bool quit = 0;
 
@@ -31,19 +36,19 @@ int main(int argc, char *argv[]){
 					switch( event.key.keysym.sym){
 
 						case SLD_h: // hit
-						
+
 						case SLD_s: // stand
-							
+
 						case SLD_n: // new game
-							
+
 						case SLD_q: // quit
 							quit = 1
 						case SDL_d: // double
-							
+
 						case SDL_r: // surrender
-							
+
 						case SDL_b: // bet
-							
+
 					}
 
 				// check for mouse button press
@@ -58,5 +63,5 @@ int main(int argc, char *argv[]){
 			}
 		}
 	}
-	
+
 }
