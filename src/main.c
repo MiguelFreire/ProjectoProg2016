@@ -10,6 +10,9 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 
 #include "config.h"
 #include "fileIO.h"
@@ -17,6 +20,8 @@
 #include "graphicalInterface.h"
 #include "players.h"
 #include "cards.h"
+#include "util.h"
+#include "errorHandling.h"
 
 int main(int argc, char *argv[]){
 	/**********************
