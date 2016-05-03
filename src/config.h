@@ -20,5 +20,7 @@
 #define MAX_NAME_SIZE 8
 #define MAX_BUFFER_SIZE 100
 
+#define MAX_PLAYER_TYPE_SIZE 2
+
 #define SETTINGS_FILE_NAME "settings.txt"
 #endif /* end include guard */

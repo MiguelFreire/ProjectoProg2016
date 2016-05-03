@@ -10,7 +10,11 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+#include <stdbool.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
@@ -22,6 +26,8 @@
 #include "graphicalInterface.h"
 #include "players.h"
 #include "cards.h"
+#include "util.h"
+#include "errorHandling.h"
 
 int main(int argc, char *argv[]){
 	/**********************

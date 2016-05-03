@@ -4,5 +4,5 @@ typedef struct {
 } Settings;
 
 Settings readSettings();
-FILE *readGameSettings(char *, FILE *, Settings *);
-void readPlayerSettings(char *buffer, FILE*, Settings *);
+void readGameSettings(char *buffer, FILE *settingsFile, Settings *stg);
+void readPlayerSettings(char *buffer, FILE *settingsFile, Player *players);
