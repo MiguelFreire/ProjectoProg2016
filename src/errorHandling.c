@@ -10,7 +10,7 @@ void fireOutOfRange(const char *s, float min, float max) {
 void fireUnknownValue(const char *s, char **types, int numTypes) {
   printf("The value of %s is not supported\n", s);
   printf("Available values for %s\n", s);
-  for(int i = 0; i <= numTypes; i++) {
-    prinft("- %s\n", s[i]);
+  for(int i = 0; i < numTypes; i++) {
+    printf("- %s\n", s[i]);
   }
 }

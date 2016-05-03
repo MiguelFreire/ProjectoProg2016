@@ -23,20 +23,22 @@ void readGameSettings(char *buffer, FILE *settingsFile, Settings *stg) {
 }
 
 void readPlayerSettings(char *buffer, FILE *settingsFile, Player *players) {
-  char playerType[2];
+  char playerType[MAX_PLAYER_TYPE_SIZE];
   int  playerTypeInt;
-  char name[8];
-
+  char name[MAX_NAME_SIZE];
 
   int i = 0;
   while (fgets(buffer, MAX_BUFFER_SIZE, settingsFile)) {
     sscanf(buffer,"%s-%s-%d-%d", playerType, name, &(players[i].money), &(players[i].bet));
+    if(strcmp(playerType, "HU") == 0) playerTypeInt = 0;
+    else if(strcmp(playerType, "EA") == 1) playerTypeInt = 1;
+    else {
+      char types[] = {"HU", "EA"};
+      fireUnknownValue("player type", types, 2);
+    }
+    *(players[i].type) = playerTypeInt;
+    strcpy(name, player[i].name);
 
-    playerType[MAX_PLAYER_TYPE_SIZE] = '\0'; //replaces the new line operator with the null byte terminator for strcmp
-    name[MAX_NAME_SIZE] = '\0';
-
-    // if(strcmp(playerType, "HU") == 0) &(playerType)
-    strcpy(playerType, player[i].name);
     i++;
   }
 }

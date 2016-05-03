@@ -46,8 +46,13 @@ typedef struct {
   return NULL;
 }
 
+<<<<<<< Updated upstream
 cardNode* pushCard(cardNode* top) {
   
+=======
+Hand* pushCard(Hand* top, Player owner) {
+
+>>>>>>> Stashed changes
 }
 
 cardNode* popCard() {
