@@ -23,3 +23,5 @@
 /**
  * CARD FUNCITIONS
  */
+
+void fazCenasAsCartas();

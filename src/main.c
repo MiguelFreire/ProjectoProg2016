@@ -10,7 +10,12 @@
  */
 
 #include <stdio.h>
+#include <stdbool.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
+#include <SDL2/SDL_image.h>
 
+#include "main.h"
 #include "config.h"
 #include "fileIO.h"
 #include "gameMechanics.h"
@@ -24,8 +29,26 @@ int main(int argc, char *argv[]){
 	 * Settings *stg = readSettings();
 	 * DONT FORGET TO FREE THE SETTINGS STRUCT!!!!!
 	 ***********************/
+
+
+
+	// Graphical interface variables
+	SDL_Window *window = NULL;
+    SDL_Renderer *renderer = NULL;
+    TTF_Font *serif = NULL;
+    SDL_Surface *cards[DECK_SIZE+1], *imgs[2];
+    
+    // Program flow control variables
 	SDL_Event event;
 	bool quit = 0;
+	gamePhase phase;
+	gameTable table;
+
+	phase = initGame(&table);
+	if(phase);
+	// initialize graphics
+    InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
+    LoadCards(cards);
 
 	while( !quit ){
 		while(SDL_PollEvent(&event)){
@@ -35,33 +58,57 @@ int main(int argc, char *argv[]){
 				case SDL_KEYDOWN:
 					switch( event.key.keysym.sym){
 
-						case SLD_h: // hit
+						case SDLK_h: // hit
+						             
+							break;
+						case SDLK_s: // stand
 
-						case SLD_s: // stand
+							break;
+						case SDLK_n: // new game
 
-						case SLD_n: // new game
+							break;
+						case SDLK_q: // quit
+							quit = 1;
+							break;
+						case SDLK_d: // double
 
-						case SLD_q: // quit
-							quit = 1
-						case SDL_d: // double
+							break;
+						case SDLK_r: // surrender
 
-						case SDL_r: // surrender
+							break;
+						case SDLK_b: // bet
 
-						case SDL_b: // bet
-
+							break;
 					}
+
+					break;
 
 				// check for mouse button press
 				case SDL_MOUSEBUTTONUP:
 					if (event.button.button == SDL_BUTTON_LEFT){
 						// check position to add player
 					}
+					break;
 
 				// check for quit cross press
 				case SDL_QUIT:
 					quit = 1;
+
+					break;
 			}
 		}
 	}
 
 }
+
+
+gamePhase initGame (gameTable *table){
+
+ 	table->currentPlayer = 0;
+ 	for (int i = 0; i < TABLE_SLOTS; i++){
+ 		table->players[i] = NULL;
+ 	}
+
+ 	return START;
+ 	
+ }

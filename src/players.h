@@ -9,6 +9,7 @@
 #define	PLAYERS_H
 
 #include "config.h"
+#include "cards.h"
 
 /**
  * Player possible types: Human or CPU (AI)
@@ -22,20 +23,13 @@ typedef enum {HUMAN, CPU} playerType;
 typedef enum {STANDARD, BLACKJACK, BUSTED, BROKE} playerState;
 
 /**
- * The player list structure (points to linked list)
+ * Player stats
  */
 typedef struct {
-	playerNode *head;
-	int totalPlayers, playersInGame;
-} playerList;
-
-/**
- * Player list node structure
- */
-typedef struct playerNode {
-	Player player;
-	struct playerNode *next;
-} playerNode;
+	int won;
+	int lost;
+	int tied;
+} playerStats;
 
 /**
  * PLayer payload structure
@@ -46,24 +40,33 @@ typedef struct {
 	int money, bet;
 	playerState state;
 	int numCards, handValue;
-	Card *hand;
+	cardNode *hand;
 	playerStats stats;
 } Player;
 
 /**
- * Player stats
+ * Player list node structure
+ */
+typedef struct playerNode {
+	Player player;
+	struct playerNode *next;
+} playerNode;
+
+/**
+ * The player list structure (points to linked list)
  */
 typedef struct {
-	int won;
-	int lost;
-	int tied;
-} playerStats;
+	playerNode *head;
+	int totalPlayers, playersInGame;
+} playerList;
+
+
 
 /**
  * House possible states: STANDARD(no special state), has a BLACKJACK or is
  * BUSTED
  */
-typedef enum {STANDARD, BLACKJACK, BUSTED} houseState;
+typedef enum {HOUSE_STANDARD, HOUSE_BLACKJACK, HOUSE_BUSTED} houseState;
 
 /**
  * House structure (points to linked list)
@@ -71,7 +74,7 @@ typedef enum {STANDARD, BLACKJACK, BUSTED} houseState;
 typedef struct {
 	houseState state;
 	int numCards;
-	Card *hand;
+	cardNode *hand;
 } House;
 
 #endif /* end include guard */

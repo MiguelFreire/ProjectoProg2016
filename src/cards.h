@@ -5,10 +5,12 @@
 #ifndef CARDS_H
 #define	CARDS_H
 
+
+
 /**
  * Enum type of suit
  */
-enum Suit{club=1, diamonds, hearts, spades}
+typedef enum {club=1, diamonds, hearts, spades} Suit;
 
 /**
  * Card is a ordinary struct
@@ -20,35 +22,37 @@ typedef struct {
 } Card;
 
 /**
- *	Deck is a linked list
+ * Node for card lists
  */
-typedef struct {
-  Card *stack;
-  struct Deck *next;
-} Deck;
+typedef struct cardNode {
+	Card card;
+	struct cardNode *next;
+} cardNode;
+
 
 /**
- * Hand is a stack
+ *	Pile is a linked list
  */
 typedef struct {
-  Player owner;
-  Hand   *next;
-} Hand;
+	int numCards;
+	cardNode *pile;
+} Pile;
+
 
 /*****************
  * Stack FUNCTION
  ****************/
-Hand* initHand() {
+/*cardNode* initHand() {
   return NULL;
 }
 
-Hand* pushCard(Hand* top, Player owner) {
+cardNode* pushCard(cardNode* top) {
   
 }
 
-Hand* popCard() {
+cardNode* popCard() {
 
 }
 
-
+*/
 #endif /* end include guard */

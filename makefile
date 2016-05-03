@@ -10,15 +10,16 @@ LIBM= -I/usr/include -lm -lSDL2 -lSDL2_ttf -lSDL2_image
 
 TARGET= blackjack
 
-FILES= ./src/main.c ./src/graphicalInterface.c ./src/fileIO.c ./src/gameMechanics.c
+FILES= ./src/main.c ./src/graphicalInterface.c ./src/fileIO.c ./src/gameMechanics.c \
+./src/players.c ./src/cards.c
 
 linux:
-	echo "Compiling blackjack"
+	@ echo "Compiling blackjack"
 
 	$(CC) $(CFLAGS) $(LIBL) $(FILES) -o $(TARGET)
 
-	#Check for compiling failure
-	@ if [ "$?" = "0" ]; then \
+#Check for compiling failure
+	@ if [ "$?" != "0" ]; then \
 		echo "Done compiling"; \
 	else \
 		echo "!!!!!!!!!Compiling Errors!!!!!!!!!!!"; \

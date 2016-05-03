@@ -5,5 +5,5 @@
 #ifndef FILEIO_H
 #define	FILEIO_H
 
-
+void fazCenas();
 #endif /* end include guard */
