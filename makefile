@@ -2,16 +2,16 @@
 
 CC=gcc
 
-CFLAGS= -g -I/usr/local/include -Wall -pedantic -std=c99 
+CFLAGS= -g -I/usr/local/include -Wall -pedantic -std=c99
 
 LIBL= -I/usr/include -lm -lSDL2 -lSDL2_ttf -lSDL2_image
 
-LIBM= -I/usr/include -lm -lSDL2 -lSDL2_ttf -lSDL2_image
+LIBM= -L/usr/local/lib -lm -lSDL2 -lSDL2_ttf -lSDL2_image
+
 
 TARGET= blackjack
 
-FILES= ./src/main.c ./src/graphicalInterface.c ./src/fileIO.c ./src/gameMechanics.c \
-./src/players.c ./src/cards.c
+FILES= ./src/*.c
 
 linux:
 	@ echo "Compiling blackjack"

@@ -15,21 +15,21 @@
 	const char myNumber[] = "IST425301";
 	const char * playerNames[] = {"Player 1", "Player 2", "Player 3", "Player 4"};
 
-void RenderTable(int _money[], TTF_Font *_font, SDL_Surface *_img[], 
+void RenderTable(int _money[], TTF_Font *_font, SDL_Surface *_img[],
     SDL_Renderer* _renderer, int currentPlayer)
 {
     SDL_Color black = { 0, 0, 0 }; // black
     SDL_Color white = { 255, 255, 255 }; // white
-    
+
     char name_money_str[MAX_BUFFER_SIZE];
     SDL_Texture *table_texture;
     SDL_Rect tableSrc, tableDest, playerRect;
     int separatorPos = (int)(0.95f*WINDOW_WIDTH); // seperates the left from the right part of the window
     int height;
-   
+
     // set color of renderer to some color
     SDL_SetRenderDrawColor( _renderer, 255, 255, 255, 255 );
-    
+
     // clear the window
     SDL_RenderClear( _renderer );
 
@@ -43,22 +43,22 @@ void RenderTable(int _money[], TTF_Font *_font, SDL_Surface *_img[],
 
     table_texture = SDL_CreateTextureFromSurface(_renderer, _img[0]);
     SDL_RenderCopy(_renderer, table_texture, &tableSrc, &tableDest);
-   
+
     // render the IST Logo
     height = RenderLogo(separatorPos, 0, _img[1], _renderer);
-    
+
     // render the student name
     height += RenderText(separatorPos+3*MARGIN, height, myName, _font, &black, _renderer);
-    
+
     // this renders the student number
     RenderText(separatorPos+3*MARGIN, height, myNumber, _font, &black, _renderer);
-    
-    
+
+
 
     // renders the areas for each player: names and money too !
     for ( int i = 0; i < TABLE_SLOTS; i++)
     {
-        
+
         playerRect.x = i*(separatorPos/4-5)+10;
         playerRect.y = (int) (0.55f*WINDOW_HEIGHT);
         playerRect.w = separatorPos/4-5;
@@ -68,12 +68,12 @@ void RenderTable(int _money[], TTF_Font *_font, SDL_Surface *_img[],
 	    if(i == currentPlayer){
             SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255 );
             SDL_RenderDrawRect(_renderer, &playerRect);
-        } 
+        }
 
         sprintf(name_money_str,"%s -- %d euros", playerNames[i], _money[i]);
         RenderText(playerRect.x+20, playerRect.y-30, name_money_str, _font, &white, _renderer);
     }
-    
+
     // destroy everything
     SDL_DestroyTexture(table_texture);
 }
@@ -93,7 +93,7 @@ void RenderCard(int _x, int _y, int _num_card, SDL_Surface **_cards, SDL_Rendere
     // render it !
     card_text = SDL_CreateTextureFromSurface(_renderer, _cards[_num_card]);
     SDL_RenderCopy(_renderer, card_text, NULL, &boardPos);
-    
+
     // destroy everything
     SDL_DestroyTexture(card_text);
 }
@@ -142,14 +142,14 @@ int RenderLogo(int x, int y, SDL_Surface *_logoIST, SDL_Renderer* _renderer)
 {
     SDL_Texture *text_IST;
     SDL_Rect boardPos;
-    
+
     // space occupied by the logo
     boardPos.x = x;
     boardPos.y = y;
     boardPos.w = _logoIST->w;
     boardPos.h = _logoIST->h;
 
-    // render it 
+    // render it
     text_IST = SDL_CreateTextureFromSurface(_renderer, _logoIST);
     SDL_RenderCopy(_renderer, text_IST, NULL, &boardPos);
 
@@ -198,7 +198,7 @@ void InitEverything(int width, int height, TTF_Font **_font, SDL_Surface *_img[]
 	InitFont();
 	*_window = CreateWindow(width, height);
 	*_renderer = CreateRenderer(width, height, *_window);
-	
+
 	// load the table texture
 	_img[0] = IMG_Load(".//img//table_texture.png");
 	if (_img[0] == NULL)
@@ -206,7 +206,7 @@ void InitEverything(int width, int height, TTF_Font **_font, SDL_Surface *_img[]
 		printf("Unable to load image: %s\n", SDL_GetError());
 		exit(EXIT_FAILURE);
 	}
-	
+
 	// load IST logo
 	_img[1] = SDL_LoadBMP(".//img//ist_logo.bmp");
 	if (_img[1] == NULL)

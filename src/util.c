@@ -1,3 +1,6 @@
+#include <stdbool.h>
+#include <string.h>
+
 #include "util.h"
 
 bool isBetween(float v, float max, float min) {

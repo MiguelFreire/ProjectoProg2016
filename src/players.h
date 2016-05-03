@@ -14,13 +14,13 @@
 /**
  * Player possible types: Human or CPU (AI)
  */
-typedef enum {HUMAN, CPU} playerType;
+typedef enum {HUMAN, CPU} PlayerType;
 
 /**
  * Player possible states: STANDARD(no special state), has a BLACKJACK, is
  * BUSTED or is BROKE
  */
-typedef enum {STANDARD, BLACKJACK, BUSTED, BROKE} playerState;
+typedef enum {STANDARD, BLACKJACK, BUSTED, BROKE} PlayerState;
 
 /**
  * Player stats
@@ -29,19 +29,19 @@ typedef struct {
 	int won;
 	int lost;
 	int tied;
-} playerStats;
+} PlayerStats;
 
 /**
  * PLayer payload structure
  */
 typedef struct {
-	playerType type;
-	char *name[MAX_NAME_SIZE + 1];
+	PlayerType type;
+	char name[MAX_NAME_SIZE + 1];
 	int money, bet;
-	playerState state;
+	PlayerState state;
 	int numCards, handValue;
 	cardNode *hand;
-	playerStats stats;
+	PlayerStats stats;
 } Player;
 
 /**
@@ -50,15 +50,15 @@ typedef struct {
 typedef struct playerNode {
 	Player player;
 	struct playerNode *next;
-} playerNode;
+} PlayerNode;
 
 /**
  * The player list structure (points to linked list)
  */
 typedef struct {
-	playerNode *head;
+	PlayerNode *head;
 	int totalPlayers, playersInGame;
-} playerList;
+} PlayerList;
 
 
 
@@ -76,5 +76,6 @@ typedef struct {
 	int numCards;
 	cardNode *hand;
 } House;
+
 
 #endif /* end include guard */

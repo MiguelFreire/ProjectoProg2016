@@ -27,6 +27,7 @@
 #include "players.h"
 #include "cards.h"
 #include "util.h"
+#include "settings.h"
 #include "errorHandling.h"
 
 int main(int argc, char *argv[]){
@@ -40,11 +41,15 @@ int main(int argc, char *argv[]){
 
 	// Graphical interface variables
 	SDL_Window *window = NULL;
-    SDL_Renderer *renderer = NULL;
-    TTF_Font *serif = NULL;
-    SDL_Surface *cards[DECK_SIZE+1], *imgs[2];
-    
-    // Program flow control variables
+  SDL_Renderer *renderer = NULL;
+  TTF_Font *serif = NULL;
+  SDL_Surface *cards[DECK_SIZE+1], *imgs[2];
+
+	//Settings and player structs
+	// if((Players *player = (player *) malloc(sizeof(player))) == NULL) fireNotEnoughMemoryError("Player struct");
+
+
+  // Program flow control variables
 	SDL_Event event;
 	bool quit = 0;
 	gamePhase phase;
@@ -65,7 +70,7 @@ int main(int argc, char *argv[]){
 					switch( event.key.keysym.sym){
 
 						case SDLK_h: // hit
-						             
+
 							break;
 						case SDLK_s: // stand
 
@@ -116,5 +121,5 @@ gamePhase initGame (gameTable *table){
  	}
 
  	return START;
- 	
+
  }

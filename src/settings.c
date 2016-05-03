@@ -1,44 +1,88 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "fileIO.h"
 #include "config.h"
 #include "players.h"
+#include "settings.h"
+#include "errorHandling.h"
 
-Settings readSettings() {
-  FILE *settingsFile = fopen(SETTINGS_FILE_NAME, "r");
+/**
+ * [readSettings description]
+ * @param  players [description]
+ * @return         [description]
+ */
+Settings readSettings(Player *players, const char *fileName) {
+  FILE *settingsFile = fopen(fileName, "r");
   if(settingsFile == NULL) {
-    printf("Failed to load the settings file: %s", SETTINGS_FILE_NAME);
+    printf("Failed to load the settings file: %s", fileName);
     exit(0);
   }
 
   char buffer[MAX_BUFFER_SIZE];
-  Settings stg;
-  readGameSettings(buffer, settingsFile, *stg); //sets the file stream pointing to the second line
-  readPlayerSettings(buffer, settingsFile, *stg);
+  //sets the file stream pointing to the second line
+  GameSettings gameStg= readGameSettings(buffer, settingsFile);
+  PlayerSettings *playerStg= readPlayerSettings(buffer, settingsFile, gameStg.numPlayers);
+  Settings stg = {gameStg, playerStg};
 
   fclose(settingsFile);
+
+  return stg;
 }
 
-void readGameSettings(char *buffer, FILE *settingsFile, Settings *stg) {
+/**
+ * [readGameSettings description]
+ * @param buffer       [description]
+ * @param settingsFile [description]
+ * @param stg          [description]
+ */
+GameSettings readGameSettings(char *buffer, FILE *settingsFile) {
+  GameSettings gameStg;
   fgets(buffer, MAX_BUFFER_SIZE, settingsFile);
-  sscanf(buffer, "%d-%d", stg->numDecks, stg->numPlayers);
+  if(sscanf(buffer, "%d-%d", &gameStg.numDecks, &gameStg.numPlayers) == -1) {
+    fireFormatError("[NumDecks]-[NumPlayers]");
+  }
+
+  return gameStg;
 }
 
-void readPlayerSettings(char *buffer, FILE *settingsFile, Player *players) {
-  char playerType[MAX_PLAYER_TYPE_SIZE];
-  int  playerTypeInt;
-  char name[MAX_NAME_SIZE];
+/**
+ * [readPlayerSettings description]
+ * @param buffer       [description]
+ * @param settingsFile [description]
+ * @param players      [description]
+ */
+PlayerSettings *readPlayerSettings(char *buffer, FILE *settingsFile, int numPlayers) {
+  /*
+  * TODO:
+  * Create player settings struct from settings struct numPlayers
+  * Pass the data from file to settings struct
+  * Return that settings struct and apply to player struct in player library
+  * Free the player settings struct in main!
+  */
+  char playerTypeChar[MAX_PLAYER_TYPE_SIZE+1];
+  PlayerType  playerType;
+  char name[MAX_NAME_SIZE+1];
+
+  PlayerSettings *playerStg =(PlayerSettings *) malloc(numPlayers*sizeof(PlayerSettings));
 
   int i = 0;
   while (fgets(buffer, MAX_BUFFER_SIZE, settingsFile)) {
-    sscanf(buffer,"%s-%s-%d-%d", playerType, name, &(players[i].money), &(players[i].bet));
-    if(strcmp(playerType, "HU") == 0) playerTypeInt = 0;
-    else if(strcmp(playerType, "EA") == 1) playerTypeInt = 1;
-    else {
-      char types[] = {"HU", "EA"};
-      fireUnknownValue("player type", types, 2);
+    if(sscanf(buffer,"%s-%s-%d-%d", playerTypeChar, name, &playerStg[i].seedMoney, &playerStg[i].seedBet) == -1) {
+      fireFormatError("[PlayerType]-[PlayerName]-[SeedMoney]-[SeedBetValue]");
     }
-    *(players[i].type) = playerTypeInt;
-    strcpy(name, player[i].name);
+
+    if(strcmp(playerTypeChar, "HU") == 0) playerType = HUMAN;
+    else if(strcmp(playerTypeChar, "EA") == 0) playerType = CPU;
+    else {
+      fireUnknownValueError("HU or EA");
+    }
+
+    strcpy(playerStg[i].name, name);
 
     i++;
   }
+
+  return playerStg;
 }

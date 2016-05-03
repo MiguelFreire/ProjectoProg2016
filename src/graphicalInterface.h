@@ -6,7 +6,7 @@
 #define	GRAPHICAL_INTERFACE_H
 
 
-	
+
 /**
  * RenderTable: Draws the table where the game will be played, namely:
  * -  some texture for the background
@@ -17,7 +17,7 @@
  * \param _img surfaces where the table background and IST logo were loaded
  * \param _renderer renderer to handle all rendering in a window
  */
-void RenderTable(int _money[], TTF_Font *_font, SDL_Surface *_img[], 
+void RenderTable(int _money[], TTF_Font *_font, SDL_Surface *_img[],
     SDL_Renderer* _renderer, int currentPlayer);
 
 /**
@@ -71,7 +71,7 @@ int RenderText(int x, int y, const char *text, TTF_Font *_font, SDL_Color *_colo
  * \param _renderer renderer to handle all rendering in a window
  */
 void InitEverything(
-	int width, int height, TTF_Font **_font, SDL_Surface *_img[], 
+	int width, int height, TTF_Font **_font, SDL_Surface *_img[],
 	SDL_Window** _window, SDL_Renderer** _renderer);
 
 /**
