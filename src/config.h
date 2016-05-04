@@ -15,6 +15,8 @@
 #define MARGIN	5
 
 #define DECK_SIZE	52
+#define CARD_RANKS	13
+
 #define TABLE_SLOTS	4
 
 #define MAX_NAME_SIZE 8

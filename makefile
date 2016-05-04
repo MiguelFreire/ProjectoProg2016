@@ -15,18 +15,21 @@ FILES= ./src/*.c
 
 linux:
 	@ echo "Compiling blackjack"
+	@ echo ""
 
 	$(CC) $(CFLAGS) $(LIBL) $(FILES) -o $(TARGET)
 
 #Check for compiling failure
 	@ if [ "$?" != "0" ]; then \
+		echo ""; \
 		echo "Done compiling"; \
 	else \
 		echo "!!!!!!!!!Compiling Errors!!!!!!!!!!!"; \
 	fi;
 
 mac:
-	echo "Compiling blackjack"
+	@ echo "Compiling blackjack"
+	@ echo ""
 
 	$(CC) $(CFLAGS) $(LIBM) $(FILES) -o $(TARGET)
 

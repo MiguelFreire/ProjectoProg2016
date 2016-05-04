@@ -14,6 +14,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
@@ -41,21 +42,27 @@ int main(int argc, char *argv[]){
 
 	// Graphical interface variables
 	SDL_Window *window = NULL;
-  SDL_Renderer *renderer = NULL;
-  TTF_Font *serif = NULL;
-  SDL_Surface *cards[DECK_SIZE+1], *imgs[2];
+	SDL_Renderer *renderer = NULL;
+    TTF_Font *serif = NULL;
+    SDL_Surface *cards[DECK_SIZE + 1], *imgs[2];
 
 	//Settings and player structs
 	// if((Players *player = (player *) malloc(sizeof(player))) == NULL) fireNotEnoughMemoryError("Player struct");
 
 
-  // Program flow control variables
+    // Program flow control variables
 	SDL_Event event;
 	bool quit = 0;
-	gamePhase phase;
-	gameTable table;
+	GamePhase phase;
 
-	phase = initGame(&table);
+	GameTable  table = createGameTable();
+	PlayerList playerList = createPlayerList();
+	Pile cardPile = createPile();
+	Settings settings;
+	settings.gameStg.numDecks = 3;
+
+	phase = initGame(&table, &settings, &cardPile);
+
 	if(phase);
 	// initialize graphics
     InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
@@ -113,12 +120,14 @@ int main(int argc, char *argv[]){
 }
 
 
-gamePhase initGame (gameTable *table){
+GamePhase initGame (GameTable *table, Settings *settings, Pile *pile){
 
- 	table->currentPlayer = 0;
- 	for (int i = 0; i < TABLE_SLOTS; i++){
- 		table->players[i] = NULL;
- 	}
+ 	refillPile(pile, settings->gameStg.numDecks);
+
+ 	dealCard(NULL, pile);
+
+ 	// seed random number generator
+ 	srand(time(NULL));
 
  	return START;
 

@@ -6,9 +6,10 @@
 #define	FILEIO_H
 
 #include "gameMechanics.h"
+#include "settings.h"
 
-typedef enum {START, PLAYERS_PLAYING, HOUSE_TURN} gamePhase;
+typedef enum {START, PLAYERS_PLAYING, HOUSE_TURN} GamePhase;
 
-gamePhase initGame (gameTable *table);
+GamePhase initGame (GameTable *table, Settings *settings, Pile *pile);
 
 #endif /* end include guard */

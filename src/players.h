@@ -40,7 +40,7 @@ typedef struct {
 	int money, bet;
 	PlayerState state;
 	int numCards, handValue;
-	cardNode *hand;
+	CardNode *hand;
 	PlayerStats stats;
 } Player;
 
@@ -61,20 +61,26 @@ typedef struct {
 } PlayerList;
 
 
+PlayerList createPlayerList();
+
+
+
+
+
 
 /**
  * House possible states: STANDARD(no special state), has a BLACKJACK or is
  * BUSTED
  */
-typedef enum {HOUSE_STANDARD, HOUSE_BLACKJACK, HOUSE_BUSTED} houseState;
+typedef enum {HOUSE_STANDARD, HOUSE_BLACKJACK, HOUSE_BUSTED} HouseState;
 
 /**
  * House structure (points to linked list)
  */
 typedef struct {
-	houseState state;
+	HouseState state;
 	int numCards;
-	cardNode *hand;
+	CardNode *hand;
 } House;
 
 

@@ -1,3 +1,10 @@
+/**
+ * Settings fecth
+ */
+
+#ifndef SETTINGS_H
+#define SETTINGS_H
+
 typedef struct {
   int numDecks;
   int numPlayers;
@@ -18,3 +25,5 @@ typedef struct {
 Settings readSettings(Player *players, const char *fileName);
 GameSettings readGameSettings(char *buffer, FILE *settingsFile);
 PlayerSettings *readPlayerSettings(char *buffer, FILE *settingsFile, int numPlayers);
+
+#endif // end iclude guard

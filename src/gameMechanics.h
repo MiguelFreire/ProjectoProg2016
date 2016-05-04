@@ -11,9 +11,8 @@
 
 typedef struct {
 	int currentPlayer;
-	PlayerNode *players[TABLE_SLOTS];
-	House house;
-	Pile pile;
-} gameTable;
+	PlayerNode *slots[TABLE_SLOTS];
+} GameTable;
 
+GameTable createGameTable();
 #endif /* end include guard */

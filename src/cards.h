@@ -6,11 +6,12 @@
 #define	CARDS_H
 
 
+#include <stdbool.h>
 
 /**
  * Enum type of suit
  */
-typedef enum {club=1, diamonds, hearts, spades} Suit;
+typedef enum {CLUBS, DIAMONDS, HEARTS, SPADES, NUM_SUITS} Suit;
 
 /**
  * Card is a ordinary struct
@@ -27,7 +28,7 @@ typedef struct {
 typedef struct cardNode {
 	Card card;
 	struct cardNode *next;
-} cardNode;
+} CardNode;
 
 
 /**
@@ -35,8 +36,20 @@ typedef struct cardNode {
  */
 typedef struct {
 	int numCards;
-	cardNode *pile;
+	CardNode *pileTop, *pileBottom;
 } Pile;
+
+Pile createPile();
+
+bool pileIsEmpty (Pile pile);
+
+void refillPile(Pile *cardPile, int numDecks);
+
+void dealCard(CardNode **hand, Pile *cardPile);
+
+CardNode *insertCardOnTop (CardNode *top, Card card);
+
+CardNode *insertCardOnBottom (CardNode *top, Card card);
 
 
 /*****************
