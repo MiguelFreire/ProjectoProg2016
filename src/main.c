@@ -59,7 +59,7 @@ int main(int argc, char *argv[]){
 	PlayerList playerList = createPlayerList();
 	Pile cardPile = createPile();
 	Settings settings;
-	settings.gameStg.numDecks = 3;
+	settings.gameStg.numDecks = 1;
 
 	phase = initGame(&table, &settings, &cardPile);
 
@@ -122,12 +122,16 @@ int main(int argc, char *argv[]){
 
 GamePhase initGame (GameTable *table, Settings *settings, Pile *pile){
 
+	// seed random number generator
+ 	srand(time(NULL));
+
  	refillPile(pile, settings->gameStg.numDecks);
 
  	dealCard(NULL, pile);
 
- 	// seed random number generator
- 	srand(time(NULL));
+ 	listPile(*pile);
+
+ 	
 
  	return START;
 
