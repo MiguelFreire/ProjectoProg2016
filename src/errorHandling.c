@@ -21,3 +21,8 @@ void fireFormatError(const char *s) {
   printf("Invalid format!\n Valid Format: %s\n", s);
   exit(EXIT_FAILURE);
 }
+
+void fireFileNotFoundError(const char *s) {
+  printf("File: %s was not found", s);
+  exit(EXIT_FAILURE);
+}
