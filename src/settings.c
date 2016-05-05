@@ -87,7 +87,6 @@ PlayerSettings *readPlayerSettings(char *buffer, FILE *settingsFile, int numPlay
 }
 
 void freeSettingsStruct(Settings *stg) {
-    for(int i = 0; i < stg->gameStg.numPlayers; i++) {
-      free(stg->playerStg);
-    }
+    free(stg->playerStg);
+    free(stg);
 }
