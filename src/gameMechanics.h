@@ -15,4 +15,17 @@ typedef struct {
 } GameTable;
 
 GameTable createGameTable();
+
+void actionHit(GameTable );
+
+void actionStand(GameTable );
+
+void actionNewGame(GameTable );
+
+void actionDouble(GameTable );
+
+void actionSurrender(GameTable );
+
+void actionBet(GameTable );
+
 #endif /* end include guard */
