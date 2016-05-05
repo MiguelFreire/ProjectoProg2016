@@ -13,4 +13,6 @@ void fireOutOfRangeError(const char *s, float min, float max);
 void fireUnknownValueError(const char *s);
 
 void fireFormatError(const char *s);
+
+void fireFileNotFoundError(const char *s);
 #endif /* end include guard */

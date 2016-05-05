@@ -58,8 +58,7 @@ int main(int argc, char *argv[]){
 	GameTable  table = createGameTable();
 	PlayerList playerList = createPlayerList();
 	Pile cardPile = createPile();
-	Settings settings;
-	settings.gameStg.numDecks = 3;
+	Settings settings = readSettings(argv[1]);
 
 	phase = initGame(&table, &settings, &cardPile);
 
@@ -68,7 +67,7 @@ int main(int argc, char *argv[]){
     InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
     LoadCards(cards);
 
-	while( !quit ){
+	while(!quit){
 		while(SDL_PollEvent(&event)){
 			switch (event.type){
 

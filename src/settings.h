@@ -22,7 +22,7 @@ typedef struct {
   PlayerSettings *playerStg;
 } Settings;
 
-Settings readSettings(Player *players, const char *fileName);
+Settings readSettings(const char *fileName);
 GameSettings readGameSettings(char *buffer, FILE *settingsFile);
 PlayerSettings *readPlayerSettings(char *buffer, FILE *settingsFile, int numPlayers);
 

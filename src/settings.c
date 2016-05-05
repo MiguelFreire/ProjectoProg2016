@@ -13,11 +13,10 @@
  * @param  players [description]
  * @return         [description]
  */
-Settings readSettings(Player *players, const char *fileName) {
+Settings readSettings(const char *fileName) {
   FILE *settingsFile = fopen(fileName, "r");
   if(settingsFile == NULL) {
-    printf("Failed to load the settings file: %s", fileName);
-    exit(0);
+    fireFileNotFoundError(fileName);
   }
 
   char buffer[MAX_BUFFER_SIZE];
@@ -69,7 +68,7 @@ PlayerSettings *readPlayerSettings(char *buffer, FILE *settingsFile, int numPlay
 
   int i = 0;
   while (fgets(buffer, MAX_BUFFER_SIZE, settingsFile)) {
-    if(sscanf(buffer,"%s-%s-%d-%d", playerTypeChar, name, &playerStg[i].seedMoney, &playerStg[i].seedBet) == -1) {
+    if(sscanf(buffer,"%[^-]-%[^-]-%d-%d", playerTypeChar, name, &playerStg[i].seedMoney, &playerStg[i].seedBet) == -1) {
       fireFormatError("[PlayerType]-[PlayerName]-[SeedMoney]-[SeedBetValue]");
     }
 
@@ -85,4 +84,10 @@ PlayerSettings *readPlayerSettings(char *buffer, FILE *settingsFile, int numPlay
   }
 
   return playerStg;
+}
+
+void freeSettingsStruct(Settings stg) {
+    for(int i = 0; i < stg.gameStg.numPlayers) {
+      free(stg->PlayerStg[i]);
+    }
 }
