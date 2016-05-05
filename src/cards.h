@@ -47,6 +47,8 @@ void refillPile(Pile *cardPile, int numDecks);
 
 void dealCard(CardNode **hand, Pile *cardPile);
 
+void listPile(Pile pile);
+
 CardNode *insertCardOnTop (CardNode *top, Card card);
 
 CardNode *insertCardOnBottom (CardNode *top, Card card);

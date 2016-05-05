@@ -74,6 +74,14 @@ void refillPile(Pile *cardPile, int numDecks){
 	
 }
 
+/**
+ * @brief      Deals a card to a player
+ *
+ * @param      hand      the player's hand where to put the card
+ * @param      cardPile  the card pilo from where to take the card
+ * 
+ * Takes a random card from the pile and puts it on the top of player's hand
+ */
 void dealCard(CardNode **hand, Pile *cardPile){
 	int cardIndex = rand()%(cardPile->numCards);
 
@@ -83,12 +91,15 @@ void dealCard(CardNode **hand, Pile *cardPile){
 
 	printf("nope\n");
 	cur = cardPile->pileTop;
-	printf("nope\n");
+
+	printf("cur: %p\n", cur);
 	while (curIndex < cardIndex){
 		prev = cur;
-		printf("nope2\n");
+		printf("nope %d\n", curIndex);
 		cur = cur->next;
-		printf("nope3\n");
+		printf("cur: %p\n", cur);
+		
+		curIndex ++;
 	}
 	printf("nope4\n");
 	if (cur == cardPile->pileTop){
@@ -98,6 +109,7 @@ void dealCard(CardNode **hand, Pile *cardPile){
 		prev->next = cur->next;
 	}
 	
+	printf("Dealt a [%d] [%d]\n", cur->card.suit, cur->card.rank);
 	printf("nope\n");
 	if (hand == NULL){
 		cur->next = NULL;
@@ -110,11 +122,19 @@ void dealCard(CardNode **hand, Pile *cardPile){
 	}
 	printf("nope\n");
 
-	printf("Dealt a [%d] [%d]\n", (*hand)->card.suit, (*hand)->card.rank);
-
 	return;
 }
 
+void listPile(Pile pile){
+	CardNode *cur = pile.pileTop;
+	while (cur != NULL){
+		printf("This is a[%d] [%d]\n", cur->card.suit, cur->card.rank);
+		cur = cur->next;
+		
+	}
+
+	return;
+}
 
 /**
  * @brief      Checks if a pile is empty
