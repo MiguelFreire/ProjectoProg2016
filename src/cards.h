@@ -41,11 +41,12 @@ typedef struct {
 
 Pile createPile();
 
+
 bool pileIsEmpty (Pile pile);
 
 void refillPile(Pile *cardPile, int numDecks);
 
-void dealCard(CardNode **hand, Pile *cardPile);
+CardNode *dealCard(Pile *cardPile);
 
 void listPile(Pile pile);
 

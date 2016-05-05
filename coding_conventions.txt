@@ -5,5 +5,7 @@ Nomemclatura:
         Camelcase (thisIsAFuntion)
     Ficheiros:
         Camelcase (thisIsAFile)
+    Typedefs:
+    	Camelcase capitalizado (ThisIsATypedef)
 
 Temos de fazer uma makefile

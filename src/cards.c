@@ -75,56 +75,45 @@ void refillPile(Pile *cardPile, int numDecks){
 }
 
 /**
- * @brief      Deals a card to a player
+ * @brief      Deals a card from the pile
  *
- * @param      hand      the player's hand where to put the card
- * @param      cardPile  the card pilo from where to take the card
+ * @param      cardPile  the card pile from where to take the card
+ *
+ * @return     ptr to the removed card
  * 
- * Takes a random card from the pile and puts it on the top of player's hand
+ * Takes a random card from the pile and returns a pointer to it
  */
-void dealCard(CardNode **hand, Pile *cardPile){
-	int cardIndex = rand()%(cardPile->numCards);
-
-	printf("Card index dealt %d\n", cardIndex);
-	int curIndex = 0;
+CardNode *dealCard(Pile *cardPile){
 	CardNode *cur, *prev;
+	int curIndex = 0;
+	int cardIndex = rand()%(cardPile->numCards);
+	printf("Card index dealt %d\n", cardIndex);
 
-	printf("nope\n");
 	cur = cardPile->pileTop;
 
-	printf("cur: %p\n", cur);
+	// advance till required index is found
 	while (curIndex < cardIndex){
 		prev = cur;
-		printf("nope %d\n", curIndex);
 		cur = cur->next;
-		printf("cur: %p\n", cur);
-		
+
 		curIndex ++;
 	}
-	printf("nope4\n");
-	if (cur == cardPile->pileTop){
+
+	if (cur == cardPile->pileTop){ // wanted card is the top one
 		cardPile->pileTop = cur->next;
-	} else {
-		printf("nope\n");
+	} else { // wanted card is interior
 		prev->next = cur->next;
 	}
-	
-	printf("Dealt a [%d] [%d]\n", cur->card.suit, cur->card.rank);
-	printf("nope\n");
-	if (hand == NULL){
-		cur->next = NULL;
-		free (cur);
-		cur = NULL;
-		printf("nope\n");
-	} else {
-		cur->next = *hand;
-		*hand = cur;
-	}
-	printf("nope\n");
 
-	return;
+	printf("Dealt a [%d] [%d]\n", cur->card.suit, cur->card.rank);
+	return cur;
 }
 
+/**
+ * @brief      Lists all pile contents
+ *
+ * @param[in]  pile  the pile to list
+ */
 void listPile(Pile pile){
 	CardNode *cur = pile.pileTop;
 	while (cur != NULL){
@@ -160,7 +149,7 @@ bool pileIsEmpty(Pile pile){
  * @return     pointer to the new node
  */
 CardNode *insertCardOnTop (CardNode *top, Card card){
-	CardNode * newNode = (CardNode *) malloc(sizeof(CardNode));
+	CardNode *newNode = (CardNode *) malloc(sizeof(CardNode));
 	if(newNode == NULL) fireNotEnoughMemoryError("CardNode");
 	newNode->card = card;
 	newNode->next = top;
@@ -181,9 +170,4 @@ CardNode *insertCardOnBottom (CardNode *bottom, Card card){
 	newNode->card = card;
 	newNode->next = NULL;
 	return newNode;
-}
-
-void removeCard(CardNode **pileTop, int cardIndex){
-	
-
 }

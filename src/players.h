@@ -56,16 +56,16 @@ typedef struct playerNode {
  * The player list structure (points to linked list)
  */
 typedef struct {
-	PlayerNode *head;
+	PlayerNode *head, *tail;
 	int totalPlayers, playersInGame;
 } PlayerList;
 
 
 PlayerList createPlayerList();
 
+PlayerNode *createPlayer(PlayerNode *tail, Player playerData);
 
-
-
+CardNode *pushToHand(CardNode *hand, CardNode *newCard)
 
 
 /**

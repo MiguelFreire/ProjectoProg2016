@@ -20,7 +20,7 @@ linux:
 	$(CC) $(CFLAGS) $(LIBL) $(FILES) -o $(TARGET)
 
 #Check for compiling failure
-	@ if [ "$?" != "0" ]; then \
+	@ if [ $? -eq 0 ]; then \
 		echo ""; \
 		echo "Done compiling"; \
 	else \
