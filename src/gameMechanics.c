@@ -19,18 +19,18 @@ void actionStand(GameTable *table) {
 	table->currentPlayer++;
 }
 
-void actionNewGame(GameTable table) {
+void actionNewGame(GameTable *table) {
 
 }
 
-void actionDouble(GameTable table) {
+void actionDouble(GameTable *table) {
 
 }
 
-void actionSurrender(GameTable table) {
+void actionSurrender(GameTable *table) {
 
 }
 
-void actionBet(GameTable table) {
+void actionBet(GameTable *table) {
 
 }
