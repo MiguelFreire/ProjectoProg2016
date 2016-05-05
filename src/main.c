@@ -60,6 +60,21 @@ int main(int argc, char *argv[]){
 	Pile cardPile = createPile();
 	Settings settings = readSettings(argv[1]);
 
+	for (int i = 0; i < settings.gameStg.numPlayers; i++){
+		Player newPlayer = {0};
+		newPlayer.type = settings.playerStg[i].playerType;
+		strcpy(newPlayer.name, settings.playerStg[i].name);
+		newPlayer.money = settings.playerStg[i].seedMoney;
+		newPlayer.bet = settings.playerStg[i].seedBet;
+
+		playerList.tail = createPlayer(playerList.tail, newPlayer);
+
+		if(playerList.head == NULL) playerList.head = playerList.tail;
+		
+	}
+
+	listPlayers(playerList);
+
 	phase = initGame(&table, &settings, &cardPile);
 
 	if(phase);
@@ -120,13 +135,14 @@ int main(int argc, char *argv[]){
 
 
 GamePhase initGame (GameTable *table, Settings *settings, Pile *pile){
+	// seed random number generator
+ 	srand(time(NULL));
 
  	refillPile(pile, settings->gameStg.numDecks);
 
- 	dealCard(NULL, pile);
+ 	
 
- 	// seed random number generator
- 	srand(time(NULL));
+ 	
 
  	return START;
 

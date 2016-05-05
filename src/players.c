@@ -3,8 +3,11 @@
  *
  * @return     empty player list
  */
+#include <stdio.h>
+#include <stdlib.h>
 
 #include "players.h"
+
 
 PlayerList createPlayerList(){
 	PlayerList tmp = {0};
@@ -12,13 +15,26 @@ PlayerList createPlayerList(){
 }
 
 PlayerNode *createPlayer(PlayerNode *tail, Player playerData){
-	Player *newPlayer = NULL;
+	PlayerNode *newPlayer = NULL;
 	newPlayer = (PlayerNode *) malloc(sizeof(PlayerNode));
-	
-	newPlayer.player = playerData;
-	tail->next = newPLayer;
+
+	newPlayer->player = playerData;
+	tail->next = newPlayer;
 
 	return newPlayer;
+}
+
+void listPlayers (PlayerList playerList){
+	PlayerNode *cur;
+	cur = playerList.head;
+	for (int i = 0; i < playerList.totalPlayers; i++){
+		printf("================\n");
+		printf("%s\n", cur->player.name);
+		printf("Type: %d\n", cur->player.type);
+		printf("Money: %d\n", cur->player.money);
+		printf("Bet: %d\n", cur->player.bet);
+		cur = cur->next;
+	}
 }
 
 CardNode *pushToHand(CardNode *hand, CardNode *newCard){

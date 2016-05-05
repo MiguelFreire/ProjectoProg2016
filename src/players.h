@@ -64,8 +64,11 @@ typedef struct {
 PlayerList createPlayerList();
 
 PlayerNode *createPlayer(PlayerNode *tail, Player playerData);
+void listPlayers (PlayerList playerList);
 
-CardNode *pushToHand(CardNode *hand, CardNode *newCard)
+CardNode *pushToHand(CardNode *hand, CardNode *newCard);
+
+
 
 
 /**
