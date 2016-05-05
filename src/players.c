@@ -19,13 +19,17 @@ PlayerNode *createPlayer(PlayerNode *tail, Player playerData){
 	newPlayer = (PlayerNode *) malloc(sizeof(PlayerNode));
 
 	newPlayer->player = playerData;
-	tail->next = newPlayer;
+	newPlayer->next = NULL;
+
+	if(tail != NULL)
+		tail->next = newPlayer;
+	
 
 	return newPlayer;
 }
 
 void listPlayers (PlayerList playerList){
-	PlayerNode *cur;
+	PlayerNode *cur = NULL;
 	cur = playerList.head;
 	for (int i = 0; i < playerList.totalPlayers; i++){
 		printf("================\n");
@@ -35,6 +39,7 @@ void listPlayers (PlayerList playerList){
 		printf("Bet: %d\n", cur->player.bet);
 		cur = cur->next;
 	}
+	printf("=================\n");
 }
 
 CardNode *pushToHand(CardNode *hand, CardNode *newCard){

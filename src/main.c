@@ -66,15 +66,11 @@ int main(int argc, char *argv[]){
 		strcpy(newPlayer.name, settings.playerStg[i].name);
 		newPlayer.money = settings.playerStg[i].seedMoney;
 		newPlayer.bet = settings.playerStg[i].seedBet;
-
 		playerList.tail = createPlayer(playerList.tail, newPlayer);
-
 		if(playerList.head == NULL) playerList.head = playerList.tail;
-		
+		playerList.totalPlayers ++;
 	}
-
 	listPlayers(playerList);
-
 	phase = initGame(&table, &settings, &cardPile);
 
 	if(phase);

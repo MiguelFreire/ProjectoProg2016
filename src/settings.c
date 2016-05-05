@@ -78,6 +78,8 @@ PlayerSettings *readPlayerSettings(char *buffer, FILE *settingsFile, int numPlay
       fireUnknownValueError("HU or EA");
     }
 
+    playerStg[i].playerType = playerType;
+    
     strcpy(playerStg[i].name, name);
 
     i++;
