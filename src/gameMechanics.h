@@ -16,16 +16,16 @@ typedef struct {
 
 GameTable createGameTable();
 
-void actionHit(GameTable );
+void actionHit(GameTable *);
 
-void actionStand(GameTable );
+void actionStand(GameTable *);
 
-void actionNewGame(GameTable );
+void actionNewGame(GameTable *);
 
-void actionDouble(GameTable );
+void actionDouble(GameTable *);
 
-void actionSurrender(GameTable );
+void actionSurrender(GameTable *);
 
-void actionBet(GameTable );
+void actionBet(GameTable *);
 
 #endif /* end include guard */

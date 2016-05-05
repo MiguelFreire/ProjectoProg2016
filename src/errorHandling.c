@@ -23,6 +23,6 @@ void fireFormatError(const char *s) {
 }
 
 void fireFileNotFoundError(const char *s) {
-  printf("File: %s was not found", s);
+  printf("File: %s was not found\n", s);
   exit(EXIT_FAILURE);
 }

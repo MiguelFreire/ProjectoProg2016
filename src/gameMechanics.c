@@ -11,7 +11,7 @@ GameTable createGameTable(){
 }
 
 void actionHit(GameTable *table) {
-	Player player = table->slots[table.currentPlayer]->player;
+	Player player = table->slots[table->currentPlayer]->player;
 	//deal card to player's hand
 }
 
@@ -32,5 +32,5 @@ void actionSurrender(GameTable table) {
 }
 
 void actionBet(GameTable table) {
-	
+
 }
