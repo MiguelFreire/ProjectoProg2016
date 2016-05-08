@@ -43,7 +43,30 @@ void listPlayers (PlayerList playerList){
 }
 
 CardNode *pushToHand(CardNode *hand, CardNode *newCard){
-	hand->next = hand;
+	if (hand != NULL)
+		newCard->next = hand;
 
 	return newCard;
+}
+
+Card peekHand(CardNode *hand, int cardNumber){
+
+	for (int i = 1; i < cardNumber; i++){
+		hand = hand->next;
+	}
+
+	return hand->card;
+}
+
+
+// House fucntions
+
+/**
+ * @brief      Creates an empty house structure and returns it
+ *
+ * @return     empty house structure
+ */
+House createHouse(){
+	House house = {0};
+	return house;
 }

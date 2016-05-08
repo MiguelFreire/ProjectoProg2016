@@ -11,6 +11,7 @@
 
 typedef struct {
 	int currentPlayer;
+	int numPLayersInGame;
 	PlayerNode *slots[TABLE_SLOTS];
 } GameTable;
 

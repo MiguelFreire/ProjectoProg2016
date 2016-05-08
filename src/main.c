@@ -43,40 +43,59 @@ int main(int argc, char *argv[]){
 	// Graphical interface variables
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
-    TTF_Font *serif = NULL;
-    SDL_Surface *cards[DECK_SIZE + 1], *imgs[2];
-
-	//Settings and player structs
-	// if((Players *player = (player *) malloc(sizeof(player))) == NULL) fireNotEnoughMemoryError("Player struct");
+	TTF_Font *serif = NULL;
+	SDL_Surface *cards[DECK_SIZE + 1], *imgs[2];
 
 
-    // Program flow control variables
+	// Program flow control variables
 	SDL_Event event;
 	bool quit = 0;
 	GamePhase phase;
 
+	// structures
 	GameTable  table = createGameTable();
+	House house = createHouse();
 	PlayerList playerList = createPlayerList();
 	Pile cardPile = createPile();
 	Settings settings = readSettings(argv[1]);
 
 	for (int i = 0; i < settings.gameStg.numPlayers; i++){
 		Player newPlayer = {0};
+
 		newPlayer.type = settings.playerStg[i].playerType;
 		strcpy(newPlayer.name, settings.playerStg[i].name);
 		newPlayer.money = settings.playerStg[i].seedMoney;
 		newPlayer.bet = settings.playerStg[i].seedBet;
+
 		playerList.tail = createPlayer(playerList.tail, newPlayer);
 		if(playerList.head == NULL) playerList.head = playerList.tail;
+
+		table.slots[i] = playerList.tail;
+
 		playerList.totalPlayers ++;
 	}
+
+	
+
 	listPlayers(playerList);
 	phase = initGame(&table, &settings, &cardPile);
 
+	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile));
+	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile));
+	table.slots[0]->player.numCards = 2;
+
+	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile));
+	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile));
+	table.slots[1]->player.numCards = 2;
+
+	house.hand = pushToHand(house.hand, dealCard(&cardPile));
+	house.hand = pushToHand(house.hand, dealCard(&cardPile));
+	house.numCards = 2;
+
 	if(phase);
 	// initialize graphics
-    InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
-    LoadCards(cards);
+	InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
+	LoadCards(cards);
 
 	while(!quit){
 		while(SDL_PollEvent(&event)){
@@ -125,21 +144,41 @@ int main(int argc, char *argv[]){
 					break;
 			}
 		}
+
+		// render game table
+		RenderTable(serif, imgs, renderer, table);
+		// render the players cards
+		RenderPlayerCards(cards, renderer, table);
+		// render house cards
+		RenderHouseCards(cards, renderer, &house);
+		// put to screen all changes above
+		SDL_RenderPresent(renderer);
+        // add a delay
+        SDL_Delay(RENDER_DELAY);
 	}
+
+	UnLoadCards(cards);
+	TTF_CloseFont(serif);
+	SDL_FreeSurface(imgs[0]);
+	SDL_FreeSurface(imgs[1]);
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+	return EXIT_SUCCESS;
 
 }
 
 
 GamePhase initGame (GameTable *table, Settings *settings, Pile *pile){
 	// seed random number generator
- 	srand(time(NULL));
+	srand(time(NULL));
 
- 	refillPile(pile, settings->gameStg.numDecks);
+	refillPile(pile, settings->gameStg.numDecks);
 
- 	
+	
 
- 	
+	
 
- 	return START;
+	return START;
 
  }

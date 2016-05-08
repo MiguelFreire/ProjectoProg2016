@@ -57,7 +57,7 @@ typedef struct playerNode {
  */
 typedef struct {
 	PlayerNode *head, *tail;
-	int totalPlayers, playersInGame;
+	int totalPlayers;
 } PlayerList;
 
 
@@ -68,14 +68,14 @@ void listPlayers (PlayerList playerList);
 
 CardNode *pushToHand(CardNode *hand, CardNode *newCard);
 
-
+Card peekHand(CardNode *hand, int cardNumber);
 
 
 /**
  * House possible states: STANDARD(no special state), has a BLACKJACK or is
  * BUSTED
  */
-typedef enum {HOUSE_STANDARD, HOUSE_BLACKJACK, HOUSE_BUSTED} HouseState;
+typedef enum {HOUSE_WAITING, HOUSE_STANDARD, HOUSE_BLACKJACK, HOUSE_BUSTED} HouseState;
 
 /**
  * House structure (points to linked list)
@@ -86,5 +86,6 @@ typedef struct {
 	CardNode *hand;
 } House;
 
+House createHouse();
 
 #endif /* end include guard */

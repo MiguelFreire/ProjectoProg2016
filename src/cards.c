@@ -79,9 +79,9 @@ void refillPile(Pile *cardPile, int numDecks){
  *
  * @param      cardPile  the card pile from where to take the card
  *
- * @return     ptr to the removed card
+ * @return     ptr to the removed card node
  * 
- * Takes a random card from the pile and returns a pointer to it
+ * Takes a random card from the pile and returns a pointer to the node
  */
 CardNode *dealCard(Pile *cardPile){
 	CardNode *cur, *prev;

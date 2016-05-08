@@ -11,7 +11,7 @@
 /**
  * Enum type of suit
  */
-typedef enum {CLUBS, DIAMONDS, HEARTS, SPADES, NUM_SUITS} Suit;
+typedef enum {CLUBS, DIAMONDS, HEARTS, SPADES, NUM_SUITS, BACK} Suit;
 
 /**
  * Card is a ordinary struct
@@ -55,25 +55,4 @@ CardNode *insertCardOnTop (CardNode *top, Card card);
 CardNode *insertCardOnBottom (CardNode *top, Card card);
 
 
-/*****************
- * Stack FUNCTION
- ****************/
-/*cardNode* initHand() {
-  return NULL;
-}
-
-<<<<<<< Updated upstream
-cardNode* pushCard(cardNode* top) {
-  
-=======
-Hand* pushCard(Hand* top, Player owner) {
-
->>>>>>> Stashed changes
-}
-
-cardNode* popCard() {
-
-}
-
-*/
 #endif /* end include guard */

@@ -14,15 +14,23 @@
 #define EXTRASPACE	150
 #define MARGIN	5
 
-#define DECK_SIZE	52
-#define CARD_RANKS	13
+#define RENDER_DELAY 1000	// delay between renders (ms)
 
-#define TABLE_SLOTS	4
+#define DECK_SIZE	52	// num of card in a deck
+#define CARD_RANKS	13	// num of different card ranks
 
-#define MAX_NAME_SIZE 8
-#define MAX_BUFFER_SIZE 100
+#define TABLE_SLOTS	4	// num of table slots for players
 
-#define MAX_PLAYER_TYPE_SIZE 2
+#define MAX_NAME_SIZE 8	// max player name size
+#define MAX_BUFFER_SIZE 100	// max size for some buffers
+
+#define MAX_PLAYER_TYPE_SIZE 2	// max size for player type chars buffer
 
 #define SETTINGS_FILE_NAME "settings.txt"
+
+#define AUTHOR_NAME1	"Andre Agostinho"
+#define AUTHOR_NAME2	"Miguel Freire"
+#define AUTHOR_NUMBER1	"IST425301"
+#define AUTHOR_NUMBER2	"IST425301"
+
 #endif /* end include guard */

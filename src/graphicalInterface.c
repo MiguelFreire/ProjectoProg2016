@@ -4,20 +4,27 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
+#include <stdbool.h>
 
 #include "config.h"
+#include "gameMechanics.h"
 #include "graphicalInterface.h"
+#include "players.h"
 
-	/**********************
-	 *Tirar isto depois
-	 ************************/
-	const char myName[] = "Andre Agostinho";
-	const char myNumber[] = "IST425301";
-	const char * playerNames[] = {"Player 1", "Player 2", "Player 3", "Player 4"};
 
-void RenderTable(int _money[], TTF_Font *_font, SDL_Surface *_img[],
-    SDL_Renderer* _renderer, int currentPlayer)
-{
+
+
+/**
+ * RenderTable: Draws the table where the game will be played, namely:
+ * -  some texture for the background
+ * -  the right part with the IST logo and the student name and number
+ * -  squares to define the playing positions of each player
+ * -  names and the available money for each player
+ * \param _money amount of money of each player
+ * \param _img surfaces where the table background and IST logo were loaded
+ * \param _renderer renderer to handle all rendering in a window
+ */
+void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable table) {
     SDL_Color black = { 0, 0, 0 }; // black
     SDL_Color white = { 255, 255, 255 }; // white
 
@@ -47,31 +54,37 @@ void RenderTable(int _money[], TTF_Font *_font, SDL_Surface *_img[],
     // render the IST Logo
     height = RenderLogo(separatorPos, 0, _img[1], _renderer);
 
-    // render the student name
-    height += RenderText(separatorPos+3*MARGIN, height, myName, _font, &black, _renderer);
+    // render the authors names
+    height += RenderText(separatorPos+3*MARGIN, height, AUTHOR_NAME1, _font, &black, _renderer);
 
-    // this renders the student number
-    RenderText(separatorPos+3*MARGIN, height, myNumber, _font, &black, _renderer);
+    height += RenderText(separatorPos+3*MARGIN, height, AUTHOR_NUMBER1, _font, &black, _renderer);
+
+    // render the authors numbers
+    height += RenderText(separatorPos+3*MARGIN, height, AUTHOR_NAME2, _font, &black, _renderer);
+
+    RenderText(separatorPos+3*MARGIN, height, AUTHOR_NUMBER2, _font, &black, _renderer);
 
 
 
     // renders the areas for each player: names and money too !
     for ( int i = 0; i < TABLE_SLOTS; i++)
     {
+        if(table.slots[i] != NULL) { // check if there is a player in that slot
+            playerRect.x = i*(separatorPos/4)+10;
+            playerRect.y = (int) (0.55f*WINDOW_HEIGHT);
+            playerRect.w = separatorPos/4-5;
+            playerRect.h = (int) (0.42f*WINDOW_HEIGHT);
 
-        playerRect.x = i*(separatorPos/4-5)+10;
-        playerRect.y = (int) (0.55f*WINDOW_HEIGHT);
-        playerRect.w = separatorPos/4-5;
-        playerRect.h = (int) (0.42f*WINDOW_HEIGHT);
+            // draw a rectangle in the current player area
+            if(i == table.currentPlayer){
+                SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255 );
+                SDL_RenderDrawRect(_renderer, &playerRect);
+            }
 
-        // draw a rectangle in the current player area
-	    if(i == currentPlayer){
-            SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255 );
-            SDL_RenderDrawRect(_renderer, &playerRect);
+            sprintf(name_money_str,"%s -- %d euros", table.slots[i]->player.name, table.slots[i]->player.money);
+            RenderText(playerRect.x+20, playerRect.y-30, name_money_str, _font, &white, _renderer);
         }
-
-        sprintf(name_money_str,"%s -- %d euros", playerNames[i], _money[i]);
-        RenderText(playerRect.x+20, playerRect.y-30, name_money_str, _font, &white, _renderer);
+        
     }
 
     // destroy everything
@@ -79,10 +92,100 @@ void RenderTable(int _money[], TTF_Font *_font, SDL_Surface *_img[],
 }
 
 
-void RenderCard(int _x, int _y, int _num_card, SDL_Surface **_cards, SDL_Renderer* _renderer)
+/**
+ * RenderPlayerCards: Renders the hand, i.e. the cards, for each player
+ * \param _player_cards 2D array with the player cards, 1st dimension is the player ID
+ * \param _pos_player_hand array with the positions of the valid card IDs for each player
+ * \param _cards vector with all loaded card images
+ * \param _renderer renderer to handle all rendering in a window
+ */
+void RenderPlayerCards(SDL_Surface **_cards, SDL_Renderer* _renderer, GameTable table)
+{
+    int pos, x, y, slot, card;
+    Player *curPlayer;
+
+    printf("render player\n");
+    // for every card of every player
+    for ( slot = 0; slot < TABLE_SLOTS; slot++)
+    {
+        if (table.slots[slot] == NULL) continue; // pass empty slots
+
+        curPlayer = &table.slots[slot]->player;
+
+        for ( card = 0; card < curPlayer->numCards; card++)
+        {
+            // draw all cards of the player: calculate its position: only 4 positions are available !
+            pos = card % 4;
+            x = (int) slot*((0.95f*WINDOW_WIDTH)/4-5)+(card/4)*12+15;
+            y = (int) (0.55f*WINDOW_HEIGHT)+10;
+            if ( pos == 1 || pos == 3) x += CARD_WIDTH + 30;
+            if ( pos == 2 || pos == 3) y += CARD_HEIGHT + 10;
+            // render it !
+            RenderCard(x, y, peekHand(curPlayer->hand, curPlayer->numCards - card), _cards, _renderer);
+        }        
+    }
+}
+
+
+/**
+ * RenderHouseCards: Renders cards of the house
+ *
+ * @param      _house           vector with the house cards
+ * @param      _pos_house_hand  position of the vector _house with valid card
+ *                              IDs
+ * @param      _cards           vector with all loaded card images
+ * @param      _renderer        renderer to handle all rendering in a window
+ * @param[in]  gameHasEnded     flag to know if it is time for the house to play
+ */
+void RenderHouseCards(SDL_Surface **_cards, SDL_Renderer* _renderer, House *house)
+{
+    int card, x, y;
+    int div = WINDOW_WIDTH/CARD_WIDTH;
+
+    printf("render house\n");
+    // drawing all house cards
+    for ( card = 0; card < house->numCards; card++)
+    {
+        // players still playing ? draw a card face down
+        if (card == 1 && house->state == HOUSE_WAITING)
+        {
+            Card cardDown = {0};
+            x = (div/2-house->numCards/2+card)*CARD_WIDTH + 15;
+            y = (int) (0.26f*WINDOW_HEIGHT);
+            cardDown.suit = BACK;
+            RenderCard(x, y, cardDown, _cards, _renderer);
+        } else {
+            // calculate its position
+            x = (div/2-house->numCards/2+card)*CARD_WIDTH + 15;
+            y = (int) (0.26f*WINDOW_HEIGHT);
+            // render it !
+            RenderCard(x, y, peekHand(house->hand, house->numCards - card), _cards, _renderer);
+        }
+        
+    }   
+}
+
+
+/**
+ * RenderCard: Draws one card at a certain position of the window, based on the card code
+ * \param _x X coordinate of the card position in the window
+ * \param _y Y coordinate of the card position in the window
+ * \param _num_card card code that identifies each card
+ * \param _cards vector with all loaded card images
+ * \param _renderer renderer to handle all rendering in a window
+ */
+void RenderCard(int _x, int _y, Card card ,SDL_Surface **_cards, SDL_Renderer* _renderer)
 {
     SDL_Texture *card_text;
     SDL_Rect boardPos;
+    int cardNumber;
+
+    printf("rendering card: [%d] [%d]\n", card.suit, card.rank);
+    // calculate card id for card array acessing
+    if (card.suit == BACK) // card back
+        cardNumber = DECK_SIZE;
+    else // regular cards
+        cardNumber = (card.suit * 13) + (card.rank);
 
     // area that will be occupied by each card
     boardPos.x = _x;
@@ -91,7 +194,7 @@ void RenderCard(int _x, int _y, int _num_card, SDL_Surface **_cards, SDL_Rendere
     boardPos.h = CARD_HEIGHT;
 
     // render it !
-    card_text = SDL_CreateTextureFromSurface(_renderer, _cards[_num_card]);
+    card_text = SDL_CreateTextureFromSurface(_renderer, _cards[cardNumber]);
     SDL_RenderCopy(_renderer, card_text, NULL, &boardPos);
 
     // destroy everything
@@ -99,6 +202,10 @@ void RenderCard(int _x, int _y, int _num_card, SDL_Surface **_cards, SDL_Rendere
 }
 
 
+/**
+ * LoadCards: Loads all images of the cards
+ * \param _cards vector with all loaded card images
+ */
 void LoadCards(SDL_Surface **_cards)
 {
     int i;
@@ -128,6 +235,10 @@ void LoadCards(SDL_Surface **_cards)
 }
 
 
+/**
+ * UnLoadCards: unloads all card images of the memory
+ * \param _cards vector with all loaded card images
+ */
 void UnLoadCards(SDL_Surface **_array_of_cards)
 {
     // unload all cards of the memory: +1 for the card back
@@ -138,6 +249,13 @@ void UnLoadCards(SDL_Surface **_array_of_cards)
 }
 
 
+/**
+ * RenderLogo function: Renders the IST Logo on the window screen
+ * \param x X coordinate of the Logo
+ * \param y Y coordinate of the Logo
+ * \param _logoIST surface with the IST logo image to render
+ * \param _renderer renderer to handle all rendering in a window
+ */
 int RenderLogo(int x, int y, SDL_Surface *_logoIST, SDL_Renderer* _renderer)
 {
     SDL_Texture *text_IST;
@@ -159,6 +277,14 @@ int RenderLogo(int x, int y, SDL_Surface *_logoIST, SDL_Renderer* _renderer)
 }
 
 
+/**
+ * RenderText function: Renders the IST Logo on the window screen
+ * \param x X coordinate of the text
+ * \param y Y coordinate of the text
+ * \param text string where the text is written
+ * \param font TTF font used to render the text
+ * \param _renderer renderer to handle all rendering in a window
+ */
 int RenderText(int x, int y, const char *text, TTF_Font *_font, SDL_Color *_color, SDL_Renderer* _renderer)
 {
     SDL_Surface *text_surface;
@@ -192,6 +318,14 @@ int RenderText(int x, int y, const char *text, TTF_Font *_font, SDL_Color *_colo
  * INTERFACE INITIALIZATION FUNCTIONS
  ******************************************************************/
 
+/**
+ * InitEverything: Initializes the SDL2 library and all graphical components: font, window, renderer
+ * \param width width in px of the window
+ * \param height height in px of the window
+ * \param _img surface to be created with the table background and IST logo
+ * \param _window represents the window of the application
+ * \param _renderer renderer to handle all rendering in a window
+ */
 void InitEverything(int width, int height, TTF_Font **_font, SDL_Surface *_img[], SDL_Window** _window, SDL_Renderer** _renderer)
 {
 	InitSDL();
@@ -224,6 +358,9 @@ void InitEverything(int width, int height, TTF_Font **_font, SDL_Surface *_img[]
 }
 
 
+/**
+ * InitSDL: Initializes the SDL2 graphic library
+ */
 void InitSDL()
 {
     // init SDL library
@@ -235,6 +372,9 @@ void InitSDL()
 }
 
 
+/**
+ * InitFont: Initializes the SDL2_ttf font library
+ */
 void InitFont()
 {
     // Init font library
@@ -246,6 +386,12 @@ void InitFont()
 }
 
 
+/**
+ * CreateWindow: Creates a window for the application
+ * \param width width in px of the window
+ * \param height height in px of the window
+ * \return pointer to the window created
+ */
 SDL_Window* CreateWindow(int width, int height)
 {
     SDL_Window *window;
@@ -261,6 +407,13 @@ SDL_Window* CreateWindow(int width, int height)
 }
 
 
+/**
+ * CreateRenderer: Creates a renderer for the application
+ * \param width width in px of the window
+ * \param height height in px of the window
+ * \param _window represents the window for which the renderer is associated
+ * \return pointer to the renderer created
+ */
 SDL_Renderer* CreateRenderer(int width, int height, SDL_Window *_window)
 {
     SDL_Renderer *renderer;
