@@ -47,8 +47,8 @@
          fireFormatError("[NumDecks]-[NumPlayers]");
      }
 
-     if(!isBetween(numDecks, 4, 8)) fireOutOfRangeError("number of decks",4,8);
-     if(!isBetween(numPlayers, 1, 4)) fireOutOfRangeError("number of players",1,4);
+     if(!isBetween(numDecks, MIN_DECKS, MAX_DECKS)) fireOutOfRangeError("number of decks", MIN_DECKS, MAX_DECKS);
+     if(!isBetween(numPlayers, MIN_PLAYERS, TABLE_SLOTS)) fireOutOfRangeError("number of players",MIN_PLAYERS,TABLE_SLOTS);
 
      GameSettings gameStg = {numDecks, numPlayers};
 

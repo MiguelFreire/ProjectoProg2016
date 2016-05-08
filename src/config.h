@@ -19,7 +19,11 @@
 #define DECK_SIZE	52	// num of card in a deck
 #define CARD_RANKS	13	// num of different card ranks
 
-#define TABLE_SLOTS	4	// num of table slots for players
+#define MIN_DECKS 4 // min number of decks to use
+#define MAX_DECKS 8 // max number of decks to use
+
+#define MIN_PLAYERS 1 // min players to start the game with
+#define TABLE_SLOTS	4	// num of table slots for players (max players)
 
 #define MAX_NAME_SIZE 8	// max player name size
 #define MAX_BUFFER_SIZE 100	// max size for some buffers

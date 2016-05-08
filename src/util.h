@@ -10,7 +10,7 @@
 /**
  * Check if a float var is between 2 values
  */
-bool isBetween(float v, float max, float min);
+bool isBetween(float v, float min, float max);
 
 void addNullByte(char *s);
 
