@@ -107,5 +107,4 @@ PlayerSettings *readPlayerSettings(char *buffer, FILE *settingsFile, int numPlay
 
 void freeSettingsStruct(Settings *stg) {
     free(stg->playerStg);
-    free(stg);
 }

@@ -17,13 +17,13 @@ void actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 	if(subject == PLAYER) {
 		Player *player = &(table->slots[table->currentPlayer]->player);
 		player->state = HIT;
-		player->hand = pushToHand(player->hand, dealCard(cardPile));
+		player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 		player->numCards++;
 		player->handValue = updatePlayerHandValue(player, player->numCards);
 		if(player->state == BUSTED || player->state == BLACKJACK) actionStand(table);
 	} else if(subject == HOUSE) {
 		House *house = table->house;
-		house->hand = pushToHand(house->hand, dealCard(cardPile));
+		house->hand = pushToHand(house->hand, dealCard(cardPile), &house->numCards);
 		house->numCards++;
 		house->handValue = updateHouseHandValue(house, house->numCards);
 		if(house->state == HOUSE_BUSTED || house->state == HOUSE_BLACKJACK) actionStand(table);

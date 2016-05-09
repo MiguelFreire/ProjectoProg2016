@@ -11,6 +11,8 @@
 #include "config.h"
 #include "cards.h"
 
+// Players
+
 /**
  * Player possible types: Human or CPU (AI)
  */
@@ -62,16 +64,14 @@ typedef struct {
 
 
 PlayerList createPlayerList();
-
-PlayerNode *createPlayer(PlayerNode *tail, Player playerData);
-void listPlayers (PlayerList playerList);
-
-CardNode *pushToHand(CardNode *hand, CardNode *newCard);
-
-Card peekHand(CardNode *hand, int cardNumber);
-
+PlayerNode *createPlayer(PlayerList *list, Player playerData);
+PlayerNode *removePlayer(PlayerList *list);
+void listPlayers (PlayerList *playerList);
+bool playerListIsEmpty(PlayerList *list);
 int updatePlayerHandValue(Player *player, int numCard);
 
+
+// House
 
 /**
  * House possible states: STANDARD(no special state), has a BLACKJACK or is
@@ -83,14 +83,21 @@ typedef enum {HOUSE_WAITING, HOUSE_STANDARD, HOUSE_BLACKJACK, HOUSE_BUSTED} Hous
  * House structure (points to linked list)
  */
 typedef struct {
-	HouseState state;
-	int numCards, handValue;
-	CardNode *hand;
+ 	HouseState state;
+ 	int numCards, handValue;
+ 	CardNode *hand;
 } House;
+
 
 House createHouse();
 
-int updateHouseHandValue(House *house, int numCards);
 
+
+// hand functions
+CardNode *pushToHand(CardNode *hand, CardNode *newCard, int *numCards);
+CardNode *popHand(CardNode *hand, Card *cardContent, int *numCards);
+Card peekHand(CardNode *hand, int cardNumber);
+bool handIsEmpty(CardNode *hand);
+int updateHouseHandValue(House *house, int numCards);
 
 #endif /* end include guard */

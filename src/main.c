@@ -37,9 +37,6 @@ int main(int argc, char *argv[]){
 	 * Settings *stg = readSettings();
 	 * DONT FORGET TO FREE THE SETTINGS STRUCT!!!!!
 	 ***********************/
-
-
-
 	// Graphical interface variables
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
@@ -53,45 +50,27 @@ int main(int argc, char *argv[]){
 	GamePhase phase;
 
 	// structures
+	Settings settings = {0};
 	GameTable  table = createGameTable();
 	House house = createHouse();
 	PlayerList playerList = createPlayerList();
 	Pile cardPile = createPile();
-	Settings settings = readSettings(argv[1]);
-
-	for (int i = 0; i < settings.gameStg.numPlayers; i++){
-		Player newPlayer = {0};
-
-		newPlayer.type = settings.playerStg[i].playerType;
-		strcpy(newPlayer.name, settings.playerStg[i].name);
-		newPlayer.money = settings.playerStg[i].seedMoney;
-		newPlayer.bet = settings.playerStg[i].seedBet;
-		newPlayer.betMultiplier = 1;
-		playerList.tail = createPlayer(playerList.tail, newPlayer);
-		if(playerList.head == NULL) playerList.head = playerList.tail;
-
-		table.slots[i] = playerList.tail;
-
-		playerList.totalPlayers ++;
-	}
+	
+	phase = initGame(&table, &playerList, &cardPile, &settings, argv[1]);
 
 
+	// testing shit
+	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile), &(table.slots[0]->player.numCards));
+	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile), &(table.slots[0]->player.numCards));
 
-	listPlayers(playerList);
-	phase = initGame(&table, &settings, &cardPile);
+	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile), &(table.slots[1]->player.numCards));
+	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile), &(table.slots[1]->player.numCards));
 
-	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile));
-	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile));
-	table.slots[0]->player.numCards = 2;
+	house.hand = pushToHand(house.hand, dealCard(&cardPile), &(house.numCards));
+	house.hand = pushToHand(house.hand, dealCard(&cardPile), &(house.numCards));
 
-	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile));
-	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile));
-	table.slots[1]->player.numCards = 2;
-
-	house.hand = pushToHand(house.hand, dealCard(&cardPile));
-	house.hand = pushToHand(house.hand, dealCard(&cardPile));
-	house.numCards = 2;
-
+	// end testing shit
+	
 	if(phase);
 	// initialize graphics
 	InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
@@ -157,6 +136,8 @@ int main(int argc, char *argv[]){
         SDL_Delay(RENDER_DELAY);
 	}
 
+	// free everything and quit the program
+	freeEverything(&playerList, &house, &cardPile, &settings);
 	UnLoadCards(cards);
 	TTF_CloseFont(serif);
 	SDL_FreeSurface(imgs[0]);
@@ -164,21 +145,62 @@ int main(int argc, char *argv[]){
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
+	printf("Exited sucessfully\n");
 	return EXIT_SUCCESS;
 
 }
 
 
-GamePhase initGame (GameTable *table, Settings *settings, Pile *pile){
+GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile, Settings *settings, char *argv1){
 	// seed random number generator
 	srand(time(NULL));
 
-	refillPile(pile, settings->gameStg.numDecks);
+	*settings = readSettings(argv1);
 
 
+	// create starting players
+	for (int i = 0; i < settings->gameStg.numPlayers; i++){
+		Player newPlayer = {0};
+
+		// assign player setting to the player
+		newPlayer.type = settings->playerStg[i].playerType;
+		strcpy(newPlayer.name, settings->playerStg[i].name);
+		newPlayer.money = settings->playerStg[i].seedMoney;
+		newPlayer.bet = settings->playerStg[i].seedBet;
 
 
+		// put player on the player list
+		playerList->tail = createPlayer(playerList, newPlayer);
+
+		// assign the player to a table slot
+		table->slots[i] = playerList->tail;		
+	}
+	listPlayers(playerList);
+
+	pile->numDecks = settings->gameStg.numDecks;
+	refillPile(pile);
 
 	return START;
-
  }
+
+
+void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, Settings *settings){
+	CardNode *tmpCard = NULL;
+	// free players
+	while (playerList->head != NULL){
+		// remove player frees the player hand and the player
+		playerList->head = removePlayer(playerList);
+	}
+	// free house hand
+	tmpCard = house->hand; 
+	while (tmpCard != NULL){
+		tmpCard = popHand(tmpCard, NULL, &house->numCards);
+	}
+	// free card pile
+	
+	while (cardPile->pileTop != NULL){
+		cardPile->pileTop = removeCardFromTop(cardPile);
+	}
+	// free settings
+	freeSettingsStruct(settings);
+}
