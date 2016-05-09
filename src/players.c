@@ -23,7 +23,7 @@ PlayerNode *createPlayer(PlayerNode *tail, Player playerData){
 
 	if(tail != NULL)
 		tail->next = newPlayer;
-	
+
 
 	return newPlayer;
 }

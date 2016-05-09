@@ -64,14 +64,14 @@ void refillPile(Pile *cardPile, int numDecks){
 					cardPile->pileBottom->next = insertCardOnBottom(cardPile->pileBottom, tmpCard);
 					cardPile->pileBottom = cardPile->pileBottom->next;
 				}
-				
+
 				cardPile->numCards++;
-				
+
 				printf("[%d] [%d] [%d] [%d]\n", cardPile->numCards, deck, suit, rank);
 			}
 		}
 	}
-	
+
 }
 
 /**
@@ -80,7 +80,7 @@ void refillPile(Pile *cardPile, int numDecks){
  * @param      cardPile  the card pile from where to take the card
  *
  * @return     ptr to the removed card node
- * 
+ *
  * Takes a random card from the pile and returns a pointer to the node
  */
 CardNode *dealCard(Pile *cardPile){
@@ -119,7 +119,7 @@ void listPile(Pile pile){
 	while (cur != NULL){
 		printf("This is a[%d] [%d]\n", cur->card.suit, cur->card.rank);
 		cur = cur->next;
-		
+
 	}
 
 	return;

@@ -20,7 +20,7 @@ typedef enum {HUMAN, CPU} PlayerType;
  * Player possible states: STANDARD(no special state), has a BLACKJACK, is
  * BUSTED or is BROKE
  */
-typedef enum {STANDARD, BLACKJACK, BUSTED, BROKE} PlayerState;
+typedef enum {STANDARD, HIT, BLACKJACK, BUSTED, BROKE, SURRENDERED} PlayerState;
 
 /**
  * Player stats
@@ -37,7 +37,7 @@ typedef struct {
 typedef struct {
 	PlayerType type;
 	char name[MAX_NAME_SIZE + 1];
-	int money, bet;
+	int money, bet, betMultiplier;
 	PlayerState state;
 	int numCards, handValue;
 	CardNode *hand;
