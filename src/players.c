@@ -42,7 +42,7 @@ PlayerNode *createPlayer(PlayerList *list, Player playerData){
 		list->head = newPlayer;
 
 	list->totalPlayers++;
-	
+
 	return newPlayer;
 }
 
@@ -182,4 +182,3 @@ Card peekHand(CardNode *hand, int cardNumber){
 bool handIsEmpty(CardNode *hand){
 	return hand == NULL;
 }
-

@@ -68,6 +68,7 @@ PlayerNode *createPlayer(PlayerList *list, Player playerData);
 PlayerNode *removePlayer(PlayerList *list);
 void listPlayers (PlayerList *playerList);
 bool playerListIsEmpty(PlayerList *list);
+int updatePlayerHandValue(Player *player, int numCard);
 
 
 // House
@@ -82,10 +83,11 @@ typedef enum {HOUSE_WAITING, HOUSE_STANDARD, HOUSE_BLACKJACK, HOUSE_BUSTED} Hous
  * House structure (points to linked list)
  */
 typedef struct {
-	HouseState state;
-	int numCards;
-	CardNode *hand;
+ 	HouseState state;
+ 	int numCards, handValue;
+ 	CardNode *hand;
 } House;
+
 
 House createHouse();
 
@@ -96,5 +98,6 @@ CardNode *pushToHand(CardNode *hand, CardNode *newCard, int *numCards);
 CardNode *popHand(CardNode *hand, Card *cardContent, int *numCards);
 Card peekHand(CardNode *hand, int cardNumber);
 bool handIsEmpty(CardNode *hand);
+int updateHouseHandValue(House *house, int numCards);
 
 #endif /* end include guard */
