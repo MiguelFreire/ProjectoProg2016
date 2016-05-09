@@ -178,6 +178,8 @@ Card peekHand(CardNode *hand, int cardNumber){
  *
  * @return     true if the hand is empty, false otherwise
  */
+
 bool handIsEmpty(CardNode *hand){
 	return hand == NULL;
 }
+

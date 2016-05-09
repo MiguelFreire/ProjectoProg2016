@@ -157,6 +157,7 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile, Settin
 
 	*settings = readSettings(argv1);
 
+
 	// create starting players
 	for (int i = 0; i < settings->gameStg.numPlayers; i++){
 		Player newPlayer = {0};
@@ -166,6 +167,7 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile, Settin
 		strcpy(newPlayer.name, settings->playerStg[i].name);
 		newPlayer.money = settings->playerStg[i].seedMoney;
 		newPlayer.bet = settings->playerStg[i].seedBet;
+
 
 		// put player on the player list
 		playerList->tail = createPlayer(playerList, newPlayer);

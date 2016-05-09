@@ -38,13 +38,14 @@ void refillPile(Pile *pile){
 
 			for (int rank = 1; rank <= CARD_RANKS; rank++){ // ranks
 				tmpCard.rank = rank;
+
 				pile->pileBottom = insertCardOnBottom(pile, tmpCard);
 				
 				printf("[%d] [%d] [%d] [%d]\n", pile->numCards, deck, suit, rank);
 			}
 		}
 	}
-	
+
 }
 
 /**
