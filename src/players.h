@@ -70,6 +70,8 @@ CardNode *pushToHand(CardNode *hand, CardNode *newCard);
 
 Card peekHand(CardNode *hand, int cardNumber);
 
+int updatePlayerHandValue(Player *player, int numCard);
+
 
 /**
  * House possible states: STANDARD(no special state), has a BLACKJACK or is
@@ -82,10 +84,13 @@ typedef enum {HOUSE_WAITING, HOUSE_STANDARD, HOUSE_BLACKJACK, HOUSE_BUSTED} Hous
  */
 typedef struct {
 	HouseState state;
-	int numCards;
+	int numCards, handValue;
 	CardNode *hand;
 } House;
 
 House createHouse();
+
+int updateHouseHandValue(House *house, int numCards);
+
 
 #endif /* end include guard */

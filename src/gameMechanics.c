@@ -19,13 +19,14 @@ void actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 		player->state = HIT;
 		player->hand = pushToHand(player->hand, dealCard(cardPile));
 		player->numCards++;
+		player->handValue = updatePlayerHandValue(player, player->numCards);
+		if(player->state == BUSTED || player->state == BLACKJACK) actionStand(table);
 	} else if(subject == HOUSE) {
 		House *house = table->house;
 		house->hand = pushToHand(house->hand, dealCard(cardPile));
 		house->numCards++;
-		//same for house
-		//Need a function to calculate handValue and check if there is a BlackJack or a Bust
-		//Update state here!!!
+		house->handValue = updateHouseHandValue(house, house->numCards);
+		if(house->state == HOUSE_BUSTED || house->state == HOUSE_BLACKJACK) actionStand(table);
 	}
 
 }
