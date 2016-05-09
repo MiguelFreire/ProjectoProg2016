@@ -10,6 +10,8 @@
 
 typedef enum {START, PLAYERS_PLAYING, HOUSE_TURN} GamePhase;
 
-GamePhase initGame (GameTable *table, Settings *settings, Pile *pile);
+GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile, Settings *settings, char *argv1);
+
+void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, Settings *settings);
 
 #endif /* end include guard */

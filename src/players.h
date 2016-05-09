@@ -11,6 +11,8 @@
 #include "config.h"
 #include "cards.h"
 
+// Players
+
 /**
  * Player possible types: Human or CPU (AI)
  */
@@ -62,14 +64,13 @@ typedef struct {
 
 
 PlayerList createPlayerList();
+PlayerNode *createPlayer(PlayerList *list, Player playerData);
+PlayerNode *removePlayer(PlayerList *list);
+void listPlayers (PlayerList *playerList);
+bool playerListIsEmpty(PlayerList *list);
 
-PlayerNode *createPlayer(PlayerNode *tail, Player playerData);
-void listPlayers (PlayerList playerList);
 
-CardNode *pushToHand(CardNode *hand, CardNode *newCard);
-
-Card peekHand(CardNode *hand, int cardNumber);
-
+// House
 
 /**
  * House possible states: STANDARD(no special state), has a BLACKJACK or is
@@ -87,5 +88,13 @@ typedef struct {
 } House;
 
 House createHouse();
+
+
+
+// hand functions
+CardNode *pushToHand(CardNode *hand, CardNode *newCard, int *numCards);
+CardNode *popHand(CardNode *hand, Card *cardContent, int *numCards);
+Card peekHand(CardNode *hand, int cardNumber);
+bool handIsEmpty(CardNode *hand);
 
 #endif /* end include guard */

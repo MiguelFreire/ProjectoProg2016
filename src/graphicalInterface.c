@@ -178,12 +178,12 @@ void RenderCard(int _x, int _y, Card card ,SDL_Surface **_cards, SDL_Renderer* _
 {
     SDL_Texture *card_text;
     SDL_Rect boardPos;
-    int cardNumber;
+    int cardNumber; // 1-53
 
     printf("rendering card: [%d] [%d]\n", card.suit, card.rank);
     // calculate card id for card array acessing
     if (card.suit == BACK) // card back
-        cardNumber = DECK_SIZE;
+        cardNumber = DECK_SIZE + 1;
     else // regular cards
         cardNumber = (card.suit * 13) + (card.rank);
 
@@ -194,7 +194,7 @@ void RenderCard(int _x, int _y, Card card ,SDL_Surface **_cards, SDL_Renderer* _
     boardPos.h = CARD_HEIGHT;
 
     // render it !
-    card_text = SDL_CreateTextureFromSurface(_renderer, _cards[cardNumber]);
+    card_text = SDL_CreateTextureFromSurface(_renderer, _cards[cardNumber - 1]);
     SDL_RenderCopy(_renderer, card_text, NULL, &boardPos);
 
     // destroy everything
@@ -242,10 +242,13 @@ void LoadCards(SDL_Surface **_cards)
 void UnLoadCards(SDL_Surface **_array_of_cards)
 {
     // unload all cards of the memory: +1 for the card back
+    printf ("vai dar caca\n");
     for (int i = 0 ; i < DECK_SIZE + 1; i++ )
     {
         SDL_FreeSurface(_array_of_cards[i]);
+        printf ("dando caca: %d\n", i);
     }
+    printf ("nao deu caca\n");
 }
 
 

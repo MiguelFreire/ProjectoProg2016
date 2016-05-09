@@ -36,23 +36,18 @@ typedef struct cardNode {
  */
 typedef struct {
 	int numCards;
+	int numDecks;
 	CardNode *pileTop, *pileBottom;
 } Pile;
 
+
 Pile createPile();
-
-
-bool pileIsEmpty (Pile pile);
-
-void refillPile(Pile *cardPile, int numDecks);
-
+void refillPile(Pile *cardPile);
+CardNode *insertCardOnTop (Pile *pile, Card card);
+CardNode *insertCardOnBottom (Pile *pile, Card card);
 CardNode *dealCard(Pile *cardPile);
-
-void listPile(Pile pile);
-
-CardNode *insertCardOnTop (CardNode *top, Card card);
-
-CardNode *insertCardOnBottom (CardNode *top, Card card);
-
+CardNode *removeCardFromTop(Pile *pile);
+void listPile(Pile *pile);
+bool pileIsEmpty (Pile *pile);
 
 #endif /* end include guard */

@@ -25,5 +25,6 @@ typedef struct {
 Settings readSettings(const char *fileName);
 GameSettings readGameSettings(char *buffer, FILE *settingsFile);
 PlayerSettings *readPlayerSettings(char *buffer, FILE *settingsFile, int numPlayers);
+void freeSettingsStruct(Settings *stg);
 
 #endif // end iclude guard
