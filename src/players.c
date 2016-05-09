@@ -54,21 +54,19 @@ PlayerNode *createPlayer(PlayerList *list, Player playerData){
  * @return     ptr to the new list head
  */
 PlayerNode *removePlayer(PlayerList *list){
-	PlayerNode *tmp = NULL;
-	CardNode *tmpCard = NULL;
+	PlayerNode *tmp = NULL, *newHead = NULL;
 
 	tmp = list->head;
-	list->head = list->head->next;
+	newHead = list->head->next;
 
 	// remove cards from hand
-	tmpCard = tmp->player.hand; 
-	while (tmpCard != NULL){
-		tmpCard = popHand(tmpCard, NULL, &tmp->player.numCards);
+	while (!handIsEmpty(tmp->player.hand)){
+		tmp->player.hand = popHand(tmp->player.hand, NULL, &tmp->player.numCards);
 	}
 
 	free(tmp);
 	list->totalPlayers -= 1;
-	return list->head;
+	return newHead;
 }
 
 /**
@@ -128,6 +126,8 @@ House createHouse(){
 CardNode *pushToHand(CardNode *hand, CardNode *newCard, int *numCards){
 	if (!handIsEmpty(hand))
 		newCard->next = hand;
+	else
+		newCard->next = NULL;
 
 	(*numCards)++;
 	return newCard;

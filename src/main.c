@@ -191,20 +191,16 @@ void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, Settin
 		// remove player frees the player hand and the player
 		playerList->head = removePlayer(playerList);
 	}
-	printf ("not players\n");
 	// free house hand
 	tmpCard = house->hand; 
 	while (tmpCard != NULL){
 		tmpCard = popHand(tmpCard, NULL, &house->numCards);
 	}
-	printf ("not house\n");
 	// free card pile
 	
 	while (cardPile->pileTop != NULL){
 		cardPile->pileTop = removeCardFromTop(cardPile);
 	}
-	printf ("not pile\n");
 	// free settings
 	freeSettingsStruct(settings);
-	printf ("not settings\n");
 }

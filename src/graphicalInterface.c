@@ -242,13 +242,10 @@ void LoadCards(SDL_Surface **_cards)
 void UnLoadCards(SDL_Surface **_array_of_cards)
 {
     // unload all cards of the memory: +1 for the card back
-    printf ("vai dar caca\n");
     for (int i = 0 ; i < DECK_SIZE + 1; i++ )
     {
         SDL_FreeSurface(_array_of_cards[i]);
-        printf ("dando caca: %d\n", i);
     }
-    printf ("nao deu caca\n");
 }
 
 
