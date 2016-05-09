@@ -68,7 +68,7 @@ PlayerNode *createPlayer(PlayerList *list, Player playerData);
 PlayerNode *removePlayer(PlayerList *list);
 void listPlayers (PlayerList *playerList);
 bool playerListIsEmpty(PlayerList *list);
-int updatePlayerHandValue(Player *player, int numCard);
+int updatePlayerHandValue(Player *player);
 
 
 // House
@@ -98,6 +98,6 @@ CardNode *pushToHand(CardNode *hand, CardNode *newCard, int *numCards);
 CardNode *popHand(CardNode *hand, Card *cardContent, int *numCards);
 Card peekHand(CardNode *hand, int cardNumber);
 bool handIsEmpty(CardNode *hand);
-int updateHouseHandValue(House *house, int numCards);
+int updateHouseHandValue(House *house);
 
 #endif /* end include guard */

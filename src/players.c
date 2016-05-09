@@ -171,6 +171,72 @@ Card peekHand(CardNode *hand, int cardNumber){
 	return hand->card;
 }
 
+int updatePlayerHandValue(Player *player) {
+	CardNode *next;
+	int numAces = 0;
+	int handValue = 0;
+	for(int i = 0; i < player->numCards; i++){
+		Card card = player->hand->card;
+
+		if(card.rank == 13) numAces++;
+		handValue += card.value;
+
+		next = player->hand->next;
+	}
+
+	if(handValue == 21) {
+		player->state = BLACKJACK;
+		return handValue;
+	} else if(handValue > 21) {
+		player->state = BUSTED;
+		return handValue;
+	} else if(handValue > 21 && numAces > 0) {
+		for(int k = 1; k <= numAces; k++) {
+        	if(handValue <= 21) break;
+        	handValue -= 10;
+        }
+
+		return handValue;
+	}
+
+	return handValue;
+
+}
+
+int updateHouseHandValue(House *house) {
+	CardNode *next;
+	int numAces = 0;
+	int handValue = 0;
+
+	for(int i = 0; i < house->numCards; i++){
+		Card card = house->hand->card;
+
+		if(card.rank == 13) numAces++;
+		handValue += card.value;
+
+		next = house->hand->next;
+	}
+
+	if(handValue == 21) {
+		house->state = HOUSE_BLACKJACK;
+		return handValue;
+	} else if(handValue > 21) {
+		house->state = HOUSE_BUSTED;
+		return handValue;
+	} else if(handValue > 21 && numAces > 0) {
+		for(int k = 1; k <= numAces; k++) {
+        	if(handValue <= 21) break;
+        	handValue -= 10;
+        }
+
+		return handValue;
+	}
+
+	return handValue;
+}
+
+// House fucntions
+
 /**
  * @brief      Checks if the hand is empty
  *
