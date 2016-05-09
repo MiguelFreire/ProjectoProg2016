@@ -13,6 +13,10 @@ GameTable createGameTable(){
 	return tmp;
 }
 
+bool slotIsEmpty(PlayerNode *slot){
+	return (slot == NULL);
+}
+
 void actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 	if(subject == PLAYER) {
 		Player *player = &(table->slots[table->currentPlayer]->player);
@@ -34,8 +38,20 @@ void actionStand(GameTable *table) {
 	table->currentPlayer++;
 }
 
-void actionNewGame(GameTable *table) {
-
+void actionNewGame(GameTable *table, Pile *cardPile) {
+	PlayerNode *curPlayer = NULL;
+	// deal 2 cards to each player and house
+	for (int i = 0; i < 2; i++){
+		// hand a card to each player
+		for (int j = 0; j < TABLE_SLOTS; j++){
+			if(!slotIsEmpty(table->slots[j])){
+				curPlayer = table->slots[j];
+				curPlayer->player.hand = pushToHand(curPlayer->player.hand, dealCard(cardPile), &curPlayer->player.numCards);
+			}
+		}
+	// hand a card to the house
+	table->house->hand = pushToHand(table->house->hand , dealCard(cardPile), &table->house->numCards);
+	}
 }
 
 void actionDouble(GameTable *table, Pile *cardPile) {

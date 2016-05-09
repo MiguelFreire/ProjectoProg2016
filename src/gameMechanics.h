@@ -22,12 +22,13 @@ typedef struct {
 
 
 GameTable createGameTable();
+bool slotIsEmpty(PlayerNode *slot);
 
 void actionHit(GameTable *, Pile *, ActionSubject);
 
 void actionStand(GameTable *);
 
-void actionNewGame(GameTable *);
+void actionNewGame(GameTable *table, Pile *cardPile);
 
 void actionDouble(GameTable *, Pile *);
 

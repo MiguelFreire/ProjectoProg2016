@@ -46,7 +46,7 @@ int main(int argc, char *argv[]){
 
 	// Program flow control variables
 	SDL_Event event;
-	bool quit = 0;
+	bool quit = false;
 	GamePhase phase;
 
 	// structures
@@ -56,25 +56,15 @@ int main(int argc, char *argv[]){
 	PlayerList playerList = createPlayerList();
 	Pile cardPile = createPile();
 	
-	phase = initGame(&table, &playerList, &cardPile, &settings, argv[1]);
+	phase = initGame(&table, &playerList, &cardPile, &house, &settings, argv[1]);
 
-
-	// testing shit
-	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile), &(table.slots[0]->player.numCards));
-	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile), &(table.slots[0]->player.numCards));
-
-	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile), &(table.slots[1]->player.numCards));
-	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile), &(table.slots[1]->player.numCards));
-
-	house.hand = pushToHand(house.hand, dealCard(&cardPile), &(house.numCards));
-	house.hand = pushToHand(house.hand, dealCard(&cardPile), &(house.numCards));
-
-	// end testing shit
 	
 	if(phase);
 	// initialize graphics
 	InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
 	LoadCards(cards);
+
+	actionNewGame(&table, &cardPile);
 
 	while(!quit){
 		while(SDL_PollEvent(&event)){
@@ -94,7 +84,7 @@ int main(int argc, char *argv[]){
 
 							break;
 						case SDLK_q: // quit
-							quit = 1;
+							quit = true;
 							break;
 						case SDLK_d: // double
 
@@ -118,7 +108,7 @@ int main(int argc, char *argv[]){
 
 				// check for quit cross press
 				case SDL_QUIT:
-					quit = 1;
+					quit = true;
 
 					break;
 			}
@@ -151,7 +141,8 @@ int main(int argc, char *argv[]){
 }
 
 
-GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile, Settings *settings, char *argv1){
+GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile, 
+	House *house, Settings *settings, char *argv1){
 	// seed random number generator
 	srand(time(NULL));
 
@@ -176,6 +167,9 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile, Settin
 		table->slots[i] = playerList->tail;		
 	}
 	listPlayers(playerList);
+
+	// set the table pointer to the house
+	table->house = house;
 
 	pile->numDecks = settings->gameStg.numDecks;
 	refillPile(pile);
