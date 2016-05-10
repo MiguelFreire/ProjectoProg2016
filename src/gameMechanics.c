@@ -16,7 +16,7 @@ GameTable createGameTable(){
 bool slotIsEmpty(PlayerNode *slot){
 	return (slot == NULL);
 }
-
+/*
 void actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 	if(subject == PLAYER) {
 		Player *player = &(table->slots[table->currentPlayer]->player);
@@ -34,7 +34,7 @@ void actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 	}
 
 }
-
+*/
 void actionStand(GameTable *table) {
 	table->currentPlayer++;
 }
@@ -55,7 +55,7 @@ void actionNewGame(GameTable *table, Pile *cardPile) {
 	}
 }
 
-void actionDouble(GameTable *table, Pile *cardPile) {
+/*void actionDouble(GameTable *table, Pile *cardPile) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	if(player->state == HIT) return;
 
@@ -65,7 +65,7 @@ void actionDouble(GameTable *table, Pile *cardPile) {
 	actionHit(table, cardPile, PLAYER);
 	actionStand(table);
 }
-
+*/
 void actionSurrender(GameTable *table) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	if(player->state == HIT) return;

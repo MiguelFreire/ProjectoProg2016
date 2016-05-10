@@ -81,7 +81,9 @@ int main(int argc, char *argv[]){
 
 							break;
 						case SDLK_n: // new game
+							if (phase == WAINTING_FOR_NEW_GAME){
 
+							}
 							break;
 						case SDLK_q: // quit
 							quit = true;
@@ -93,16 +95,30 @@ int main(int argc, char *argv[]){
 
 							break;
 						case SDLK_b: // bet
+							if (phase == WAINTING_FOR_NEW_GAME){
 
+							}
 							break;
+						case SDLK_a: // add player
+						    if (phase == WAINTING_FOR_NEW_GAME){
+
+						    }
+						    break;
 					}
 
 					break;
 
 				// check for mouse button press
-				case SDL_MOUSEBUTTONUP:
-					if (event.button.button == SDL_BUTTON_LEFT){
+				case SDL_MOUSEBUTTONDOWN:
+					if (phase == ADDING_PLAYER && 
+						event.button.button == SDL_BUTTON_LEFT){
 						// check position to add player
+						/*
+						int mouseX, mouseY, slotClicked;
+						if (slotClicked = hoveringSlot(mouseX, mouseY) >= 0){
+							addPlayer(slotClicked, &playerList, &house);
+						}
+						*/
 					}
 					break;
 

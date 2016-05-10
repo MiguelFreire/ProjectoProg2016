@@ -77,7 +77,7 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
 
             // draw a rectangle in the current player area
             if(i == table.currentPlayer){
-                SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255 );
+                SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
                 SDL_RenderDrawRect(_renderer, &playerRect);
             }
 
@@ -294,7 +294,7 @@ int RenderText(int x, int y, const char *text, TTF_Font *_font, SDL_Color *_colo
     solidRect.x = x;
     solidRect.y = y;
     // create a surface from the string text with a predefined font
-    text_surface = TTF_RenderText_Blended(_font,text,*_color);
+    text_surface = TTF_RenderUTF8_Blended(_font,text,*_color);
     if(!text_surface)
     {
         printf("TTF_RenderText_Blended: %s\n", TTF_GetError());

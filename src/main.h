@@ -8,7 +8,15 @@
 #include "gameMechanics.h"
 #include "settings.h"
 
-typedef enum {START, PLAYERS_PLAYING, HOUSE_TURN, POINTS_COUTING, WAINTING_FOR_NEW_GAME, GAME_OVER} GamePhase;
+typedef enum {
+	START, 
+	PLAYERS_PLAYING, 
+	HOUSE_TURN, 
+	POINTS_COUTING, 
+	WAINTING_FOR_NEW_GAME,
+	ADDING_PLAYER, 
+	GAME_OVER
+} GamePhase;
 
 GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 	House *house, Settings *settings, char *argv1);

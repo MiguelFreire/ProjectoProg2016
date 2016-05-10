@@ -14,11 +14,20 @@
 typedef enum {PLAYER, HOUSE} ActionSubject;
 
 typedef struct {
+	int x;	// x position
+	int y;	// y position
+	int w;	// width
+	int h;	// height
+} SlotDim;
+
+typedef struct {
 	int currentPlayer;
 	int numPLayersInGame;
 	PlayerNode *slots[TABLE_SLOTS];
+	SlotDim slotDim[TABLE_SLOTS];
 	House *house;
 } GameTable;
+
 
 
 GameTable createGameTable();
