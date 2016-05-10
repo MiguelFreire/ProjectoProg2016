@@ -24,7 +24,7 @@
  * \param _img surfaces where the table background and IST logo were loaded
  * \param _renderer renderer to handle all rendering in a window
  */
-void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable table) {
+void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable *table) {
     SDL_Color black = { 0, 0, 0 }; // black
     SDL_Color white = { 255, 255, 255 }; // white
 
@@ -69,19 +69,20 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     // renders the areas for each player: names and money too !
     for ( int i = 0; i < TABLE_SLOTS; i++)
     {
-        if(table.slots[i] != NULL) { // check if there is a player in that slot
+        if(!slotIsEmpty(table->slots[i])) { // check if there is a player in that slot
             playerRect.x = i*(separatorPos/4)+10;
             playerRect.y = (int) (0.55f*WINDOW_HEIGHT);
             playerRect.w = separatorPos/4-5;
             playerRect.h = (int) (0.42f*WINDOW_HEIGHT);
 
             // draw a rectangle in the current player area
-            if(i == table.currentPlayer){
+            if(i == table->currentPlayer){
                 SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
                 SDL_RenderDrawRect(_renderer, &playerRect);
             }
 
-            sprintf(name_money_str,"%s -- %d euros", table.slots[i]->player.name, table.slots[i]->player.money);
+            sprintf(name_money_str,"%s -- %d euros -- %d bet", table->slots[i]->player.name, table->slots[i]->player.money, 
+                table->slots[i]->player.bet);
             RenderText(playerRect.x+20, playerRect.y-30, name_money_str, _font, &white, _renderer);
         }
         
@@ -99,24 +100,23 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
  * \param _cards vector with all loaded card images
  * \param _renderer renderer to handle all rendering in a window
  */
-void RenderPlayerCards(SDL_Surface **_cards, SDL_Renderer* _renderer, GameTable table)
+void RenderPlayerCards(SDL_Surface **_cards, SDL_Renderer* _renderer, GameTable *table)
 {
     int pos, x, y, slot, card;
     Player *curPlayer;
 
-    printf("render player\n");
     // for every card of every player
     for ( slot = 0; slot < TABLE_SLOTS; slot++)
     {
-        if (table.slots[slot] == NULL) continue; // pass empty slots
+        if (table->slots[slot] == NULL) continue; // pass empty slots
 
-        curPlayer = &table.slots[slot]->player;
+        curPlayer = &table->slots[slot]->player;
 
         for ( card = 0; card < curPlayer->numCards; card++)
         {
             // draw all cards of the player: calculate its position: only 4 positions are available !
             pos = card % 4;
-            x = (int) slot*((0.95f*WINDOW_WIDTH)/4-5)+(card/4)*12+15;
+            x = (int) slot*((0.95f*WINDOW_WIDTH)/4+5)+(card/4)*12+15;
             y = (int) (0.55f*WINDOW_HEIGHT)+10;
             if ( pos == 1 || pos == 3) x += CARD_WIDTH + 30;
             if ( pos == 2 || pos == 3) y += CARD_HEIGHT + 10;
@@ -142,7 +142,6 @@ void RenderHouseCards(SDL_Surface **_cards, SDL_Renderer* _renderer, House *hous
     int card, x, y;
     int div = WINDOW_WIDTH/CARD_WIDTH;
 
-    printf("render house\n");
     // drawing all house cards
     for ( card = 0; card < house->numCards; card++)
     {
@@ -180,7 +179,6 @@ void RenderCard(int _x, int _y, Card card ,SDL_Surface **_cards, SDL_Renderer* _
     SDL_Rect boardPos;
     int cardNumber; // 1-53
 
-    printf("rendering card: [%d] [%d]\n", card.suit, card.rank);
     // calculate card id for card array acessing
     if (card.suit == BACK) // card back
         cardNumber = DECK_SIZE + 1;

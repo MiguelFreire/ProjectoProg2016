@@ -22,7 +22,7 @@ typedef struct {
 
 typedef struct {
 	int currentPlayer;
-	int numPLayersInGame;
+	int numPlayersInGame;
 	PlayerNode *slots[TABLE_SLOTS];
 	SlotDim slotDim[TABLE_SLOTS];
 	House *house;

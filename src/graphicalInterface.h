@@ -7,11 +7,11 @@
 
 #include <stdbool.h>
 
-void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable table);
+void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable *table);
 
 void RenderHouseCards(SDL_Surface **_cards, SDL_Renderer* _renderer, House *house);
 
-void RenderPlayerCards(SDL_Surface **_cards, SDL_Renderer* _renderer, GameTable table);
+void RenderPlayerCards(SDL_Surface **_cards, SDL_Renderer* _renderer, GameTable *table);
 
 void RenderCard(int _x, int _y, Card card ,SDL_Surface **_cards, SDL_Renderer* _renderer);
 

@@ -17,27 +17,29 @@ GameTable createGameTable(){
 bool slotIsEmpty(PlayerNode *slot){
 	return (slot == NULL);
 }
-/*
+
 void actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 	if(subject == PLAYER) {
 		Player *player = &(table->slots[table->currentPlayer]->player);
 		player->state = HIT;
 		player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
-		player->numCards++;
 		player->handValue = updatePlayerHandValue(player);
 		if(player->state == BUSTED || player->state == BLACKJACK) actionStand(table);
 	} else if(subject == HOUSE) {
 		House *house = table->house;
 		house->hand = pushToHand(house->hand, dealCard(cardPile), &house->numCards);
-		house->numCards++;
 		house->handValue = updateHouseHandValue(house);
 		if(house->state == HOUSE_BUSTED || house->state == HOUSE_BLACKJACK) actionStand(table);
 	}
 
 }
-*/
+
 void actionStand(GameTable *table) {
-	table->currentPlayer++;
+	do {
+		table->currentPlayer++; 
+	} while (slotIsEmpty(table->slots[table->currentPlayer]) ||
+		table->slots[table->currentPlayer]->player.state != STANDARD); // next player has a BLACKJACK
+	
 }
 
 void actionNewGame(GameTable *table, Pile *cardPile) {
@@ -56,7 +58,7 @@ void actionNewGame(GameTable *table, Pile *cardPile) {
 	}
 }
 
-/*void actionDouble(GameTable *table, Pile *cardPile) {
+void actionDouble(GameTable *table, Pile *cardPile) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	if(player->state == HIT) return;
 
@@ -66,7 +68,7 @@ void actionNewGame(GameTable *table, Pile *cardPile) {
 	actionHit(table, cardPile, PLAYER);
 	actionStand(table);
 }
-*/
+
 void actionSurrender(GameTable *table) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	if(player->state == HIT) return;
@@ -85,12 +87,12 @@ void actionBet(GameTable *table) {
 	fgets(playerName, MAX_BUFFER_SIZE, stdin);
 	playerName[strlen(playerName)-1] = '\0';
 
-	Player *player;
+	Player *player = NULL;
 
 	if(strcmp("CANCEL",playerName) == 0) return;
 
-	for(int i = 0; i < table->numPLayersInGame; i++) {
-		if(strcmp(table->slots[i]->player.name, playerName) == 0) {
+	for(int i = 0; i < TABLE_SLOTS; i++) {
+		if(!slotIsEmpty(table->slots[i]) && strcmp(table->slots[i]->player.name, playerName) == 0) {
 			player = &(table->slots[i]->player);
 		}
 	}
@@ -104,12 +106,14 @@ void actionBet(GameTable *table) {
 	int newBet = 0;
 	bool error = false;
 	do {
-		if(!error) printf("Player's bet value must be between: %d and %.2f", 2, 0.25*player->money);
+		if(error) printf("Player's bet value must be between: %d and %.2f\n", 2, 0.25*player->money);
 		printf("New bet?\n");
 		fgets(buffer, MAX_BUFFER_SIZE, stdin);
 		sscanf(buffer, "%d", &newBet);
-   } while(!(isBetween(newBet, 2, 0.25*player->money)) || (error = false) == false);
+   } while(!(isBetween(newBet, 2, 0.25*player->money)) && (error = true));
 
    player->bet = newBet;
+   printf("Bet set\n");
 
+   return;
 }

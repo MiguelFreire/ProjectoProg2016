@@ -75,10 +75,10 @@ int main(int argc, char *argv[]){
 					switch( event.key.keysym.sym){
 
 						case SDLK_h: // hit
-
+							actionHit(&table, &cardPile, PLAYER);
 							break;
 						case SDLK_s: // stand
-
+							actionStand(&table);
 							break;
 						case SDLK_n: // new game
 							if (phase == WAINTING_FOR_NEW_GAME){
@@ -95,6 +95,7 @@ int main(int argc, char *argv[]){
 
 							break;
 						case SDLK_b: // bet
+						    actionBet(&table);
 							if (phase == WAINTING_FOR_NEW_GAME){
 
 							}
@@ -131,9 +132,9 @@ int main(int argc, char *argv[]){
 		}
 
 		// render game table
-		RenderTable(serif, imgs, renderer, table);
+		RenderTable(serif, imgs, renderer, &table);
 		// render the players cards
-		RenderPlayerCards(cards, renderer, table);
+		RenderPlayerCards(cards, renderer, &table);
 		// render house cards
 		RenderHouseCards(cards, renderer, &house);
 		// put to screen all changes above

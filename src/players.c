@@ -187,17 +187,17 @@ int updatePlayerHandValue(Player *player) {
 	if(handValue == 21) {
 		player->state = BLACKJACK;
 		return handValue;
-	} else if(handValue > 21) {
-		player->state = BUSTED;
-		return handValue;
 	} else if(handValue > 21 && numAces > 0) {
 		for(int k = 1; k <= numAces; k++) {
         	if(handValue <= 21) break;
         	handValue -= 10;
         }
-
 		return handValue;
-	}
+		
+	} else if(handValue > 21) {
+		player->state = BUSTED;
+		return handValue;
+	} 
 
 	return handValue;
 
