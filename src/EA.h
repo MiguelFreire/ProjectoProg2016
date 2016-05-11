@@ -10,7 +10,7 @@ int **readHardEAMatrix();
 
 int getAction(char action);
 
-void actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table);
+int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table);
 
 
 

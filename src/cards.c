@@ -178,6 +178,21 @@ bool pileIsEmpty(Pile *pile){
 		|| pile->numCards == 0);
 }
 
+int getHandValue(CardNode *hand, int numCards) {
+	CardNode *curr;
+	int handValue = 0;
+	Card card = {0};
+	for(int i = 0; i < numCards; i++){
+		card = curr->card;
+
+		handValue += card.value;
+
+		curr = curr->next;
+	}
+
+	return handValue;
+}
+
 int hasAces(CardNode *hand, int numCards) {
 	int numAces = 0;
 	CardNode *curr = hand;

@@ -37,11 +37,7 @@ void actionHit(GameTable *, Pile *, ActionSubject);
 
 void actionStand(GameTable *);
 
-<<<<<<< Updated upstream
 void actionNewGame(GameTable *table, Pile *cardPile);
-=======
-void actionNewGame(GameTable *,  Pile *cardPile);
->>>>>>> Stashed changes
 
 void actionDouble(GameTable *, Pile *);
 

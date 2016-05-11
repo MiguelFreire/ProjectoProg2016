@@ -55,29 +55,9 @@ int main(int argc, char *argv[]){
 	House house = createHouse();
 	PlayerList playerList = createPlayerList();
 	Pile cardPile = createPile();
-<<<<<<< Updated upstream
-	
+
+
 	phase = initGame(&table, &playerList, &cardPile, &house, &settings, argv[1]);
-
-	
-=======
-
-	phase = initGame(&table, &playerList, &cardPile, &settings, argv[1]);
-
-
-	// testing shit
-	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile), &(table.slots[0]->player.numCards));
-	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile), &(table.slots[0]->player.numCards));
-
-	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile), &(table.slots[1]->player.numCards));
-	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile), &(table.slots[1]->player.numCards));
-
-	house.hand = pushToHand(house.hand, dealCard(&cardPile), &(house.numCards));
-	house.hand = pushToHand(house.hand, dealCard(&cardPile), &(house.numCards));
-
-	// end testing shit
-
->>>>>>> Stashed changes
 	if(phase);
 	// initialize graphics
 	InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
@@ -130,7 +110,7 @@ int main(int argc, char *argv[]){
 
 				// check for mouse button press
 				case SDL_MOUSEBUTTONDOWN:
-					if (phase == ADDING_PLAYER && 
+					if (phase == ADDING_PLAYER &&
 						event.button.button == SDL_BUTTON_LEFT){
 						// check position to add player
 						/*
@@ -177,7 +157,7 @@ int main(int argc, char *argv[]){
 }
 
 
-GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile, 
+GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 	House *house, Settings *settings, char *argv1){
 	// seed random number generator
 	srand(time(NULL));

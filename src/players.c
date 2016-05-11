@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-
+#include "cards.h"
 #include "players.h"
 
 // PLayer functions
@@ -172,17 +172,9 @@ Card peekHand(CardNode *hand, int cardNumber){
 }
 
 int updatePlayerHandValue(Player *player) {
-	CardNode *next;
-	int numAces = 0;
-	int handValue = 0;
-	for(int i = 0; i < player->numCards; i++){
-		Card card = player->hand->card;
-
-		if(card.rank == 13) numAces++;
-		handValue += card.value;
-
-		next = player->hand->next;
-	}
+	CardNode *curr = player->hand;
+	int numAces = hasAces(curr, player->numCards);
+	int handValue = getHandValue(curr, player->numCards);
 
 	if(handValue == 21) {
 		player->state = BLACKJACK;
@@ -193,29 +185,20 @@ int updatePlayerHandValue(Player *player) {
         	handValue -= 10;
         }
 		return handValue;
-		
+
 	} else if(handValue > 21) {
 		player->state = BUSTED;
 		return handValue;
-	} 
+	}
 
 	return handValue;
 
 }
 
 int updateHouseHandValue(House *house) {
-	CardNode *next;
-	int numAces = 0;
-	int handValue = 0;
-
-	for(int i = 0; i < house->numCards; i++){
-		Card card = house->hand->card;
-
-		if(card.rank == 13) numAces++;
-		handValue += card.value;
-
-		next = house->hand->next;
-	}
+	CardNode *curr = house->hand;
+	int numAces = hasAces(curr, house->numCards);
+	int handValue = getHandValue(curr, house->numCards);
 
 	if(handValue == 21) {
 		house->state = HOUSE_BLACKJACK;

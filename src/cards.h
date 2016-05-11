@@ -49,7 +49,7 @@ CardNode *dealCard(Pile *cardPile);
 CardNode *removeCardFromTop(Pile *pile);
 void listPile(Pile *pile);
 bool pileIsEmpty (Pile *pile);
-
+int getHandValue(CardNode *hand, int numCards);
 int hasAces(CardNode *hand, int numCards);
 
 #endif /* end include guard */

@@ -24,6 +24,7 @@ void actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 		player->state = HIT;
 		player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 		player->handValue = updatePlayerHandValue(player);
+		printf("%d", player->state);
 		if(player->state == BUSTED || player->state == BLACKJACK) actionStand(table);
 	} else if(subject == HOUSE) {
 		House *house = table->house;
@@ -36,21 +37,12 @@ void actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 
 void actionStand(GameTable *table) {
 	do {
-<<<<<<< Updated upstream
-		table->currentPlayer++; 
-	} while (slotIsEmpty(table->slots[table->currentPlayer]) ||
-		table->slots[table->currentPlayer]->player.state != STANDARD); // next player has a BLACKJACK
-	
-}
-
-=======
 		table->currentPlayer++;
 	} while (slotIsEmpty(table->slots[table->currentPlayer]) ||
 		table->slots[table->currentPlayer]->player.state != STANDARD); // next player has a BLACKJACK
 
 }
 
->>>>>>> Stashed changes
 void actionNewGame(GameTable *table, Pile *cardPile) {
 	PlayerNode *curPlayer = NULL;
 	// deal 2 cards to each player and house

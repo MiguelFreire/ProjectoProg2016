@@ -70,7 +70,23 @@ int getAction(char action) {
     }
 }
 
-void actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
-    Player *currentPlayer = &(table->slots[table->currentPlayer]->player);
+EAAction actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
+    CardNode *playerHand =  table->slots[table->currentPlayer]->player.hand;
+    CardNode *houseHand = table->house->hand;
+    int numCards = table->slots[table->currentPlayer]->player.numCards;
+    int **matrix;
+    (hasAces(playerHand, 2) > 0) ? matrix = softMatrix : matrix = hardMatrix;
+
+    int houseCard = houseHand->card.rank;
+
+    int playerHandValue = getHandValue(playerHand, numCards);
+
+    int col = houseCard - 1;
+    int row = 0;
+    if(isBetween(playerHandValue, 4, 8)) row = 0;
+    else row = playerHandValue - 8;
+
+    return matrix[row][col];
+
 
 }
