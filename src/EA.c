@@ -3,6 +3,7 @@
 #include "config.h"
 #include "errorHandling.h"
 #include "gameMechanics.h"
+#include "util.h"
 #include "EA.h"
 
 int **readSoftEAMatrix() {
@@ -70,23 +71,28 @@ int getAction(char action) {
     }
 }
 
-EAAction actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
+int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
     CardNode *playerHand =  table->slots[table->currentPlayer]->player.hand;
     CardNode *houseHand = table->house->hand;
     int numCards = table->slots[table->currentPlayer]->player.numCards;
-    int **matrix;
-    (hasAces(playerHand, 2) > 0) ? matrix = softMatrix : matrix = hardMatrix;
 
     int houseCard = houseHand->card.rank;
-
     int playerHandValue = getHandValue(playerHand, numCards);
 
-    int col = houseCard - 1;
+    int col = houseCard - 2;
     int row = 0;
-    if(isBetween(playerHandValue, 4, 8)) row = 0;
-    else row = playerHandValue - 8;
 
-    return matrix[row][col];
+    if(hasAces(playerHand, 2) > 0) {
+        //soft
+        if(playerHandValue >= 19) row = 6;
+        else row = playerHandValue - 13;
+        return softMatrix[row][col];
+    } else {
+        if(playerHandValue >= 17) row = 9;
+        else if(isBetween(playerHandValue, 4,8)) row = 0;
+        else row = playerHandValue - 8;
+        return hardMatrix[row][col];
+    }
 
 
 }
