@@ -10,7 +10,6 @@
 #include "cards.h"
 
 
-
 typedef enum {PLAYER, HOUSE} ActionSubject;
 
 typedef struct {
@@ -33,11 +32,11 @@ typedef struct {
 GameTable createGameTable();
 bool slotIsEmpty(PlayerNode *slot);
 
-void actionHit(GameTable *, Pile *, ActionSubject);
+int actionHit(GameTable *, Pile *, ActionSubject);
 
-void actionStand(GameTable *);
+int actionStand(GameTable *);
 
-void actionNewGame(GameTable *table, Pile *cardPile);
+int actionNewGame(GameTable *table, Pile *cardPile);
 
 void actionDouble(GameTable *, Pile *);
 

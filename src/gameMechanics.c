@@ -7,6 +7,7 @@
 #include "players.h"
 #include "cards.h"
 #include "util.h"
+#include "main.h"
 #include "gameMechanics.h"
 
 GameTable createGameTable(){
@@ -18,32 +19,34 @@ bool slotIsEmpty(PlayerNode *slot){
 	return (slot == NULL);
 }
 
-void actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
+int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 	if(subject == PLAYER) {
 		Player *player = &(table->slots[table->currentPlayer]->player);
 		player->state = HIT;
 		player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 		player->handValue = updatePlayerHandValue(player);
 		printf("%d", player->state);
-		if(player->state == BUSTED || player->state == BLACKJACK) actionStand(table);
+		if(player->state == BUSTED || player->state == BLACKJACK) return (actionStand(table));
 	} else if(subject == HOUSE) {
 		House *house = table->house;
 		house->hand = pushToHand(house->hand, dealCard(cardPile), &house->numCards);
 		house->handValue = updateHouseHandValue(house);
 		if(house->state == HOUSE_BUSTED || house->state == HOUSE_BLACKJACK) actionStand(table);
 	}
-
+	return PLAYERS_PLAYING;
 }
 
-void actionStand(GameTable *table) {
+int actionStand(GameTable *table) {
 	do {
 		table->currentPlayer++;
+		if (table->currentPlayer >= TABLE_SLOTS) return HOUSE_TURN;
 	} while (slotIsEmpty(table->slots[table->currentPlayer]) ||
 		table->slots[table->currentPlayer]->player.state != STANDARD); // next player has a BLACKJACK
-
+	
+	return PLAYERS_PLAYING;
 }
 
-void actionNewGame(GameTable *table, Pile *cardPile) {
+int actionNewGame(GameTable *table, Pile *cardPile) {
 	PlayerNode *curPlayer = NULL;
 	// deal 2 cards to each player and house
 	for (int i = 0; i < 2; i++){
@@ -57,6 +60,8 @@ void actionNewGame(GameTable *table, Pile *cardPile) {
 	// hand a card to the house
 	table->house->hand = pushToHand(table->house->hand , dealCard(cardPile), &table->house->numCards);
 	}
+
+	return PLAYERS_PLAYING;
 }
 
 void actionDouble(GameTable *table, Pile *cardPile) {

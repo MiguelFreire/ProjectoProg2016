@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
 	InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
 	LoadCards(cards);
 
-	actionNewGame(&table, &cardPile);
+	phase = actionNewGame(&table, &cardPile);
 
 	while(!quit){
 		while(SDL_PollEvent(&event)){
@@ -74,33 +74,39 @@ int main(int argc, char *argv[]){
 					switch( event.key.keysym.sym){
 
 						case SDLK_h: // hit
-							actionHit(&table, &cardPile, PLAYER);
+						    if (phase == PLAYERS_PLAYING){
+						    	phase = actionHit(&table, &cardPile, PLAYER);
+						    }
 							break;
 						case SDLK_s: // stand
-							actionStand(&table);
+						    if (phase == PLAYERS_PLAYING){
+						    	phase = actionStand(&table);
+						    }
 							break;
 						case SDLK_n: // new game
-							if (phase == WAINTING_FOR_NEW_GAME){
-
+							if (phase == WAITING_FOR_NEW_GAME){
+								phase = actionNewGame(&table, &cardPile);
 							}
 							break;
 						case SDLK_q: // quit
-							quit = true;
+						    if (phase == WAITING_FOR_NEW_GAME){
+								quit = true;
+							}
 							break;
 						case SDLK_d: // double
-
+							// adicionar player state "acabar de receber duas cartas"
 							break;
 						case SDLK_r: // surrender
 
 							break;
 						case SDLK_b: // bet
-						    actionBet(&table);
-							if (phase == WAINTING_FOR_NEW_GAME){
-
+						    
+							if (phase == WAITING_FOR_NEW_GAME){
+								actionBet(&table);
 							}
 							break;
 						case SDLK_a: // add player
-						    if (phase == WAINTING_FOR_NEW_GAME){
+						    if (phase == WAITING_FOR_NEW_GAME){
 
 						    }
 						    break;

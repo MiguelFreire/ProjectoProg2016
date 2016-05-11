@@ -13,6 +13,7 @@
 #include "errorHandling.h"
 #include "cards.h"
 
+int cardValues[CARD_RANKS] = {2,3,4,5,6,7,8,9,10,10,10,10,11}; // card values
 /**
  * @brief      Creates an empty card pile
  *
@@ -38,6 +39,7 @@ void refillPile(Pile *pile){
 
 			for (int rank = 1; rank <= CARD_RANKS; rank++){ // ranks
 				tmpCard.rank = rank;
+				tmpCard.value = cardValues[rank];
 
 				pile->pileBottom = insertCardOnBottom(pile, tmpCard);
 
