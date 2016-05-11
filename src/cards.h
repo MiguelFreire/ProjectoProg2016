@@ -50,4 +50,6 @@ CardNode *removeCardFromTop(Pile *pile);
 void listPile(Pile *pile);
 bool pileIsEmpty (Pile *pile);
 
+int hasAces(CardNode *hand, int numCards);
+
 #endif /* end include guard */

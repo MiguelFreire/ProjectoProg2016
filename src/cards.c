@@ -40,7 +40,7 @@ void refillPile(Pile *pile){
 				tmpCard.rank = rank;
 
 				pile->pileBottom = insertCardOnBottom(pile, tmpCard);
-				
+
 				printf("[%d] [%d] [%d] [%d]\n", pile->numCards, deck, suit, rank);
 			}
 		}
@@ -54,7 +54,7 @@ void refillPile(Pile *pile){
  * @param      pile  the card pile from where to take the card
  *
  * @return     ptr to the dealt card node
- * 
+ *
  * Takes a random card from the pile and returns a pointer to that node
  */
 CardNode *dealCard(Pile *pile){
@@ -174,6 +174,17 @@ void listPile(Pile *pile){
  * @return     true if the pile is empty, false otherwise
  */
 bool pileIsEmpty(Pile *pile){
-	return (pile->pileTop == NULL || pile->pileBottom == NULL 
+	return (pile->pileTop == NULL || pile->pileBottom == NULL
 		|| pile->numCards == 0);
+}
+
+int hasAces(CardNode *hand, int numCards) {
+	int numAces = 0;
+	CardNode *curr = hand;
+	for(int i = 0; i < numCards; i++) {
+		if(curr->card.rank == 13) numAces++;
+		curr = curr->next;
+	}
+
+	return numAces;
 }

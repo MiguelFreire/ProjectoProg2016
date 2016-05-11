@@ -31,6 +31,9 @@
 #define MAX_PLAYER_TYPE_SIZE 2	// max size for player type chars buffer
 
 #define SETTINGS_FILE_NAME "settings.txt"
+#define HARD_EA_MATRIX  "EAHardMatrix.txt"
+#define SOFT_EA_MATRIX  "EASoftMatrix.txt"
+
 
 #define AUTHOR_NAME1	"Andre Agostinho"
 #define AUTHOR_NAME2	"Miguel Freire"

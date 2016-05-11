@@ -55,10 +55,29 @@ int main(int argc, char *argv[]){
 	House house = createHouse();
 	PlayerList playerList = createPlayerList();
 	Pile cardPile = createPile();
+<<<<<<< Updated upstream
 	
 	phase = initGame(&table, &playerList, &cardPile, &house, &settings, argv[1]);
 
 	
+=======
+
+	phase = initGame(&table, &playerList, &cardPile, &settings, argv[1]);
+
+
+	// testing shit
+	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile), &(table.slots[0]->player.numCards));
+	table.slots[0]->player.hand = pushToHand(table.slots[0]->player.hand, dealCard(&cardPile), &(table.slots[0]->player.numCards));
+
+	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile), &(table.slots[1]->player.numCards));
+	table.slots[1]->player.hand = pushToHand(table.slots[1]->player.hand, dealCard(&cardPile), &(table.slots[1]->player.numCards));
+
+	house.hand = pushToHand(house.hand, dealCard(&cardPile), &(house.numCards));
+	house.hand = pushToHand(house.hand, dealCard(&cardPile), &(house.numCards));
+
+	// end testing shit
+
+>>>>>>> Stashed changes
 	if(phase);
 	// initialize graphics
 	InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
@@ -181,7 +200,7 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 		playerList->tail = createPlayer(playerList, newPlayer);
 
 		// assign the player to a table slot
-		table->slots[i] = playerList->tail;		
+		table->slots[i] = playerList->tail;
 	}
 	listPlayers(playerList);
 
@@ -203,12 +222,12 @@ void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, Settin
 		playerList->head = removePlayer(playerList);
 	}
 	// free house hand
-	tmpCard = house->hand; 
+	tmpCard = house->hand;
 	while (tmpCard != NULL){
 		tmpCard = popHand(tmpCard, NULL, &house->numCards);
 	}
 	// free card pile
-	
+
 	while (cardPile->pileTop != NULL){
 		cardPile->pileTop = removeCardFromTop(cardPile);
 	}
