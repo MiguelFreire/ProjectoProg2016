@@ -44,6 +44,10 @@ void actionSurrender(GameTable *);
 
 void actionBet(GameTable *);
 
+int houseTurn(GameTable *table, House *house, Pile *cardPile);
+
+int colectBets(GameTable *table, House *house);
+
 void modifyBet(GameTable *);
 
 #endif /* end include guard */

@@ -39,11 +39,11 @@ void refillPile(Pile *pile){
 
 			for (int rank = 1; rank <= CARD_RANKS; rank++){ // ranks
 				tmpCard.rank = rank;
-				tmpCard.value = cardValues[rank];
+				tmpCard.value = cardValues[rank-1];
 
 				pile->pileBottom = insertCardOnBottom(pile, tmpCard);
 
-				printf("[%d] [%d] [%d] [%d]\n", pile->numCards, deck, suit, rank);
+				printf("[%d] [%d] [%d] [%d] - %d\n", pile->numCards, deck, suit, rank, tmpCard.value);
 			}
 		}
 	}
@@ -85,7 +85,7 @@ CardNode *dealCard(Pile *pile){
 	// reffil if needed
 	if (pileIsEmpty(pile)) refillPile(pile);
 
-	printf("Dealt a [%d] [%d]\n", cur->card.suit, cur->card.rank);
+	printf("Dealt a [%d] [%d] - %d\n", cur->card.suit, cur->card.rank, cur->card.value);
 	return cur;
 }
 
@@ -181,7 +181,7 @@ bool pileIsEmpty(Pile *pile){
 }
 
 int getHandValue(CardNode *hand, int numCards) {
-	CardNode *curr;
+	CardNode *curr = hand;
 	int handValue = 0;
 	Card card = {0};
 	for(int i = 0; i < numCards; i++){

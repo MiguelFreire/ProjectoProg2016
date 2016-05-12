@@ -25,13 +25,17 @@ int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 		player->state = HIT;
 		player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 		player->handValue = updatePlayerHandValue(player);
-		printf("%d", player->state);
+		printf("%d - %d\n", player->state, player->handValue);
+
 		if(player->state == BUSTED || player->state == BLACKJACK) return (actionStand(table));
 	} else if(subject == HOUSE) {
 		House *house = table->house;
 		house->hand = pushToHand(house->hand, dealCard(cardPile), &house->numCards);
 		house->handValue = updateHouseHandValue(house);
-		if(house->state == HOUSE_BUSTED || house->state == HOUSE_BLACKJACK) actionStand(table);
+		printf("house %d - %d\n", house->state, house->handValue);
+
+		if(house->state == HOUSE_BUSTED || house->state == HOUSE_BLACKJACK) return COLECTING_BETS;
+		return HOUSE_TURN;
 	}
 	return PLAYERS_PLAYING;
 }
@@ -122,4 +126,60 @@ void actionBet(GameTable *table) {
    printf("Bet set\n");
 
    return;
+}
+
+int houseTurn(GameTable *table, House *house, Pile *cardPile){
+	if (house->handValue < 17){
+		return actionHit(table, cardPile, HOUSE);
+	}
+	return COLECTING_BETS;
+}
+
+int colectBets(GameTable *table, House *house){
+	table->currentPlayer = 0;
+	Player *player = &table->slots[table->currentPlayer]->player;
+
+	// find the next player to colect the bet
+	// busted players had their bet colected already, so they are passed
+	while (slotIsEmpty(table->slots[table->currentPlayer]) 
+		|| player->state == WON || player->state == LOST 
+		|| player->state == TIED || player->state == BUSTED) {
+
+		table->currentPlayer++;
+		if (table->currentPlayer >= TABLE_SLOTS) return WAITING_FOR_NEW_GAME;
+		player = &table->slots[table->currentPlayer]->player;
+
+	} 
+	
+	
+	// test WIN, LOSS or TIE and colect or pay bets
+	if ( // TIE
+		(house->state == HOUSE_BLACKJACK && player->state == BLACKJACK) // both have blackjack
+		|| (house->handValue == player->handValue && // both have the same points
+		house->state != HOUSE_BLACKJACK && player->state != BLACKJACK) // and none has blackjack
+	){ 
+		player->state = TIED;
+
+	} else if ( // LOSE
+		house->state == HOUSE_BLACKJACK // house has a blackjack
+		|| (player->handValue < house->handValue && house->state != HOUSE_BUSTED) // house has more points than the player
+		){
+		player->state = LOST;
+		player->money -= player->bet * player->betMultiplier;
+
+	} else if ( // WIN
+		player->state == BLACKJACK // player has blackjack 
+		|| house->state == HOUSE_BUSTED // house busted
+		|| player->handValue > house->handValue // player has more points than house
+	){ 
+		player->state = WON;
+		player->money += player->bet * player->betMultiplier;
+	}
+
+	// take the cards from player hand
+	while (player->hand != NULL){
+		player->hand = popHand(player->hand, NULL, &player->numCards);
+	}
+
+	return COLECTING_BETS;
 }

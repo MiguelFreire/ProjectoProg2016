@@ -2,7 +2,7 @@
 #define	EA_H
 
 
-typedef enum {aHIT, aDOUBLE, aSURRENDER, aSTAND} eaAction;
+typedef enum {aHIT, aDOUBLE, aSURRENDER, aSTAND} EAAction;
 
 int **readSoftEAMatrix();
 

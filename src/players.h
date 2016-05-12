@@ -22,7 +22,17 @@ typedef enum {HUMAN, CPU} PlayerType;
  * Player possible states: STANDARD(no special state), has a BLACKJACK, is
  * BUSTED or is BROKE
  */
-typedef enum {STANDARD, HIT, BLACKJACK, BUSTED, BROKE, SURRENDERED} PlayerState;
+typedef enum {
+	STANDARD,
+	HIT,
+	BLACKJACK,
+	BUSTED,
+	BROKE,
+	SURRENDERED,
+	TIED,
+	WON,
+	LOST
+} PlayerState;
 
 /**
  * Player stats
@@ -68,7 +78,6 @@ PlayerNode *createPlayer(PlayerList *list, Player playerData);
 PlayerNode *removePlayer(PlayerList *list);
 void listPlayers (PlayerList *playerList);
 bool playerListIsEmpty(PlayerList *list);
-int updatePlayerHandValue(Player *player);
 
 
 // House
@@ -77,7 +86,7 @@ int updatePlayerHandValue(Player *player);
  * House possible states: STANDARD(no special state), has a BLACKJACK or is
  * BUSTED
  */
-typedef enum {HOUSE_WAITING, HOUSE_STANDARD, HOUSE_BLACKJACK, HOUSE_BUSTED} HouseState;
+typedef enum {HOUSE_WAITING, HOUSE_COLECTING, HOUSE_BLACKJACK, HOUSE_BUSTED} HouseState;
 
 /**
  * House structure (points to linked list)
@@ -98,6 +107,7 @@ CardNode *pushToHand(CardNode *hand, CardNode *newCard, int *numCards);
 CardNode *popHand(CardNode *hand, Card *cardContent, int *numCards);
 Card peekHand(CardNode *hand, int cardNumber);
 bool handIsEmpty(CardNode *hand);
+int updatePlayerHandValue(Player *player);
 int updateHouseHandValue(House *house);
 
 #endif /* end include guard */

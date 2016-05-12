@@ -175,7 +175,7 @@ int updatePlayerHandValue(Player *player) {
 	CardNode *curr = player->hand;
 	int numAces = hasAces(curr, player->numCards);
 	int handValue = getHandValue(curr, player->numCards);
-
+	printf("%d aces \n", numAces);
 	if(handValue == 21) {
 		player->state = BLACKJACK;
 		return handValue;
@@ -184,6 +184,7 @@ int updatePlayerHandValue(Player *player) {
         	if(handValue <= 21) break;
         	handValue -= 10;
         }
+        if (handValue > 21) player->state = BUSTED;
 		return handValue;
 
 	} else if(handValue > 21) {
@@ -203,17 +204,18 @@ int updateHouseHandValue(House *house) {
 	if(handValue == 21) {
 		house->state = HOUSE_BLACKJACK;
 		return handValue;
-	} else if(handValue > 21) {
-		house->state = HOUSE_BUSTED;
-		return handValue;
 	} else if(handValue > 21 && numAces > 0) {
 		for(int k = 1; k <= numAces; k++) {
         	if(handValue <= 21) break;
         	handValue -= 10;
         }
+        if (handValue > 21) house->state = HOUSE_BUSTED;
 
 		return handValue;
-	}
+	} else if(handValue > 21) {
+		house->state = HOUSE_BUSTED;
+		return handValue;
+	} 
 
 	return handValue;
 }

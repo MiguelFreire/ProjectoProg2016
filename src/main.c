@@ -135,6 +135,15 @@ int main(int argc, char *argv[]){
 					break;
 			}
 		}
+		if (phase == HOUSE_TURN){
+			printf("house turn\n");
+			phase = houseTurn(&table, &house, &cardPile);
+		}
+
+		if (phase == COLECTING_BETS){
+			printf("colecting bets\n");
+			phase = colectBets(&table, &house);
+		}
 
 		// render game table
 		RenderTable(serif, imgs, renderer, &table);
@@ -180,6 +189,7 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 		strcpy(newPlayer.name, settings->playerStg[i].name);
 		newPlayer.money = settings->playerStg[i].seedMoney;
 		newPlayer.bet = settings->playerStg[i].seedBet;
+		newPlayer.betMultiplier = 1;
 
 
 		// put player on the player list
