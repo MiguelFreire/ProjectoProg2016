@@ -118,3 +118,22 @@ void actionBet(GameTable *table) {
 
    return;
 }
+
+void executeEAAction(GameTable *table, Pile *cardPile, eaAction action) {
+	switch (action) {
+		case aHIT:
+			actionHit(table, cardPile, PLAYER);
+			break;
+		case aSTAND:
+			actionStand(table);
+			break;
+		case aDOUBLE:
+			actionDouble(table, cardPile);
+			break;
+		case aSURRENDER:
+			actionSurrender(table);
+			break;
+		default:
+			return;
+	}
+}

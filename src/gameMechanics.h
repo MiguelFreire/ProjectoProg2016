@@ -9,9 +9,9 @@
 #include "players.h"
 #include "cards.h"
 
-
-
 typedef enum {PLAYER, HOUSE} ActionSubject;
+
+typedef enum {aHIT, aDOUBLE, aSURRENDER, aSTAND} eaAction;
 
 typedef struct {
 	int x;	// x position
@@ -46,5 +46,7 @@ void actionSurrender(GameTable *);
 void actionBet(GameTable *);
 
 void modifyBet(GameTable *);
+
+void executeEAAction(GameTable *, Pile *pile, eaAction action);
 
 #endif /* end include guard */

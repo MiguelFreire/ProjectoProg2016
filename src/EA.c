@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+
 #include "config.h"
 #include "errorHandling.h"
-#include "gameMechanics.h"
 #include "util.h"
+#include "gameMechanics.h"
 #include "EA.h"
 
 int **readSoftEAMatrix() {
@@ -93,6 +95,4 @@ int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
         else row = playerHandValue - 8;
         return hardMatrix[row][col];
     }
-
-
 }
