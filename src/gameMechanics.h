@@ -9,9 +9,10 @@
 #include "players.h"
 #include "cards.h"
 
+
 typedef enum {PLAYER, HOUSE} ActionSubject;
 
-typedef enum {aHIT, aDOUBLE, aSURRENDER, aSTAND} eaAction;
+typedef enum {aHIT, aDOUBLE, aSURRENDER, aSTAND} EAAction;
 
 typedef struct {
 	int x;	// x position
@@ -33,17 +34,21 @@ typedef struct {
 GameTable createGameTable();
 bool slotIsEmpty(PlayerNode *slot);
 
-void actionHit(GameTable *, Pile *, ActionSubject);
+int actionHit(GameTable *, Pile *, ActionSubject);
 
-void actionStand(GameTable *);
+int actionStand(GameTable *);
 
-void actionNewGame(GameTable *table, Pile *cardPile);
+int actionNewGame(GameTable *table, Pile *cardPile);
 
 void actionDouble(GameTable *, Pile *);
 
 void actionSurrender(GameTable *);
 
 void actionBet(GameTable *);
+
+int houseTurn(GameTable *table, House *house, Pile *cardPile);
+
+int colectBets(GameTable *table, House *house);
 
 void modifyBet(GameTable *);
 
