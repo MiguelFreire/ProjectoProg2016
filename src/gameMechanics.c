@@ -85,15 +85,19 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 	table->house->hand = pushToHand(table->house->hand , dealCard(cardPile), &table->house->numCards);
 	}
 
-	// take everyone's bet and reset their states
+	// take everyone's bet, reset their states and update their hand values
 	for (int i = 0; i < TABLE_SLOTS; i++){
 		if(!slotIsEmpty(table->slots[i])){
 			curPlayer = &table->slots[i]->player;
+
 			curPlayer->money -= curPlayer->bet;
 			curPlayer->state = STANDARD;
+			curPlayer->handValue = updatePlayerHandValue(curPlayer);
+
 		}
 	}
-
+	table->house->handValue = getHandValue(table->house->hand, table->house->numCards);
+	table->house->state = HOUSE_WAITING;
 	// reset current player
 	table->currentPlayer = 0;
 
@@ -241,10 +245,8 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	playerType[strlen(playerType)-1] = '\0';
 
 	if(strcmp(playerType, "HU") == 0){
-		printf("HU lel");
 		newPlayer.type = HUMAN;
 	} else if (strcmp(playerType, "EA") == 0){
-		printf("EA lel");
 		newPlayer.type = CPU;
 	}
 
@@ -270,6 +272,7 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	sscanf(buffer, "%d", &playerBet);
 
 	newPlayer.bet = playerBet;	
+	newPlayer.betMultiplier = 1;
 
 	// add player to the player list
 	playerList->tail = createPlayer(playerList, newPlayer);

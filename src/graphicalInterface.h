@@ -14,7 +14,7 @@ void calcSlotDim(GameTable *table);
 
 
 // Render functions
-void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable *table);
+void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable *table, int phase);
 
 void RenderHouseCards(SDL_Surface **_cards, SDL_Renderer* _renderer, House *house);
 

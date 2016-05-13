@@ -112,8 +112,19 @@ int main(int argc, char *argv[]){
 							break;
 						case SDLK_a: // add player
 						    if (phase == WAITING_FOR_NEW_GAME){
-						    	phase = ADDING_PLAYER;
-						    	printf("adding player\n");
+						    	bool emptySlots = false;
+								for (int i = 0; i < TABLE_SLOTS; i++){
+									if (slotIsEmpty(table.slots[i])){
+										emptySlots = true;
+									}
+								}
+								if (emptySlots){
+									phase = ADDING_PLAYER;
+						    		printf("Adding player\n");
+								} else {
+									phase = WAITING_FOR_NEW_GAME;
+									printf("There are no empty slots\n");
+								}
 						    }
 						    break;
 					}
@@ -125,7 +136,6 @@ int main(int argc, char *argv[]){
 					if (phase == ADDING_PLAYER &&
 						event.button.button == SDL_BUTTON_LEFT){
 						// check position to add player
-						
 						int mouseX, mouseY, slotClicked;
 						SDL_GetMouseState(&mouseX, &mouseY);
 						printf("clicked %d, %d\n", mouseX, mouseY);
@@ -160,7 +170,7 @@ int main(int argc, char *argv[]){
 		}
 
 		// render game table
-		RenderTable(serif, imgs, renderer, &table);
+		RenderTable(serif, imgs, renderer, &table, phase);
 		// render the players cards
 		RenderPlayerCards(cards, renderer, &table);
 		// render house cards
@@ -191,10 +201,10 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 	// seed random number generator
 	srand(time(NULL));
 
+
 	*settings = readSettings(argv1);
 
-
-	// create starting players
+	// create starting players from config file
 	for (int i = 0; i < settings->gameStg.numPlayers; i++){
 		Player newPlayer = {0};
 
@@ -214,12 +224,17 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 	}
 	listPlayers(playerList);
 
+
+
 	// set the table pointer to the house
 	table->house = house;
+
+	table->currentPlayer = -1; // no player is playing
 
 	// compute and store table slots dimensions
 	calcSlotDim(table);
 
+	// fill the pile
 	pile->numDecks = settings->gameStg.numDecks;
 	refillPile(pile);
 
