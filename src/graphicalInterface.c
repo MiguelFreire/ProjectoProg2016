@@ -12,7 +12,28 @@
 #include "players.h"
 
 
+void calcSlotDim(GameTable *table){
+    int separatorPos = (int)(0.95f*WINDOW_WIDTH);
 
+    for (int i = 0; i < TABLE_SLOTS; i++){
+        table->slotDim[i].x = i*(separatorPos/4)+5;
+        table->slotDim[i].y = (int) (0.55f*WINDOW_HEIGHT);
+        table->slotDim[i].w = separatorPos/4-10;
+        table->slotDim[i].h = (int) (0.42f*WINDOW_HEIGHT);
+    }
+}
+
+int mouseIsOverSlot(GameTable *table, int mouseX, int mouseY){
+    SlotDim slot;
+    for (int i = 0; i < TABLE_SLOTS; i++){
+        slot = table->slotDim[i];
+        if (mouseX > slot.x && mouseX < slot.x + slot.w 
+            && mouseY > slot.y && mouseY < slot.y + slot.h){
+            return i;
+        }
+    }
+    return (-1);
+}
 
 /**
  * RenderTable: Draws the table where the game will be played, namely:

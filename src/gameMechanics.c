@@ -192,6 +192,7 @@ int colectBets(GameTable *table, House *house){
 		house->state != HOUSE_BLACKJACK && player->state != BLACKJACK) // and none has blackjack
 	){ 
 		player->state = TIED;
+		player->stats.tied ++;
 		player->money += player->bet * (player->betMultiplier + (1 - (player->state == BLACKJACK) * BLACKJACK_MULTIPLIER ));
 
 	} else if ( // LOSE
@@ -199,6 +200,7 @@ int colectBets(GameTable *table, House *house){
 		|| (player->handValue < house->handValue && house->state != HOUSE_BUSTED) // house has more points than the player
 		){
 		player->state = LOST;
+		player->stats.lost ++;
 
 	} else if ( // WIN
 		player->state == BLACKJACK // player has blackjack 
@@ -206,6 +208,7 @@ int colectBets(GameTable *table, House *house){
 		|| player->handValue > house->handValue // player has more points than house
 	){ 
 		player->state = WON;
+		player->stats.won ++;
 		player->money += player->bet * (1 + player->betMultiplier); // give taken bet plus winnings
 	}
 
@@ -214,8 +217,68 @@ int colectBets(GameTable *table, House *house){
 
 void bust(Player *player){
 	player->money -= player->bet * player->betMultiplier;
-	// take the cards from player hand
-	while (player->hand != NULL){
-		player->hand = popHand(player->hand, NULL, &player->numCards);
+}
+
+int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
+	Player newPlayer = {0};
+	char buffer[MAX_BUFFER_SIZE] = {0};
+	// ask for new player's name
+	printf("What's the name of the player?\n");
+	printf("(Write CANCEL to quit)\n");
+
+	char playerName[MAX_BUFFER_SIZE]; // TODO mudar o tamanho disto para o maximo do nome
+
+	fgets(playerName, MAX_BUFFER_SIZE, stdin);
+	playerName[strlen(playerName)-1] = '\0';
+
+	strcpy(newPlayer.name, playerName);
+
+	// ask for new player's type
+	printf("What's the type of the player (HU/EA)\n");
+	char playerType[MAX_PLAYER_TYPE_SIZE + 1];
+
+	fgets(playerType, MAX_PLAYER_TYPE_SIZE + 2, stdin);
+	playerType[strlen(playerType)-1] = '\0';
+
+	if(strcmp(playerType, "HU") == 0){
+		printf("HU lel");
+		newPlayer.type = HUMAN;
+	} else if (strcmp(playerType, "EA") == 0){
+		printf("EA lel");
+		newPlayer.type = CPU;
 	}
+
+	// ask for new player's money
+	printf("Introduce the initial money for this player\n");
+	int playerMoney;
+
+	fgets(buffer, MAX_BUFFER_SIZE, stdin);
+	buffer[strlen(buffer)-1] = '\0';
+	printf("%s\n", buffer);
+
+	sscanf(buffer, "%d", &playerMoney);
+
+	newPlayer.money = playerMoney;
+
+	// ask for new player's bet
+	printf("Introduce the initial bet for this player\n");
+	int playerBet;
+
+	fgets(buffer, MAX_BUFFER_SIZE, stdin);
+	buffer[strlen(buffer)-1] = '\0';
+
+	sscanf(buffer, "%d", &playerBet);
+
+	newPlayer.bet = playerBet;	
+
+	// add player to the player list
+	playerList->tail = createPlayer(playerList, newPlayer);
+
+	table->slots[slotClicked] = playerList->tail;
+
+	listPlayers(playerList);
+
+	printf("New player added\n");
+
+	return WAITING_FOR_NEW_GAME;
 }

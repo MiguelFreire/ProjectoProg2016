@@ -71,6 +71,7 @@ int main(int argc, char *argv[]){
 
 				// check for key press
 				case SDL_KEYDOWN:
+
 					switch( event.key.keysym.sym){
 
 						case SDLK_h: // hit
@@ -94,7 +95,6 @@ int main(int argc, char *argv[]){
 							}
 							break;
 						case SDLK_d: // double
-							// adicionar player state "acabar de receber duas cartas"
 						    if (phase == PLAYERS_PLAYING){
 						    	actionDouble(&table, &cardPile);
 						    }
@@ -112,7 +112,8 @@ int main(int argc, char *argv[]){
 							break;
 						case SDLK_a: // add player
 						    if (phase == WAITING_FOR_NEW_GAME){
-
+						    	phase = ADDING_PLAYER;
+						    	printf("adding player\n");
 						    }
 						    break;
 					}
@@ -124,12 +125,20 @@ int main(int argc, char *argv[]){
 					if (phase == ADDING_PLAYER &&
 						event.button.button == SDL_BUTTON_LEFT){
 						// check position to add player
-						/*
+						
 						int mouseX, mouseY, slotClicked;
-						if (slotClicked = hoveringSlot(mouseX, mouseY) >= 0){
-							addPlayer(slotClicked, &playerList, &house);
+						SDL_GetMouseState(&mouseX, &mouseY);
+						printf("clicked %d, %d\n", mouseX, mouseY);
+						slotClicked = mouseIsOverSlot(&table, mouseX, mouseY);
+						printf("slot: %d\n", slotClicked);
+						if (slotClicked >= 0){
+							printf("Clicked slot %d\n", slotClicked);
+							if (slotIsEmpty(table.slots[slotClicked])){
+								phase = actionAddPlayer(slotClicked, &playerList, &table);
+							}
+							
 						}
-						*/
+						
 					}
 					break;
 
@@ -207,6 +216,9 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 
 	// set the table pointer to the house
 	table->house = house;
+
+	// compute and store table slots dimensions
+	calcSlotDim(table);
 
 	pile->numDecks = settings->gameStg.numDecks;
 	refillPile(pile);
