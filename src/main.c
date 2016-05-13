@@ -63,7 +63,7 @@ int main(int argc, char *argv[]){
 	InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
 	LoadCards(cards);
 
-	phase = actionNewGame(&table, &cardPile);
+	phase = WAITING_FOR_NEW_GAME;
 
 	while(!quit){
 		while(SDL_PollEvent(&event)){
@@ -95,9 +95,14 @@ int main(int argc, char *argv[]){
 							break;
 						case SDLK_d: // double
 							// adicionar player state "acabar de receber duas cartas"
+						    if (phase == PLAYERS_PLAYING){
+						    	actionDouble(&table, &cardPile);
+						    }
 							break;
 						case SDLK_r: // surrender
-
+							if (phase == PLAYERS_PLAYING){
+								actionSurrender(&table);
+							}
 							break;
 						case SDLK_b: // bet
 						    

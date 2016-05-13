@@ -48,6 +48,8 @@ int houseTurn(GameTable *table, House *house, Pile *cardPile);
 
 int colectBets(GameTable *table, House *house);
 
+void bust(Player *player);
+
 void modifyBet(GameTable *);
 
 #endif /* end include guard */

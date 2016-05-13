@@ -69,12 +69,16 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     // renders the areas for each player: names and money too !
     for ( int i = 0; i < TABLE_SLOTS; i++)
     {
-        if(!slotIsEmpty(table->slots[i])) { // check if there is a player in that slot
-            playerRect.x = i*(separatorPos/4)+10;
+            playerRect.x = i*(separatorPos/4)+5;
             playerRect.y = (int) (0.55f*WINDOW_HEIGHT);
-            playerRect.w = separatorPos/4-5;
+            playerRect.w = separatorPos/4-10;
             playerRect.h = (int) (0.42f*WINDOW_HEIGHT);
 
+            SDL_SetRenderDrawColor(_renderer, 22, 107, 16, 200);
+            SDL_RenderFillRect(_renderer, &playerRect);
+
+        if(!slotIsEmpty(table->slots[i])) { // check if there is a player in that slot
+            
             // draw a rectangle in the current player area
             if(i == table->currentPlayer){
                 SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
@@ -146,7 +150,7 @@ void RenderHouseCards(SDL_Surface **_cards, SDL_Renderer* _renderer, House *hous
     for ( card = 0; card < house->numCards; card++)
     {
         // players still playing ? draw a card face down
-        if (card == 1 && house->state == HOUSE_WAITING)
+        if (card == 1 && house->numCards == 2 && house->state == HOUSE_WAITING)
         {
             Card cardDown = {0};
             x = (div/2-house->numCards/2+card)*CARD_WIDTH + 15;
@@ -426,6 +430,8 @@ SDL_Renderer* CreateRenderer(int width, int height, SDL_Window *_window)
 
     // set size of renderer to the same as window
     SDL_RenderSetLogicalSize( renderer, width+EXTRASPACE, height );
+
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     return renderer;
 }

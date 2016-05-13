@@ -29,6 +29,7 @@ typedef enum {
 	BUSTED,
 	BROKE,
 	SURRENDERED,
+	DOUBLED,
 	TIED,
 	WON,
 	LOST

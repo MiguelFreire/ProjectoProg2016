@@ -25,7 +25,10 @@ int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 		player->state = HIT;
 		player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 		player->handValue = updatePlayerHandValue(player);
-		printf("%d - %d\n", player->state, player->handValue);
+		printf("player %d - %d\n", player->state, player->handValue);
+		if (player->state == BUSTED){
+			bust(player);
+		}
 
 		if(player->state == BUSTED || player->state == BLACKJACK) return (actionStand(table));
 	} else if(subject == HOUSE) {
@@ -51,19 +54,48 @@ int actionStand(GameTable *table) {
 }
 
 int actionNewGame(GameTable *table, Pile *cardPile) {
-	PlayerNode *curPlayer = NULL;
+	Player *curPlayer = NULL;
+
+	// empty house's hand
+	while (table->house->hand != NULL){
+		table->house->hand = popHand(table->house->hand, NULL, &table->house->numCards);
+	}
+
+	// empty players hands
+	for (int i = 0; i < TABLE_SLOTS; i++){
+		if(!slotIsEmpty(table->slots[i])){
+			curPlayer = &table->slots[i]->player;
+			while (curPlayer->hand != NULL){
+				curPlayer->hand = popHand(curPlayer->hand, NULL, &curPlayer->numCards);
+			}
+		}
+	}
+	
+
 	// deal 2 cards to each player and house
 	for (int i = 0; i < 2; i++){
 		// hand a card to each player
 		for (int j = 0; j < TABLE_SLOTS; j++){
 			if(!slotIsEmpty(table->slots[j])){
-				curPlayer = table->slots[j];
-				curPlayer->player.hand = pushToHand(curPlayer->player.hand, dealCard(cardPile), &curPlayer->player.numCards);
+				curPlayer = &table->slots[j]->player;
+				curPlayer->hand = pushToHand(curPlayer->hand, dealCard(cardPile), &curPlayer->numCards);
 			}
 		}
 	// hand a card to the house
 	table->house->hand = pushToHand(table->house->hand , dealCard(cardPile), &table->house->numCards);
 	}
+
+	// take everyone's bet and reset their states
+	for (int i = 0; i < TABLE_SLOTS; i++){
+		if(!slotIsEmpty(table->slots[i])){
+			curPlayer = &table->slots[i]->player;
+			curPlayer->money -= curPlayer->bet;
+			curPlayer->state = STANDARD;
+		}
+	}
+
+	// reset current player
+	table->currentPlayer = 0;
 
 	return PLAYERS_PLAYING;
 }
@@ -73,7 +105,7 @@ void actionDouble(GameTable *table, Pile *cardPile) {
 	if(player->state == HIT) return;
 
 	player->money -= player->bet;
-	player->betMultiplier = 2;
+	player->betMultiplier = DOUBLE_MULTIPLIER;
 
 	actionHit(table, cardPile, PLAYER);
 	actionStand(table);
@@ -132,6 +164,7 @@ int houseTurn(GameTable *table, House *house, Pile *cardPile){
 	if (house->handValue < 17){
 		return actionHit(table, cardPile, HOUSE);
 	}
+	house->state = COLECTING_BETS;
 	return COLECTING_BETS;
 }
 
@@ -159,13 +192,13 @@ int colectBets(GameTable *table, House *house){
 		house->state != HOUSE_BLACKJACK && player->state != BLACKJACK) // and none has blackjack
 	){ 
 		player->state = TIED;
+		player->money += player->bet * (player->betMultiplier + (1 - (player->state == BLACKJACK) * BLACKJACK_MULTIPLIER ));
 
 	} else if ( // LOSE
 		house->state == HOUSE_BLACKJACK // house has a blackjack
 		|| (player->handValue < house->handValue && house->state != HOUSE_BUSTED) // house has more points than the player
 		){
 		player->state = LOST;
-		player->money -= player->bet * player->betMultiplier;
 
 	} else if ( // WIN
 		player->state == BLACKJACK // player has blackjack 
@@ -173,13 +206,16 @@ int colectBets(GameTable *table, House *house){
 		|| player->handValue > house->handValue // player has more points than house
 	){ 
 		player->state = WON;
-		player->money += player->bet * player->betMultiplier;
+		player->money += player->bet * (1 + player->betMultiplier); // give taken bet plus winnings
 	}
 
+	return COLECTING_BETS;
+}
+
+void bust(Player *player){
+	player->money -= player->bet * player->betMultiplier;
 	// take the cards from player hand
 	while (player->hand != NULL){
 		player->hand = popHand(player->hand, NULL, &player->numCards);
 	}
-
-	return COLECTING_BETS;
 }
