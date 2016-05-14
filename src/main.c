@@ -160,14 +160,12 @@ int main(int argc, char *argv[]){
 			}
 		}
 		if (phase == HOUSE_TURN){
-			printf("house turn\n");
 			phase = houseTurn(&table, &house, &cardPile);
 			if (phase == COLECTING_BETS)
 				table.currentPlayer = 0;
 		}
 
 		if (phase == COLECTING_BETS){
-			printf("colecting bets\n");
 			phase = colectBets(&table, &house);
 		}
 

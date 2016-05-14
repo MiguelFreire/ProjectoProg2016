@@ -45,10 +45,10 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
     Player *player;
 
     for (int i = 0; i < TABLE_SLOTS; i++){
-        stateRect.x = table->slotDim[i].x + 10;
-        stateRect.y = table->slotDim[i].y + 10;
-        stateRect.w = table->slotDim[i].w - 20;
-        stateRect.h = table->slotDim[i].h - 20;
+        stateRect.x = table->slotDim[i].x + 5;
+        stateRect.y = table->slotDim[i].y + 5;
+        stateRect.w = table->slotDim[i].w - 10;
+        stateRect.h = table->slotDim[i].h - 10;
 
         textRect.x = stateRect.x + stateRect.w/8;
         textRect.y = stateRect.y + stateRect.h/3;

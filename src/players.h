@@ -42,6 +42,7 @@ typedef struct {
 	int won;
 	int lost;
 	int tied;
+	int houseGains;
 } PlayerStats;
 
 /**
@@ -80,6 +81,7 @@ PlayerNode *removePlayer(PlayerList *list);
 void listPlayers (PlayerList *playerList);
 bool playerListIsEmpty(PlayerList *list);
 
+void updateMoney(Player *player, int amount);
 
 // House
 

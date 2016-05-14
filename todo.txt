@@ -1,7 +1,9 @@
 TODO:
 @Create EA Matrix
-@Create Graphical Interface Helper Functions
 @EA delay control
 @Write stats
-@Show more information on interface (bet, bust, blackjack, etc, monye on the right, etc)
+@Do remaining state overlays (win, loss, tie)
+@take players from the table
+@check for player money when doubling
+@use message boxes for some information and to warn about terminal input needed
 

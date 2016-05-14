@@ -100,6 +100,13 @@ bool playerListIsEmpty(PlayerList *list){
 }
 
 
+
+void updateMoney(Player *player, int amount){
+	player->money += amount;
+	player->stats.houseGains -= amount;
+}
+
+
 // House fucntions
 
 /**

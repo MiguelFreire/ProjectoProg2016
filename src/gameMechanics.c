@@ -87,7 +87,7 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 		if(!slotIsEmpty(table->slots[i])){
 			curPlayer = &table->slots[i]->player;
 
-			curPlayer->money -= curPlayer->bet;
+			updateMoney(curPlayer, -curPlayer->bet);
 			curPlayer->state = STANDARD;
 			curPlayer->handValue = updatePlayerHandValue(curPlayer);
 
@@ -109,7 +109,7 @@ int actionDouble(GameTable *table, Pile *cardPile) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	if(player->state == HIT) return PLAYERS_PLAYING;
 
-	player->money -= player->bet;
+	updateMoney(player, -player->bet);
 	player->betMultiplier = DOUBLE_MULTIPLIER;
 
 	int newPhase;
@@ -124,6 +124,7 @@ int actionSurrender(GameTable *table) {
 	if(player->state == HIT) return PLAYERS_PLAYING;
 
 	player->state = SURRENDERED;
+	updateMoney(player, player->bet/2);
 
 	return actionStand(table);
 }
@@ -203,7 +204,7 @@ int colectBets(GameTable *table, House *house){
 	){
 		player->state = TIED;
 		player->stats.tied ++;
-		player->money += player->bet * (player->betMultiplier + (1 - (player->state == BLACKJACK) * BLACKJACK_MULTIPLIER ));
+		updateMoney(player, player->bet * (player->betMultiplier + (1 - (player->state == BLACKJACK) * BLACKJACK_MULTIPLIER )));
 
 	} else if ( // LOSE
 	    player->state == BUSTED // player busted
@@ -235,15 +236,11 @@ int colectBets(GameTable *table, House *house){
 			player->state = WON;
 		}
 		player->stats.won ++;
-		player->money += player->bet * 2 * (player->betMultiplier); // give taken bet plus winnings
+		updateMoney(player, player->bet * 2 * (player->betMultiplier)); // give taken bet plus winnings
 	}
 
 	table->currentPlayer++;
 	return COLECTING_BETS;
-}
-
-void bust(Player *player){
-	player->money -= player->bet * player->betMultiplier;
 }
 
 int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
