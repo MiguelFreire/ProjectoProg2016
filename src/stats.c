@@ -1,26 +1,46 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "config.h"
 #include "players.h"
 #include "gameMechanics.h"
+#include "errorHandling.h"
 #include "stats.h"
 
-void writeStats(PlayersList list) {
-    FILE *file = fopen(STATS_FILE_NAME, "r");
+void writeStats(PlayerList list) {
+    FILE *file = fopen(STATS_FILE_NAME, "w");
     if(file == NULL) fireFileNotFoundError(STATS_FILE_NAME);
 
     PlayerNode *node = list.head;
 
     char name[MAX_NAME_SIZE+1];
-    Playertype type = 0;
+    char type[3];
     int gameStats[3] = {0};
     int playerMoney = 0;
     int houseMoney = 0;
 
     while(node != NULL) {
+        strcpy(name, node->player.name);
+        if(node->player.type == HUMAN) strcpy(type, "HUMAN");
+        else if(node->player.type == CPU) strcpy(type, "CPU");
 
+        gameStats[0] = node->player.stats.won;  // Games Won
+        gameStats[1] = node->player.stats.lost; // Games Loss
+        gameStats[2] = node->player.stats.tied; // Games tied
+
+        playerMoney = node->player.money;
+
+        // houseMoney = node->player->houseMoney;
+
+        fprintf(file, "Player Name: %s\n"
+                      "Player Type: %s\n"
+                      "Games Won/Tied/Lost: %d/%d/%d\n"
+                      "Final money: %d\n"
+                      "Money house earned or lost: %d\n\n",
+                       name, type, gameStats[0], gameStats[1], gameStats[2],
+                       playerMoney, houseMoney);
 
         node = node->next;
     }
