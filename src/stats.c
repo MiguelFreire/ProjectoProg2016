@@ -19,7 +19,7 @@ void writeStats(PlayerList list) {
     char type[3];
     int gameStats[3] = {0};
     int playerMoney = 0;
-    int houseMoney = 0;
+    int houseGains = 0;
 
     while(node != NULL) {
         strcpy(name, node->player.name);
@@ -32,17 +32,18 @@ void writeStats(PlayerList list) {
 
         playerMoney = node->player.money;
 
-        // houseMoney = node->player->houseMoney;
+        houseGains =  node->player.stats.houseGains;
 
         fprintf(file, "Player Name: %s\n"
                       "Player Type: %s\n"
                       "Games Won/Tied/Lost: %d/%d/%d\n"
                       "Final money: %d\n"
-                      "Money house earned or lost: %d\n\n",
+                      "House gains: %d\n\n",
                        name, type, gameStats[0], gameStats[1], gameStats[2],
-                       playerMoney, houseMoney);
+                       playerMoney, houseGains);
 
         node = node->next;
     }
 
+    fclose(file);
 }

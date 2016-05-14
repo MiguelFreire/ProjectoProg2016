@@ -70,7 +70,7 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     textX = textRect.x + textRect.w/4;
                     textY = textRect.y + textRect.h/8;
                     textY += RenderText(textX, textY, "BUSTED", font, &white, renderer);
-                    sprintf(moneyStr, "-%.2f€", player->bet * player->betMultiplier);
+                    sprintf(moneyStr, "-%d€", (int)(player->bet * player->betMultiplier));
                     RenderText(textX + textRect.w/8, textY, moneyStr, font, &white, renderer);
                     break;
                 case BLACKJACK:
@@ -84,7 +84,7 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     textX = textRect.x + textRect.w/10;
                     textY = textRect.y + textRect.h/8;
                     textY += RenderText(textX, textY, "BLACKJACK", font, &white, renderer);
-                    sprintf(moneyStr, "+%.2f€", player->bet * player->betMultiplier);
+                    sprintf(moneyStr, "+%d€", (int)(player->bet * player->betMultiplier));
                     RenderText(textX + textRect.w/3, textY, moneyStr, font, &white, renderer);
                     break;
                 case SURRENDERED:

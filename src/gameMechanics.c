@@ -97,7 +97,7 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 	table->house->state = HOUSE_WAITING;
 	// select first player
 	table->currentPlayer = 0;
-	while(slotIsEmpty(table->slots[table->currentPlayer]) 
+	while(slotIsEmpty(table->slots[table->currentPlayer])
 		|| table->slots[table->currentPlayer]->player.state == BLACKJACK){
 		table->currentPlayer ++;
 	}
@@ -173,7 +173,7 @@ int houseTurn(GameTable *table, House *house, Pile *cardPile){
 	if (house->handValue < 17){
 		return actionHit(table, cardPile, HOUSE);
 	}
-	house->state = COLECTING_BETS;
+	house->state = HOUSE_COLECTING;
 	return COLECTING_BETS;
 }
 
@@ -190,7 +190,7 @@ int colectBets(GameTable *table, House *house){
 
 		if (table->currentPlayer >= TABLE_SLOTS){
 			return WAITING_FOR_NEW_GAME;
-		} 
+		}
 	}
 
 	player = &table->slots[table->currentPlayer]->player;
@@ -221,7 +221,7 @@ int colectBets(GameTable *table, House *house){
 		} else {
 			player->state = LOST;
 		}
-		
+
 		player->stats.lost ++;
 
 	} else if ( // WIN
