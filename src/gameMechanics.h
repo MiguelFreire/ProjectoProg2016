@@ -12,6 +12,8 @@
 
 typedef enum {PLAYER, HOUSE} ActionSubject;
 
+typedef enum {aHIT, aDOUBLE, aSURRENDER, aSTAND} EAAction;
+
 typedef struct {
 	int x;	// x position
 	int y;	// y position
@@ -53,5 +55,7 @@ int colectBets(GameTable *table, House *house);
 void bust(Player *player);
 
 void modifyBet(GameTable *);
+
+void executeEAAction(GameTable *, Pile *pile, EAAction action);
 
 #endif /* end include guard */

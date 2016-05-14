@@ -1,8 +1,9 @@
 #ifndef EA_H
 #define	EA_H
 
+#include "cards.h"
+#include "gameMechanics.h"
 
-typedef enum {aHIT, aDOUBLE, aSURRENDER, aSTAND} EAAction;
 
 int **readSoftEAMatrix();
 

@@ -46,7 +46,7 @@ int actionStand(GameTable *table) {
 		if (table->currentPlayer >= TABLE_SLOTS) return HOUSE_TURN;
 	} while (slotIsEmpty(table->slots[table->currentPlayer]) ||
 		table->slots[table->currentPlayer]->player.state != STANDARD); // next player has a BLACKJACK
-	
+
 	return PLAYERS_PLAYING;
 }
 
@@ -67,7 +67,7 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 			}
 		}
 	}
-	
+
 
 	// deal 2 cards to each player and house
 	for (int i = 0; i < 2; i++){
@@ -182,23 +182,25 @@ int colectBets(GameTable *table, House *house){
 	if (table->currentPlayer >= TABLE_SLOTS)
 		return WAITING_FOR_NEW_GAME;
 
+	// find the next player to colect the bet
 	while (slotIsEmpty(table->slots[table->currentPlayer])) {
 
 		table->currentPlayer++;
 
-		if (table->currentPlayer >= TABLE_SLOTS)
-		return WAITING_FOR_NEW_GAME;
-	} 
+		if (table->currentPlayer >= TABLE_SLOTS){
+			return WAITING_FOR_NEW_GAME;
+		} 
+	}
 
 	player = &table->slots[table->currentPlayer]->player;
-	
-	
+
+
 	// test WIN, LOSS or TIE and colect or pay bets
 	if ( // TIE
 		(house->state == HOUSE_BLACKJACK && player->state == BLACKJACK) // both have blackjack
 		|| (house->handValue == player->handValue && // both have the same points
 		house->state != HOUSE_BLACKJACK && player->state != BLACKJACK) // and none has blackjack
-	){ 
+	){
 		player->state = TIED;
 		player->stats.tied ++;
 		player->money += player->bet * (player->betMultiplier + (1 - (player->state == BLACKJACK) * BLACKJACK_MULTIPLIER ));
@@ -222,10 +224,11 @@ int colectBets(GameTable *table, House *house){
 		player->stats.lost ++;
 
 	} else if ( // WIN
-		player->state == BLACKJACK // player has blackjack 
+		player->state == BLACKJACK // player has blackjack
 		|| house->state == HOUSE_BUSTED // house busted
 		|| player->handValue > house->handValue // player has more points than house
-	){ 
+	){
+
 		if (player->state == BLACKJACK){
 			player->state = BLACKJACK;
 		} else {
@@ -291,7 +294,7 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 
 	sscanf(buffer, "%d", &playerBet);
 
-	newPlayer.bet = playerBet;	
+	newPlayer.bet = playerBet;
 	newPlayer.betMultiplier = 1;
 
 	// add player to the player list
@@ -305,4 +308,3 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 
 	return WAITING_FOR_NEW_GAME;
 }
-
