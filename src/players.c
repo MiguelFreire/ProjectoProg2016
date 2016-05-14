@@ -178,6 +178,7 @@ int updatePlayerHandValue(Player *player) {
 	printf("%d aces \n", numAces);
 	if(handValue == 21) {
 		player->state = BLACKJACK;
+		player->betMultiplier = BLACKJACK_MULTIPLIER;
 		return handValue;
 	} else if(handValue > 21 && numAces > 0) {
 		for(int k = 1; k <= numAces; k++) {

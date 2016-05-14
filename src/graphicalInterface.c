@@ -12,7 +12,28 @@
 #include "players.h"
 
 
+void calcSlotDim(GameTable *table){
+    int separatorPos = (int)(0.95f*WINDOW_WIDTH);
 
+    for (int i = 0; i < TABLE_SLOTS; i++){
+        table->slotDim[i].x = i*(separatorPos/4)+5;
+        table->slotDim[i].y = (int) (0.55f*WINDOW_HEIGHT);
+        table->slotDim[i].w = separatorPos/4-10;
+        table->slotDim[i].h = (int) (0.42f*WINDOW_HEIGHT);
+    }
+}
+
+int mouseIsOverSlot(GameTable *table, int mouseX, int mouseY){
+    SlotDim slot;
+    for (int i = 0; i < TABLE_SLOTS; i++){
+        slot = table->slotDim[i];
+        if (mouseX > slot.x && mouseX < slot.x + slot.w 
+            && mouseY > slot.y && mouseY < slot.y + slot.h){
+            return i;
+        }
+    }
+    return (-1);
+}
 
 /**
  * RenderTable: Draws the table where the game will be played, namely:
@@ -24,11 +45,11 @@
  * \param _img surfaces where the table background and IST logo were loaded
  * \param _renderer renderer to handle all rendering in a window
  */
-void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable *table) {
+void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable *table, int phase){
     SDL_Color black = { 0, 0, 0 }; // black
     SDL_Color white = { 255, 255, 255 }; // white
 
-    char name_money_str[MAX_BUFFER_SIZE];
+    char nameMoneyStr[MAX_BUFFER_SIZE];
     SDL_Texture *table_texture;
     SDL_Rect tableSrc, tableDest, playerRect;
     int separatorPos = (int)(0.95f*WINDOW_WIDTH); // seperates the left from the right part of the window
@@ -40,6 +61,7 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     // clear the window
     SDL_RenderClear( _renderer );
 
+    // render table texture
     tableDest.x = tableSrc.x = 0;
     tableDest.y = tableSrc.y = 0;
     tableSrc.w = _img[0]->w;
@@ -51,42 +73,57 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     table_texture = SDL_CreateTextureFromSurface(_renderer, _img[0]);
     SDL_RenderCopy(_renderer, table_texture, &tableSrc, &tableDest);
 
+
+
+    // render side area
     // render the IST Logo
     height = RenderLogo(separatorPos, 0, _img[1], _renderer);
 
-    // render the authors names
-    height += RenderText(separatorPos+3*MARGIN, height, AUTHOR_NAME1, _font, &black, _renderer);
+    // render player names and money
+    height += 50;
+    char phaseStr[3];
+    sprintf(phaseStr, "Phase %d", phase);
+    height += RenderText(separatorPos+3*MARGIN, height, phaseStr, _font, &black, _renderer);
+    height += RenderText(separatorPos+3*MARGIN, height, "==============", _font, &black, _renderer);
+    for (int i = 0; i < TABLE_SLOTS; i++){
+        if (!slotIsEmpty(table->slots[i])){
+            sprintf(nameMoneyStr, "%s - %d€", table->slots[i]->player.name, table->slots[i]->player.money);
+            height += RenderText(separatorPos+3*MARGIN, height, nameMoneyStr, _font, &black, _renderer);
+        }
+    }
+    RenderText(separatorPos+3*MARGIN, height, "==============", _font, &black, _renderer);
+    
 
-    height += RenderText(separatorPos+3*MARGIN, height, AUTHOR_NUMBER1, _font, &black, _renderer);
 
-    // render the authors numbers
-    height += RenderText(separatorPos+3*MARGIN, height, AUTHOR_NAME2, _font, &black, _renderer);
-
-    RenderText(separatorPos+3*MARGIN, height, AUTHOR_NUMBER2, _font, &black, _renderer);
-
-
-
-    // renders the areas for each player: names and money too !
+    // render player areas
     for ( int i = 0; i < TABLE_SLOTS; i++)
     {
-        if(!slotIsEmpty(table->slots[i])) { // check if there is a player in that slot
-            playerRect.x = i*(separatorPos/4)+10;
-            playerRect.y = (int) (0.55f*WINDOW_HEIGHT);
-            playerRect.w = separatorPos/4-5;
-            playerRect.h = (int) (0.42f*WINDOW_HEIGHT);
+            playerRect.x = table->slotDim[i].x;
+            playerRect.y = table->slotDim[i].y;
+            playerRect.w = table->slotDim[i].w;
+            playerRect.h = table->slotDim[i].h;
 
-            // draw a rectangle in the current player area
+            // Draw the player area
+            SDL_SetRenderDrawColor(_renderer, 80, 255, 40, 50);
+            SDL_RenderFillRect(_renderer, &playerRect);
+
+        if(!slotIsEmpty(table->slots[i])) { // check if there is a player in that slot
+            
+            // draw a rectangle around the current player area
             if(i == table->currentPlayer){
                 SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
                 SDL_RenderDrawRect(_renderer, &playerRect);
             }
 
-            sprintf(name_money_str,"%s -- %d euros -- %d bet", table->slots[i]->player.name, table->slots[i]->player.money, 
-                table->slots[i]->player.bet);
-            RenderText(playerRect.x+20, playerRect.y-30, name_money_str, _font, &white, _renderer);
+            sprintf(nameMoneyStr,"%s -- %d bet -- %d points",
+                table->slots[i]->player.name,
+                table->slots[i]->player.bet * table->slots[i]->player.betMultiplier,
+                table->slots[i]->player.handValue);
+            RenderText(playerRect.x+20, playerRect.y-30, nameMoneyStr, _font, &white, _renderer);
         }
         
     }
+
 
     // destroy everything
     SDL_DestroyTexture(table_texture);
@@ -146,7 +183,7 @@ void RenderHouseCards(SDL_Surface **_cards, SDL_Renderer* _renderer, House *hous
     for ( card = 0; card < house->numCards; card++)
     {
         // players still playing ? draw a card face down
-        if (card == 1 && house->state == HOUSE_WAITING)
+        if (card == 1 && house->numCards == 2 && house->state == HOUSE_WAITING)
         {
             Card cardDown = {0};
             x = (div/2-house->numCards/2+card)*CARD_WIDTH + 15;
@@ -426,6 +463,8 @@ SDL_Renderer* CreateRenderer(int width, int height, SDL_Window *_window)
 
     // set size of renderer to the same as window
     SDL_RenderSetLogicalSize( renderer, width+EXTRASPACE, height );
+
+    SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
 
     return renderer;
 }

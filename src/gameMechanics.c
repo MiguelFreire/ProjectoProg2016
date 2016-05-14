@@ -25,7 +25,10 @@ int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 		player->state = HIT;
 		player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 		player->handValue = updatePlayerHandValue(player);
-		printf("%d - %d\n", player->state, player->handValue);
+		printf("player %d - %d\n", player->state, player->handValue);
+		if (player->state == BUSTED){
+			bust(player);
+		}
 
 		if(player->state == BUSTED || player->state == BLACKJACK) return (actionStand(table));
 	} else if(subject == HOUSE) {
@@ -51,19 +54,52 @@ int actionStand(GameTable *table) {
 }
 
 int actionNewGame(GameTable *table, Pile *cardPile) {
-	PlayerNode *curPlayer = NULL;
+	Player *curPlayer = NULL;
+
+	// empty house's hand
+	while (table->house->hand != NULL){
+		table->house->hand = popHand(table->house->hand, NULL, &table->house->numCards);
+	}
+
+	// empty players hands
+	for (int i = 0; i < TABLE_SLOTS; i++){
+		if(!slotIsEmpty(table->slots[i])){
+			curPlayer = &table->slots[i]->player;
+			while (curPlayer->hand != NULL){
+				curPlayer->hand = popHand(curPlayer->hand, NULL, &curPlayer->numCards);
+			}
+		}
+	}
+
+
 	// deal 2 cards to each player and house
 	for (int i = 0; i < 2; i++){
 		// hand a card to each player
 		for (int j = 0; j < TABLE_SLOTS; j++){
 			if(!slotIsEmpty(table->slots[j])){
-				curPlayer = table->slots[j];
-				curPlayer->player.hand = pushToHand(curPlayer->player.hand, dealCard(cardPile), &curPlayer->player.numCards);
+				curPlayer = &table->slots[j]->player;
+				curPlayer->hand = pushToHand(curPlayer->hand, dealCard(cardPile), &curPlayer->numCards);
 			}
 		}
 	// hand a card to the house
 	table->house->hand = pushToHand(table->house->hand , dealCard(cardPile), &table->house->numCards);
 	}
+
+	// take everyone's bet, reset their states and update their hand values
+	for (int i = 0; i < TABLE_SLOTS; i++){
+		if(!slotIsEmpty(table->slots[i])){
+			curPlayer = &table->slots[i]->player;
+
+			curPlayer->money -= curPlayer->bet;
+			curPlayer->state = STANDARD;
+			curPlayer->handValue = updatePlayerHandValue(curPlayer);
+
+		}
+	}
+	table->house->handValue = getHandValue(table->house->hand, table->house->numCards);
+	table->house->state = HOUSE_WAITING;
+	// reset current player
+	table->currentPlayer = 0;
 
 	return PLAYERS_PLAYING;
 }
@@ -73,7 +109,7 @@ void actionDouble(GameTable *table, Pile *cardPile) {
 	if(player->state == HIT) return;
 
 	player->money -= player->bet;
-	player->betMultiplier = 2;
+	player->betMultiplier = DOUBLE_MULTIPLIER;
 
 	actionHit(table, cardPile, PLAYER);
 	actionStand(table);
@@ -128,29 +164,11 @@ void actionBet(GameTable *table) {
    return;
 }
 
-void executeEAAction(GameTable *table, Pile *cardPile, EAAction action) {
-	switch (action) {
-		case aHIT:
-			actionHit(table, cardPile, PLAYER);
-			break;
-		case aSTAND:
-			actionStand(table);
-			break;
-		case aDOUBLE:
-			actionDouble(table, cardPile);
-			break;
-		case aSURRENDER:
-			actionSurrender(table);
-			break;
-		default:
-			return;
-	}
-}
-
 int houseTurn(GameTable *table, House *house, Pile *cardPile){
 	if (house->handValue < 17){
 		return actionHit(table, cardPile, HOUSE);
 	}
+	house->state = COLECTING_BETS;
 	return COLECTING_BETS;
 }
 
@@ -178,13 +196,15 @@ int colectBets(GameTable *table, House *house){
 		house->state != HOUSE_BLACKJACK && player->state != BLACKJACK) // and none has blackjack
 	){
 		player->state = TIED;
+		player->stats.tied ++;
+		player->money += player->bet * (player->betMultiplier + (1 - (player->state == BLACKJACK) * BLACKJACK_MULTIPLIER ));
 
 	} else if ( // LOSE
 		house->state == HOUSE_BLACKJACK // house has a blackjack
 		|| (player->handValue < house->handValue && house->state != HOUSE_BUSTED) // house has more points than the player
 		){
 		player->state = LOST;
-		player->money -= player->bet * player->betMultiplier;
+		player->stats.lost ++;
 
 	} else if ( // WIN
 		player->state == BLACKJACK // player has blackjack
@@ -192,13 +212,76 @@ int colectBets(GameTable *table, House *house){
 		|| player->handValue > house->handValue // player has more points than house
 	){
 		player->state = WON;
-		player->money += player->bet * player->betMultiplier;
-	}
-
-	// take the cards from player hand
-	while (player->hand != NULL){
-		player->hand = popHand(player->hand, NULL, &player->numCards);
+		player->stats.won ++;
+		player->money += player->bet * (1 + player->betMultiplier); // give taken bet plus winnings
 	}
 
 	return COLECTING_BETS;
+}
+
+void bust(Player *player){
+	player->money -= player->bet * player->betMultiplier;
+}
+
+int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
+	Player newPlayer = {0};
+	char buffer[MAX_BUFFER_SIZE] = {0};
+	// ask for new player's name
+	printf("What's the name of the player?\n");
+	printf("(Write CANCEL to quit)\n");
+
+	char playerName[MAX_BUFFER_SIZE]; // TODO mudar o tamanho disto para o maximo do nome
+
+	fgets(playerName, MAX_BUFFER_SIZE, stdin);
+	playerName[strlen(playerName)-1] = '\0';
+
+	strcpy(newPlayer.name, playerName);
+
+	// ask for new player's type
+	printf("What's the type of the player (HU/EA)\n");
+	char playerType[MAX_PLAYER_TYPE_SIZE + 1];
+
+	fgets(playerType, MAX_PLAYER_TYPE_SIZE + 2, stdin);
+	playerType[strlen(playerType)-1] = '\0';
+
+	if(strcmp(playerType, "HU") == 0){
+		newPlayer.type = HUMAN;
+	} else if (strcmp(playerType, "EA") == 0){
+		newPlayer.type = CPU;
+	}
+
+	// ask for new player's money
+	printf("Introduce the initial money for this player\n");
+	int playerMoney;
+
+	fgets(buffer, MAX_BUFFER_SIZE, stdin);
+	buffer[strlen(buffer)-1] = '\0';
+	printf("%s\n", buffer);
+
+	sscanf(buffer, "%d", &playerMoney);
+
+	newPlayer.money = playerMoney;
+
+	// ask for new player's bet
+	printf("Introduce the initial bet for this player\n");
+	int playerBet;
+
+	fgets(buffer, MAX_BUFFER_SIZE, stdin);
+	buffer[strlen(buffer)-1] = '\0';
+
+	sscanf(buffer, "%d", &playerBet);
+
+	newPlayer.bet = playerBet;
+	newPlayer.betMultiplier = 1;
+
+	// add player to the player list
+	playerList->tail = createPlayer(playerList, newPlayer);
+
+	table->slots[slotClicked] = playerList->tail;
+
+	listPlayers(playerList);
+
+	printf("New player added\n");
+
+	return WAITING_FOR_NEW_GAME;
 }

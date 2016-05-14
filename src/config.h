@@ -14,7 +14,7 @@
 #define EXTRASPACE	150
 #define MARGIN	5
 
-#define RENDER_DELAY 300	// delay between renders (ms)
+#define RENDER_DELAY 500	// delay between renders (ms)
 
 #define DECK_SIZE	52	// num of card in a deck
 #define CARD_RANKS	13	// num of different card ranks
@@ -29,6 +29,9 @@
 #define MAX_BUFFER_SIZE 100	// max size for some buffers
 
 #define MAX_PLAYER_TYPE_SIZE 2	// max size for player type chars buffer
+
+#define BLACKJACK_MULTIPLIER	1.5 // bet multiplier for blackjack
+#define DOUBLE_MULTIPLIER 	2 // bet multiplier for double
 
 #define SETTINGS_FILE_NAME "settings.txt"
 #define HARD_EA_MATRIX  "EAHardMatrix.txt"
