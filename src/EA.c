@@ -96,3 +96,11 @@ int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
         return hardMatrix[row][col];
     }
 }
+
+int HiLoCounter(CardNode *node) {
+    int HiLoMatrix[CARD_RANKS] = {1,1,1,1,1,0,0,0,-1,-1,-1,-1,-1};
+
+    int value = HiLoMatrix[node->card.rank];
+
+    return value;
+}

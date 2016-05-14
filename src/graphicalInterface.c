@@ -28,7 +28,7 @@ int mouseIsOverSlot(GameTable *table, int mouseX, int mouseY){
     SlotDim slot;
     for (int i = 0; i < TABLE_SLOTS; i++){
         slot = table->slotDim[i];
-        if (mouseX > slot.x && mouseX < slot.x + slot.w 
+        if (mouseX > slot.x && mouseX < slot.x + slot.w
             && mouseY > slot.y && mouseY < slot.y + slot.h){
             return i;
         }
@@ -70,7 +70,7 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     textX = textRect.x + textRect.w/4;
                     textY = textRect.y + textRect.h/8;
                     textY += RenderText(textX, textY, "BUSTED", font, &white, renderer);
-                    sprintf(moneyStr, "-%d€", player->bet * player->betMultiplier);
+                    sprintf(moneyStr, "-%.2f€", player->bet * player->betMultiplier);
                     RenderText(textX + textRect.w/8, textY, moneyStr, font, &white, renderer);
                     break;
                 case BLACKJACK:
@@ -84,7 +84,7 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     textX = textRect.x + textRect.w/10;
                     textY = textRect.y + textRect.h/8;
                     textY += RenderText(textX, textY, "BLACKJACK", font, &white, renderer);
-                    sprintf(moneyStr, "+%d€", player->bet * player->betMultiplier);
+                    sprintf(moneyStr, "+%.2f€", player->bet * player->betMultiplier);
                     RenderText(textX + textRect.w/3, textY, moneyStr, font, &white, renderer);
                     break;
                 case SURRENDERED:
@@ -189,7 +189,7 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
         }
     }
     RenderText(separatorPos+3*MARGIN, height, "==============", _font, &black, _renderer);
-    
+
 
 
     // render player areas
@@ -205,20 +205,20 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
             SDL_RenderFillRect(_renderer, &playerRect);
 
         if(!slotIsEmpty(table->slots[i])) { // check if there is a player in that slot
-            
+
             // draw a rectangle around the current player area
             if(i == table->currentPlayer){
                 SDL_SetRenderDrawColor(_renderer, 255, 255, 255, 255);
                 SDL_RenderDrawRect(_renderer, &playerRect);
             }
 
-            sprintf(nameMoneyStr,"%s -- %d bet -- %d points",
+            sprintf(nameMoneyStr,"%s -- %.2f bet -- %d points",
                 table->slots[i]->player.name,
                 table->slots[i]->player.bet * table->slots[i]->player.betMultiplier,
                 table->slots[i]->player.handValue);
             RenderText(playerRect.x+20, playerRect.y-30, nameMoneyStr, _font, &white, _renderer);
         }
-        
+
     }
 
 
@@ -256,7 +256,7 @@ void RenderPlayerCards(SDL_Surface **_cards, SDL_Renderer* _renderer, GameTable 
             if ( pos == 2 || pos == 3) y += CARD_HEIGHT + 10;
             // render it !
             RenderCard(x, y, peekHand(curPlayer->hand, curPlayer->numCards - card), _cards, _renderer);
-        }        
+        }
     }
 }
 
@@ -294,8 +294,8 @@ void RenderHouseCards(SDL_Surface **_cards, SDL_Renderer* _renderer, House *hous
             // render it !
             RenderCard(x, y, peekHand(house->hand, house->numCards - card), _cards, _renderer);
         }
-        
-    }   
+
+    }
 }
 
 

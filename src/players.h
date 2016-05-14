@@ -51,7 +51,8 @@ typedef struct {
 typedef struct {
 	PlayerType type;
 	char name[MAX_NAME_SIZE + 1];
-	int money, bet, betMultiplier;
+	int money, bet;
+	float betMultiplier;
 	PlayerState state;
 	int numCards, handValue;
 	CardNode *hand;
