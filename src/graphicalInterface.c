@@ -10,6 +10,7 @@
 #include "gameMechanics.h"
 #include "graphicalInterface.h"
 #include "players.h"
+#include "main.h"
 
 
 void calcSlotDim(GameTable *table){
@@ -33,6 +34,102 @@ int mouseIsOverSlot(GameTable *table, int mouseX, int mouseY){
         }
     }
     return (-1);
+}
+
+void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int phase){
+    SDL_Rect stateRect, textRect;
+    int textX, textY;
+    SDL_Color white = { 255, 255, 255 }; // white
+    SDL_Color black = {0,0,0}; // black
+    char moneyStr[MAX_BUFFER_SIZE];
+    Player *player;
+
+    for (int i = 0; i < TABLE_SLOTS; i++){
+        stateRect.x = table->slotDim[i].x + 10;
+        stateRect.y = table->slotDim[i].y + 10;
+        stateRect.w = table->slotDim[i].w - 20;
+        stateRect.h = table->slotDim[i].h - 20;
+
+        textRect.x = stateRect.x + stateRect.w/8;
+        textRect.y = stateRect.y + stateRect.h/3;
+        textRect.w = stateRect.w*3/4;
+        textRect.h = stateRect.h/3;
+
+        if(!slotIsEmpty(table->slots[i])){
+            player = &table->slots[i]->player;
+
+            switch (player->state){
+                case BUSTED:
+                    // big rectangle
+                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 100);
+                    SDL_RenderFillRect(renderer, &stateRect);
+                    // small rectangle
+                    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 220);
+                    SDL_RenderFillRect(renderer, &textRect);
+                    // text
+                    textX = textRect.x + textRect.w/4;
+                    textY = textRect.y + textRect.h/8;
+                    textY += RenderText(textX, textY, "BUSTED", font, &white, renderer);
+                    sprintf(moneyStr, "-%d€", player->bet * player->betMultiplier);
+                    RenderText(textX + textRect.w/8, textY, moneyStr, font, &white, renderer);
+                    break;
+                case BLACKJACK:
+                    // big rectangle
+                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 100);
+                    SDL_RenderFillRect(renderer, &stateRect);
+                    // small rectangle
+                    SDL_SetRenderDrawColor(renderer, 0, 255, 0, 220);
+                    SDL_RenderFillRect(renderer, &textRect);
+                    // text
+                    textX = textRect.x + textRect.w/10;
+                    textY = textRect.y + textRect.h/8;
+                    textY += RenderText(textX, textY, "BLACKJACK", font, &white, renderer);
+                    sprintf(moneyStr, "+%d€", player->bet * player->betMultiplier);
+                    RenderText(textX + textRect.w/3, textY, moneyStr, font, &white, renderer);
+                    break;
+                case SURRENDERED:
+                    // big rectangle
+                    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 100);
+                    SDL_RenderFillRect(renderer, &stateRect);
+                    // small rectangle
+                    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 220);
+                    SDL_RenderFillRect(renderer, &textRect);
+                    // text
+                    textX = textRect.x + textRect.w/10;
+                    textY = textRect.y + textRect.h/8;
+                    textY += RenderText(textX, textY, "SURRENDERED", font, &white, renderer);
+                    sprintf(moneyStr, "-%d€", player->bet/2);
+                    RenderText(textX + textRect.w/3, textY, moneyStr, font, &white, renderer);
+                    break;
+                case BROKE:
+                    // big rectangle
+                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 100);
+                    SDL_RenderFillRect(renderer, &stateRect);
+                    // small rectangle
+                    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 220);
+                    SDL_RenderFillRect(renderer, &textRect);
+                    // text
+                    textX = textRect.x + textRect.w/4;
+                    textY = textRect.y + textRect.h/8;
+                    RenderText(textX, textY, "BROKE", font, &white, renderer);
+                default:
+                    break;
+            }
+        } else {
+            if (phase == ADDING_PLAYER){
+                // big rectangle
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 100);
+                SDL_RenderFillRect(renderer, &stateRect);
+                // small rectangle
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 220);
+                SDL_RenderFillRect(renderer, &textRect);
+                // text
+                textX = textRect.x + textRect.w/10;
+                textY = textRect.y + textRect.h/8;
+                textY += RenderText(textX, textY, "ADD PLAYER", font, &black, renderer);
+            }
+        }
+    }
 }
 
 /**

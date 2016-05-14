@@ -38,9 +38,9 @@ int actionStand(GameTable *);
 
 int actionNewGame(GameTable *table, Pile *cardPile);
 
-void actionDouble(GameTable *, Pile *);
+int actionDouble(GameTable *, Pile *);
 
-void actionSurrender(GameTable *);
+int actionSurrender(GameTable *);
 
 void actionBet(GameTable *);
 

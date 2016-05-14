@@ -14,7 +14,7 @@
 #define EXTRASPACE	150
 #define MARGIN	5
 
-#define RENDER_DELAY 500	// delay between renders (ms)
+#define RENDER_DELAY 200	// delay between renders (ms)
 
 #define DECK_SIZE	52	// num of card in a deck
 #define CARD_RANKS	13	// num of different card ranks

@@ -96,12 +96,12 @@ int main(int argc, char *argv[]){
 							break;
 						case SDLK_d: // double
 						    if (phase == PLAYERS_PLAYING){
-						    	actionDouble(&table, &cardPile);
+						    	phase = actionDouble(&table, &cardPile);
 						    }
 							break;
 						case SDLK_r: // surrender
 							if (phase == PLAYERS_PLAYING){
-								actionSurrender(&table);
+								phase = actionSurrender(&table);
 							}
 							break;
 						case SDLK_b: // bet
@@ -162,6 +162,8 @@ int main(int argc, char *argv[]){
 		if (phase == HOUSE_TURN){
 			printf("house turn\n");
 			phase = houseTurn(&table, &house, &cardPile);
+			if (phase == COLECTING_BETS)
+				table.currentPlayer = 0;
 		}
 
 		if (phase == COLECTING_BETS){
@@ -175,6 +177,8 @@ int main(int argc, char *argv[]){
 		RenderPlayerCards(cards, renderer, &table);
 		// render house cards
 		RenderHouseCards(cards, renderer, &house);
+		// render info orverlays
+		renderStates(serif, renderer, &table, phase);
 		// put to screen all changes above
 		SDL_RenderPresent(renderer);
         // add a delay

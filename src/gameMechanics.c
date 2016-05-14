@@ -26,9 +26,6 @@ int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 		player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 		player->handValue = updatePlayerHandValue(player);
 		printf("player %d - %d\n", player->state, player->handValue);
-		if (player->state == BUSTED){
-			bust(player);
-		}
 
 		if(player->state == BUSTED || player->state == BLACKJACK) return (actionStand(table));
 	} else if(subject == HOUSE) {
@@ -98,30 +95,37 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 	}
 	table->house->handValue = getHandValue(table->house->hand, table->house->numCards);
 	table->house->state = HOUSE_WAITING;
-	// reset current player
+	// select first player
 	table->currentPlayer = 0;
+	while(slotIsEmpty(table->slots[table->currentPlayer]) 
+		|| table->slots[table->currentPlayer]->player.state == BLACKJACK){
+		table->currentPlayer ++;
+	}
 
 	return PLAYERS_PLAYING;
 }
 
-void actionDouble(GameTable *table, Pile *cardPile) {
+int actionDouble(GameTable *table, Pile *cardPile) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
-	if(player->state == HIT) return;
+	if(player->state == HIT) return PLAYERS_PLAYING;
 
 	player->money -= player->bet;
 	player->betMultiplier = DOUBLE_MULTIPLIER;
 
-	actionHit(table, cardPile, PLAYER);
-	actionStand(table);
+	int newPhase;
+	newPhase = actionHit(table, cardPile, PLAYER);
+	if(player->state != BUSTED)
+		newPhase = actionStand(table);
+	return newPhase;
 }
 
-void actionSurrender(GameTable *table) {
+int actionSurrender(GameTable *table) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
-	if(player->state == HIT) return;
+	if(player->state == HIT) return PLAYERS_PLAYING;
 
 	player->state = SURRENDERED;
 
-	actionStand(table);
+	return actionStand(table);
 }
 
 void actionBet(GameTable *table) {
@@ -173,20 +177,20 @@ int houseTurn(GameTable *table, House *house, Pile *cardPile){
 }
 
 int colectBets(GameTable *table, House *house){
-	table->currentPlayer = 0;
-	Player *player = &table->slots[table->currentPlayer]->player;
+	Player *player = NULL;
 
-	// find the next player to colect the bet
-	// busted players had their bet colected already, so they are passed
-	while (slotIsEmpty(table->slots[table->currentPlayer]) 
-		|| player->state == WON || player->state == LOST 
-		|| player->state == TIED || player->state == BUSTED) {
+	if (table->currentPlayer >= TABLE_SLOTS)
+		return WAITING_FOR_NEW_GAME;
+
+	while (slotIsEmpty(table->slots[table->currentPlayer])) {
 
 		table->currentPlayer++;
-		if (table->currentPlayer >= TABLE_SLOTS) return WAITING_FOR_NEW_GAME;
-		player = &table->slots[table->currentPlayer]->player;
 
+		if (table->currentPlayer >= TABLE_SLOTS)
+		return WAITING_FOR_NEW_GAME;
 	} 
+
+	player = &table->slots[table->currentPlayer]->player;
 	
 	
 	// test WIN, LOSS or TIE and colect or pay bets
@@ -200,10 +204,21 @@ int colectBets(GameTable *table, House *house){
 		player->money += player->bet * (player->betMultiplier + (1 - (player->state == BLACKJACK) * BLACKJACK_MULTIPLIER ));
 
 	} else if ( // LOSE
-		house->state == HOUSE_BLACKJACK // house has a blackjack
+	    player->state == BUSTED // player busted
+	    || player->state == SURRENDERED // player surrendered
+		|| house->state == HOUSE_BLACKJACK // house has a blackjack
 		|| (player->handValue < house->handValue && house->state != HOUSE_BUSTED) // house has more points than the player
 		){
-		player->state = LOST;
+		if (player->money < player->bet){
+			player->state = BROKE;
+		} else if (player->state == SURRENDERED){
+			player->state = SURRENDERED; // keep state
+		} else if (player->state == BUSTED){
+			player->state = BUSTED; // keep state
+		} else {
+			player->state = LOST;
+		}
+		
 		player->stats.lost ++;
 
 	} else if ( // WIN
@@ -211,11 +226,16 @@ int colectBets(GameTable *table, House *house){
 		|| house->state == HOUSE_BUSTED // house busted
 		|| player->handValue > house->handValue // player has more points than house
 	){ 
-		player->state = WON;
+		if (player->state == BLACKJACK){
+			player->state = BLACKJACK;
+		} else {
+			player->state = WON;
+		}
 		player->stats.won ++;
-		player->money += player->bet * (1 + player->betMultiplier); // give taken bet plus winnings
+		player->money += player->bet * 2 * (player->betMultiplier); // give taken bet plus winnings
 	}
 
+	table->currentPlayer++;
 	return COLECTING_BETS;
 }
 
@@ -285,3 +305,4 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 
 	return WAITING_FOR_NEW_GAME;
 }
+
