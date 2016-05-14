@@ -34,6 +34,7 @@
 #define DOUBLE_MULTIPLIER 	2 // bet multiplier for double
 
 #define SETTINGS_FILE_NAME "settings.txt"
+#define STATS_FILE_NAME "stats.txt"
 #define HARD_EA_MATRIX  "EAHardMatrix.txt"
 #define SOFT_EA_MATRIX  "EASoftMatrix.txt"
 
