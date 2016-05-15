@@ -14,7 +14,7 @@
 #define EXTRASPACE	150
 #define MARGIN	5
 
-#define RENDER_DELAY 200	// delay between renders (ms)
+#define RENDER_DELAY 300	// delay between renders (ms)
 
 #define DECK_SIZE	52	// num of card in a deck
 #define CARD_RANKS	13	// num of different card ranks
@@ -35,8 +35,8 @@
 
 #define SETTINGS_FILE_NAME "settings.txt"
 #define STATS_FILE_NAME "stats.txt"
-#define HARD_EA_MATRIX  "EAHardMatrix.txt"
-#define SOFT_EA_MATRIX  "EASoftMatrix.txt"
+#define HARD_EA_MATRIX  "./config/EAHardMatrix.txt"
+#define SOFT_EA_MATRIX  "./config/EASoftMatrix.txt"
 
 
 #define AUTHOR_NAME1	"Andre Agostinho"

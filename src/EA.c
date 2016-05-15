@@ -8,6 +8,22 @@
 #include "gameMechanics.h"
 #include "EA.h"
 
+int increaseEADelay(int delayLevel){
+    if (delayLevel < 5){
+        return delayLevel + 1;
+    } else {
+        return delayLevel;
+    }
+}
+
+int decreaseEADelay(int delayLevel){
+    if (delayLevel > 1){
+        return delayLevel - 1;
+    } else {
+        return delayLevel;
+    }
+}
+
 int **readSoftEAMatrix() {
     FILE *file = fopen(SOFT_EA_MATRIX, "r");
     if(file == NULL) fireFileNotFoundError(SOFT_EA_MATRIX);
@@ -62,12 +78,16 @@ int getAction(char action) {
     switch (action) {
         case 'H':
             return aHIT;
+            break;
         case 'D':
             return aDOUBLE;
+            break;
         case 'S':
             return aSTAND;
+            break;
         case 'R':
             return aSURRENDER;
+            break;
         default:
             return -1;
     }
@@ -76,10 +96,9 @@ int getAction(char action) {
 int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
     CardNode *playerHand =  table->slots[table->currentPlayer]->player.hand;
     CardNode *houseHand = table->house->hand;
-    int numCards = table->slots[table->currentPlayer]->player.numCards;
 
-    int houseCard = houseHand->card.rank;
-    int playerHandValue = getHandValue(playerHand, numCards);
+    int houseCard = houseHand->next->card.value;
+    int playerHandValue = table->slots[table->currentPlayer]->player.handValue;
 
     int col = houseCard - 2;
     int row = 0;
@@ -88,11 +107,13 @@ int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
         //soft
         if(playerHandValue >= 19) row = 6;
         else row = playerHandValue - 13;
+        printf ("row: %d, colummn: %d\n", row, col);
         return softMatrix[row][col];
     } else {
         if(playerHandValue >= 17) row = 9;
         else if(isBetween(playerHandValue, 4,8)) row = 0;
         else row = playerHandValue - 8;
+        printf ("row: %d, colummn: %d\n", row, col);
         return hardMatrix[row][col];
     }
 }

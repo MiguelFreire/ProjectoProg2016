@@ -142,7 +142,7 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
  * \param _img surfaces where the table background and IST logo were loaded
  * \param _renderer renderer to handle all rendering in a window
  */
-void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable *table, int phase){
+void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable *table, int phase, int delayLevel){
     SDL_Color black = { 0, 0, 0 }; // black
     SDL_Color white = { 255, 255, 255 }; // white
 
@@ -176,11 +176,19 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     // render the IST Logo
     height = RenderLogo(separatorPos, 0, _img[1], _renderer);
 
-    // render player names and money
+   
     height += 50;
-    char phaseStr[3];
+    // render phase
+    char phaseStr[10];
     sprintf(phaseStr, "Phase %d", phase);
     height += RenderText(separatorPos+3*MARGIN, height, phaseStr, _font, &black, _renderer);
+
+    // render delay level
+    char delayStr[10];
+    sprintf(delayStr, "Delay %d", delayLevel);
+    height += RenderText(separatorPos+3*MARGIN, height, delayStr, _font, &black, _renderer);
+
+    // render player names and money
     height += RenderText(separatorPos+3*MARGIN, height, "==============", _font, &black, _renderer);
     for (int i = 0; i < TABLE_SLOTS; i++){
         if (!slotIsEmpty(table->slots[i])){
@@ -212,9 +220,9 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
                 SDL_RenderDrawRect(_renderer, &playerRect);
             }
 
-            sprintf(nameMoneyStr,"%s -- %.2f bet -- %d points",
+            sprintf(nameMoneyStr,"%s -- %d bet -- %d points",
                 table->slots[i]->player.name,
-                table->slots[i]->player.bet * table->slots[i]->player.betMultiplier,
+                (int)(table->slots[i]->player.bet * table->slots[i]->player.betMultiplier),
                 table->slots[i]->player.handValue);
             RenderText(playerRect.x+20, playerRect.y-30, nameMoneyStr, _font, &white, _renderer);
         }

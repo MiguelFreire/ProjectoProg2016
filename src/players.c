@@ -182,7 +182,6 @@ int updatePlayerHandValue(Player *player) {
 	CardNode *curr = player->hand;
 	int numAces = hasAces(curr, player->numCards);
 	int handValue = getHandValue(curr, player->numCards);
-	printf("%d aces \n", numAces);
 	if(handValue == 21) {
 		player->state = BLACKJACK;
 		player->betMultiplier = BLACKJACK_MULTIPLIER;

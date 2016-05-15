@@ -20,6 +20,7 @@ bool slotIsEmpty(PlayerNode *slot){
 }
 
 int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
+	printf("Hits\n");
 	if(subject == PLAYER) {
 		Player *player = &(table->slots[table->currentPlayer]->player);
 		player->state = HIT;
@@ -47,6 +48,7 @@ int actionStand(GameTable *table) {
 	} while (slotIsEmpty(table->slots[table->currentPlayer]) ||
 		table->slots[table->currentPlayer]->player.state != STANDARD); // next player has a BLACKJACK
 
+	printf("Stood\n");
 	return PLAYERS_PLAYING;
 }
 
@@ -89,6 +91,7 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 
 			updateMoney(curPlayer, -curPlayer->bet);
 			curPlayer->state = STANDARD;
+			curPlayer->betMultiplier = 1;
 			curPlayer->handValue = updatePlayerHandValue(curPlayer);
 
 		}
@@ -102,6 +105,7 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 		table->currentPlayer ++;
 	}
 
+	printf ("Started a new game\n");
 	return PLAYERS_PLAYING;
 }
 
@@ -116,6 +120,8 @@ int actionDouble(GameTable *table, Pile *cardPile) {
 	newPhase = actionHit(table, cardPile, PLAYER);
 	if(player->state != BUSTED)
 		newPhase = actionStand(table);
+
+	printf ("Doubled\n");
 	return newPhase;
 }
 
@@ -126,6 +132,7 @@ int actionSurrender(GameTable *table) {
 	player->state = SURRENDERED;
 	updateMoney(player, player->bet/2);
 
+	printf("Surrendered\n");
 	return actionStand(table);
 }
 
@@ -204,7 +211,7 @@ int colectBets(GameTable *table, House *house){
 	){
 		player->state = TIED;
 		player->stats.tied ++;
-		updateMoney(player, player->bet * (player->betMultiplier + (1 - (player->state == BLACKJACK) * BLACKJACK_MULTIPLIER )));
+		updateMoney(player, player->bet * (player->betMultiplier - (player->state == BLACKJACK) * (BLACKJACK_MULTIPLIER -1)));
 
 	} else if ( // LOSE
 	    player->state == BUSTED // player busted
