@@ -103,7 +103,7 @@ int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
     int col = houseCard - 2;
     int row = 0;
 
-    if(hasAces(playerHand, 2) > 0) {
+    if(hasAces(playerHand) > 0) {
         //soft
         if(playerHandValue >= 19) row = 6;
         else row = playerHandValue - 13;

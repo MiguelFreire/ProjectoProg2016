@@ -104,7 +104,7 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 
 		}
 	}
-	table->house->handValue = getHandValue(table->house->hand, table->house->numCards);
+	table->house->handValue = getHandValue(table->house->hand, NULL);
 	table->house->state = HOUSE_WAITING;
 	// select first player
 	table->currentPlayer = 0;

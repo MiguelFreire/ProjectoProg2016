@@ -180,25 +180,48 @@ bool pileIsEmpty(Pile *pile){
 		|| pile->numCards == 0);
 }
 
-int getHandValue(CardNode *hand, int numCards) {
+
+/**
+ * @brief      Get the hand value
+ *
+ * @param      hand     ptr to the hand to count
+ * @param[out] numAces  ptr to the number of aces in hand
+ *
+ * @return     The hand value.
+ */
+int getHandValue(CardNode *hand, int *numAces) {
 	CardNode *curr = hand;
-	int handValue = 0;
+	int handValue = 0, aces = 0;
 	Card card = {0};
-	for(int i = 0; i < numCards; i++){
+	while(curr != NULL){
 		card = curr->card;
 
 		handValue += card.value;
+		if (card.rank == 13) aces ++; 
 
 		curr = curr->next;
 	}
 
+	for (int i = 0; i < aces; i++){
+		if (handValue > 21) handValue -= 10; // change ace's value to 1
+	}
+
+	if (numAces != NULL) *numAces = aces;
+
 	return handValue;
 }
 
-int hasAces(CardNode *hand, int numCards) {
+/**
+ * @brief      Counts the number of aces in the hand
+ *
+ * @param      hand  ptr to the hand
+ *
+ * @return     num of aces in hand
+ */
+int hasAces(CardNode *hand) {
 	int numAces = 0;
 	CardNode *curr = hand;
-	for(int i = 0; i < numCards; i++) {
+	while (curr != NULL) {
 		if(curr->card.rank == 13) numAces++;
 		curr = curr->next;
 	}

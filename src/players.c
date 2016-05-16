@@ -9,7 +9,9 @@
 #include "cards.h"
 #include "players.h"
 
-// PLayer functions
+//////////////////////////////////////////////////////////////////////////////
+//								Players Funtions							//
+//////////////////////////////////////////////////////////////////////////////
 
 /**
  * @brief      Creates an empty player list structure and returns it
@@ -101,13 +103,22 @@ bool playerListIsEmpty(PlayerList *list){
 
 
 
+/**
+ * @brief      Updates player money
+ *
+ * @param      player  ptr to the player to update money
+ * @param[in]  amount  the amount of money to increase (negative to decrease)
+ */
 void updateMoney(Player *player, int amount){
 	player->money += amount;
 	player->stats.houseGains -= amount;
 }
 
 
-// House fucntions
+
+//////////////////////////////////////////////////////////////////////////////
+//								House Funtions								//
+//////////////////////////////////////////////////////////////////////////////
 
 /**
  * @brief      Creates an empty house structure and returns it
@@ -120,7 +131,10 @@ House createHouse(){
 }
 
 
-// hand functions
+
+//////////////////////////////////////////////////////////////////////////////
+//									Hand Funtions							//
+//////////////////////////////////////////////////////////////////////////////
 
 /**
  * @brief      Inserts a card (node) in the top of the hand
@@ -139,6 +153,7 @@ CardNode *pushToHand(CardNode *hand, CardNode *newCard, int *numCards){
 	(*numCards)++;
 	return newCard;
 }
+
 
 /**
  * @brief      Removes a card (node) from the top of the hand
@@ -160,6 +175,7 @@ CardNode *popHand(CardNode *hand, Card *cardContent, int *numCards){
 	return hand;
 }
 
+
 /**
  * @brief      Retrieves the content of a card from the hand
  *
@@ -178,56 +194,58 @@ Card peekHand(CardNode *hand, int cardNumber){
 	return hand->card;
 }
 
+
+/**
+ * @brief      Calculates the player's hand value and updates state acording
+ *             to the hand value
+ *
+ * @param      player  ptr to the player
+ *
+ * @return     the player's hand value
+ */
 int updatePlayerHandValue(Player *player) {
 	CardNode *curr = player->hand;
-	int numAces = hasAces(curr, player->numCards);
-	int handValue = getHandValue(curr, player->numCards);
-	if(handValue == 21) {
+	int handValue = getHandValue(curr, NULL);
+
+	if(handValue == 21 && player->numCards == 2){
 		player->state = BLACKJACK;
-		player->betMultiplier = BLACKJACK_MULTIPLIER;
-		return handValue;
-	} else if(handValue > 21 && numAces > 0) {
-		for(int k = 1; k <= numAces; k++) {
-        	if(handValue <= 21) break;
-        	handValue -= 10;
-        }
-        if (handValue > 21) player->state = BUSTED;
 		return handValue;
 
 	} else if(handValue > 21) {
 		player->state = BUSTED;
 		return handValue;
+
+	} else {
+		return handValue;
 	}
-
-	return handValue;
-
 }
 
+
+/**
+ * @brief      Calculates the house's hand value and updates its state
+ *             acording to the hand value
+ *
+ * @param      house  ptr to the house
+ *
+ * @return     the house hand value
+ */
 int updateHouseHandValue(House *house) {
 	CardNode *curr = house->hand;
-	int numAces = hasAces(curr, house->numCards);
-	int handValue = getHandValue(curr, house->numCards);
+	int handValue = getHandValue(curr, NULL);
 
-	if(handValue == 21) {
+	if(handValue == 21 && house->numCards == 2) {
 		house->state = HOUSE_BLACKJACK;
 		return handValue;
-	} else if(handValue > 21 && numAces > 0) {
-		for(int k = 1; k <= numAces; k++) {
-        	if(handValue <= 21) break;
-        	handValue -= 10;
-        }
-        if (handValue > 21) house->state = HOUSE_BUSTED;
 
-		return handValue;
 	} else if(handValue > 21) {
 		house->state = HOUSE_BUSTED;
 		return handValue;
-	} 
 
-	return handValue;
+	} else {
+		return handValue;
+	}
 }
 
-// House fucntions
 
 /**
  * @brief      Checks if the hand is empty
@@ -236,7 +254,6 @@ int updateHouseHandValue(House *house) {
  *
  * @return     true if the hand is empty, false otherwise
  */
-
 bool handIsEmpty(CardNode *hand){
 	return hand == NULL;
 }
