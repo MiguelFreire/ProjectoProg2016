@@ -3,4 +3,8 @@ TODO:
 @use message boxes for some information and to warn about terminal input needed
 @error check on add player
 @redo delay control
+@make a funtion to clear the terminal
+
+@maybes
 @maybe update player hand value when a card is pushed to the hand
+@maybe put parts of main in funtions

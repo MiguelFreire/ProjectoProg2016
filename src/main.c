@@ -70,6 +70,20 @@ int main(int argc, char *argv[]){
 	LoadCards(cards);
 
 	phase = WAITING_FOR_NEW_GAME;
+	// render for the first time
+	// render game table
+	RenderTable(serif, imgs, renderer, &table, phase, EADelayLevel);
+	// put to screen all changes above
+	SDL_RenderPresent(renderer);
+	// add a delay
+    SDL_Delay(2 * RENDER_DELAY);
+
+    // clear the terminal
+	printf("\033[2J\033[1;1H");
+	
+	// inform the user to press n for new game
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "New Game", 
+	"Press 'n' to start a new game", window);
 
 	while(!quit){
 		if (phase != PLAYERS_PLAYING || table.slots[table.currentPlayer]->player.type == HUMAN){
@@ -112,9 +126,12 @@ int main(int argc, char *argv[]){
 								}
 								break;
 							case SDLK_b: // bet
-							    
 								if (phase == WAITING_FOR_NEW_GAME){
+									// warn user that input is needed at the terminal
+									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed", 
+									"Please check the terminal to provide some input", window);
 									actionBet(&table);
+
 								}
 								break;
 							case SDLK_a: // add player
@@ -127,17 +144,23 @@ int main(int argc, char *argv[]){
 									}
 									if (emptySlots){
 										phase = ADDING_PLAYER;
+										// inform the user to click an empty slot
+										SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Adding Player", 
+										"Please click an empty slot to add a player", window);
 							    		printf("Adding player\n");
 									} else {
 										phase = WAITING_FOR_NEW_GAME;
+										// inform the user that there are no empty slots
+										SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Adding Player", 
+										"There are no empty slots for new players", window);
 										printf("There are no empty slots\n");
 									}
 							    }
 							    break;
-							case SDLK_UP:
+							case SDLK_UP: // increase EA delay
 								EADelayLevel = increaseEADelay(EADelayLevel);
 								break;
-							case SDLK_DOWN:
+							case SDLK_DOWN:	// decrease EA delay
 								EADelayLevel = decreaseEADelay(EADelayLevel);
 								break;
 						}
@@ -151,12 +174,14 @@ int main(int argc, char *argv[]){
 							// check position to add player
 							int mouseX, mouseY, slotClicked;
 							SDL_GetMouseState(&mouseX, &mouseY);
-							printf("clicked %d, %d\n", mouseX, mouseY);
 							slotClicked = mouseIsOverSlot(&table, mouseX, mouseY);
-							printf("slot: %d\n", slotClicked);
 							if (slotClicked >= 0){
-								printf("Clicked slot %d\n", slotClicked);
 								if (slotIsEmpty(table.slots[slotClicked])){
+									// warn user that input is needed at the terminal
+									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed", 
+									"Please check the terminal to provide some input", window);
+									printf("\033[2J\033[1;1H");
+									printf("Adding player at slot %d\n", slotClicked + 1);
 									phase = actionAddPlayer(slotClicked, &playerList, &table);
 								}
 								

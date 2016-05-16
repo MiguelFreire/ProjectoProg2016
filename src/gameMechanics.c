@@ -9,6 +9,7 @@
 #include "util.h"
 #include "main.h"
 #include "gameMechanics.h"
+#include "SDL2/SDL.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //							Game Table Funtions								//
@@ -188,6 +189,7 @@ int actionSurrender(GameTable *table) {
 }
 
 void actionBet(GameTable *table) {
+
 	// get player name
 	printf("What's the name of the player?\n");
 	printf("(Write CANCEL to quit)\n");
@@ -199,8 +201,10 @@ void actionBet(GameTable *table) {
 
 	Player *player = NULL;
 
-	if(strcmp("CANCEL",playerName) == 0) return;
-
+	if(strcmp("CANCEL",playerName) == 0) {
+		printf("You can return to game window\n");
+		return;
+	}
 	// search for player
 	for(int i = 0; i < TABLE_SLOTS; i++) {
 		if(!slotIsEmpty(table->slots[i]) && strcmp(table->slots[i]->player.name, playerName) == 0) {
@@ -211,6 +215,7 @@ void actionBet(GameTable *table) {
 	if(player == NULL) {
 		printf("Player not found\n");
 		actionBet(table);
+		return;
 	}
 
 	// check if the player is too broke
@@ -236,6 +241,7 @@ void actionBet(GameTable *table) {
 
     player->bet = newBet;
     printf("Bet set\n");
+    printf("You can return to game window\n");
 
     // check if player was and is no longer broke
     if (player->state == BROKE && player->money >= player->bet){
@@ -302,9 +308,8 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 
 	table->slots[slotClicked] = playerList->tail;
 
-	listPlayers(playerList);
-
 	printf("New player added\n");
+	printf("You can return to the game window\n");
 
 	return WAITING_FOR_NEW_GAME;
 }
