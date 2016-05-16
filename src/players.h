@@ -117,8 +117,11 @@ CardNode *pushToHand(CardNode *hand, CardNode *newCard, int *numCards);
 CardNode *popHand(CardNode *hand, Card *cardContent, int *numCards);
 Card peekHand(CardNode *hand, int cardNumber);
 bool handIsEmpty(CardNode *hand);
+int getHandValue(CardNode *hand, int *numAces);
+int hasAces(CardNode *hand);
 
 int updatePlayerHandValue(Player *player);
 int updateHouseHandValue(House *house);
+bool pileIsEmpty (Pile *pile);
 
 #endif /* end include guard */

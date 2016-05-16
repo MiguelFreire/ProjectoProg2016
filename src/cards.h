@@ -48,8 +48,5 @@ CardNode *insertCardOnBottom (Pile *pile, Card card);
 CardNode *dealCard(Pile *cardPile);
 CardNode *removeCardFromTop(Pile *pile);
 void listPile(Pile *pile);
-bool pileIsEmpty (Pile *pile);
-int getHandValue(CardNode *hand, int *numAces);
-int hasAces(CardNode *hand);
 
 #endif /* end include guard */
