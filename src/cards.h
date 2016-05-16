@@ -48,5 +48,6 @@ CardNode *insertCardOnBottom (Pile *pile, Card card);
 CardNode *dealCard(Pile *cardPile);
 CardNode *removeCardFromTop(Pile *pile);
 void listPile(Pile *pile);
+bool pileIsEmpty(Pile *pile);
 
 #endif /* end include guard */

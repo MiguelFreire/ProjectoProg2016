@@ -2,6 +2,6 @@ TODO:
 @Do remaining state overlays (win, loss, tie)
 @check for player money when doubling
 @use message boxes for some information and to warn about terminal input needed
-@care with black jack multiplier and 21 points not being a blackjack
 @error check on add player
 @change bet of broken players
+@redo delay control
