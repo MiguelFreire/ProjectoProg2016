@@ -1,7 +1,6 @@
 TODO:
 @Do remaining state overlays (win, loss, tie)
-@check for player money when doubling
 @use message boxes for some information and to warn about terminal input needed
 @error check on add player
-@change bet of broken players
 @redo delay control
+@maybe update player hand value when a card is pushed to the hand

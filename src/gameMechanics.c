@@ -151,10 +151,15 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 
 int actionDouble(GameTable *table, Pile *cardPile) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
-	if(player->state == HIT) return PLAYERS_PLAYING;
 
+	// check if double is valid
+	if(player->state == HIT || player->money < player->bet) 
+		return PLAYERS_PLAYING;
+
+	// handle money and state
 	updateMoney(player, -player->bet);
 	player->betMultiplier = DOUBLE_MULTIPLIER;
+	player->state = DOUBLED;
 
 	// mandatory hit
 	int newPhase;
@@ -169,16 +174,21 @@ int actionDouble(GameTable *table, Pile *cardPile) {
 
 int actionSurrender(GameTable *table) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
-	if(player->state == HIT) return PLAYERS_PLAYING;
 
-	player->state = SURRENDERED;
+	// check if surrender is valid
+	if(player->state == HIT) 
+		return PLAYERS_PLAYING;
+
+	// handle money and state
 	updateMoney(player, player->bet/2);
+	player->state = SURRENDERED;
 
 	printf("Surrendered\n");
 	return actionStand(table);
 }
 
 void actionBet(GameTable *table) {
+	// get player name
 	printf("What's the name of the player?\n");
 	printf("(Write CANCEL to quit)\n");
 
@@ -191,6 +201,7 @@ void actionBet(GameTable *table) {
 
 	if(strcmp("CANCEL",playerName) == 0) return;
 
+	// search for player
 	for(int i = 0; i < TABLE_SLOTS; i++) {
 		if(!slotIsEmpty(table->slots[i]) && strcmp(table->slots[i]->player.name, playerName) == 0) {
 			player = &(table->slots[i]->player);
@@ -202,20 +213,36 @@ void actionBet(GameTable *table) {
 		actionBet(table);
 	}
 
+	// check if the player is too broke
+	if (player->money < MIN_BET){
+		printf("Player has less money than the minimum bet (%d)." 
+			"Can't change the bet\n", MIN_BET);
+		return;
+	}
+
+	// get new bet for player
 	char buffer[MAX_BUFFER_SIZE];
 	int newBet = 0;
 	bool error = false;
 	do {
-		if(error) printf("Player's bet value must be between: %d and %.2f\n", 2, 0.25*player->money);
+		if(error) 
+			printf("Player's bet value must be between: %d and %d\n", 
+			MIN_BET, player->money );
 		printf("New bet?\n");
 		fgets(buffer, MAX_BUFFER_SIZE, stdin);
 		sscanf(buffer, "%d", &newBet);
-   } while(!(isBetween(newBet, 2, 0.25*player->money)) && (error = true));
+    } while(!(isBetween(newBet, MIN_BET, player->money)) 
+    	&& (error = true) ); // set error the second time the loop runs
 
-   player->bet = newBet;
-   printf("Bet set\n");
+    player->bet = newBet;
+    printf("Bet set\n");
 
-   return;
+    // check if player was and is no longer broke
+    if (player->state == BROKE && player->money >= player->bet){
+    	player->state = STANDARD;
+    }
+
+    return;
 }
 
 
