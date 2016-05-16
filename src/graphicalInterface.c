@@ -189,14 +189,17 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     height += RenderText(separatorPos+3*MARGIN, height, delayStr, _font, &black, _renderer);
 
     // render player names and money
-    height += RenderText(separatorPos+3*MARGIN, height, "==============", _font, &black, _renderer);
+    height += RenderText(separatorPos+3*MARGIN, height, "==================", _font, &black, _renderer);
     for (int i = 0; i < TABLE_SLOTS; i++){
         if (!slotIsEmpty(table->slots[i])){
-            sprintf(nameMoneyStr, "%s - %d€", table->slots[i]->player.name, table->slots[i]->player.money);
+            sprintf(nameMoneyStr, "%s(%s) - %d€", 
+                table->slots[i]->player.name,
+                table->slots[i]->player.type == 0 ? "HU" : "EA", 
+                table->slots[i]->player.money);
             height += RenderText(separatorPos+3*MARGIN, height, nameMoneyStr, _font, &black, _renderer);
         }
     }
-    RenderText(separatorPos+3*MARGIN, height, "==============", _font, &black, _renderer);
+    RenderText(separatorPos+3*MARGIN, height, "==================", _font, &black, _renderer);
 
 
 

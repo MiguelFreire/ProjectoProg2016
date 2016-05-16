@@ -44,6 +44,7 @@ int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 int actionStand(GameTable *table) {
 	do {
 		table->currentPlayer++;
+		printf ("House turn: %d\n", table->currentPlayer);
 		if (table->currentPlayer >= TABLE_SLOTS) return HOUSE_TURN;
 	} while (slotIsEmpty(table->slots[table->currentPlayer]) ||
 		table->slots[table->currentPlayer]->player.state != STANDARD); // next player has a BLACKJACK
@@ -187,9 +188,6 @@ int houseTurn(GameTable *table, House *house, Pile *cardPile){
 int colectBets(GameTable *table, House *house){
 	Player *player = NULL;
 
-	if (table->currentPlayer >= TABLE_SLOTS)
-		return WAITING_FOR_NEW_GAME;
-
 	// find the next player to colect the bet
 	while (slotIsEmpty(table->slots[table->currentPlayer])) {
 
@@ -247,6 +245,9 @@ int colectBets(GameTable *table, House *house){
 	}
 
 	table->currentPlayer++;
+	if (table->currentPlayer >= TABLE_SLOTS)
+		return WAITING_FOR_NEW_GAME;
+
 	return COLECTING_BETS;
 }
 

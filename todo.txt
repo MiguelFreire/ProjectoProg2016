@@ -5,4 +5,3 @@ TODO:
 @use message boxes for some information and to warn about terminal input needed
 @care with black jack multiplier and 21 points not being a blackjack
 @redo hand value updating
-

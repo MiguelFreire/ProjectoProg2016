@@ -64,7 +64,7 @@ int main(int argc, char *argv[]){
 	int EADelayLevel = 3;
 
 	phase = initGame(&table, &playerList, &cardPile, &house, &settings, argv[1]);
-	if(phase);
+
 	// initialize graphics
 	InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
 	LoadCards(cards);
@@ -178,29 +178,35 @@ int main(int argc, char *argv[]){
 			printf ("action: %d\n", action);
 			switch (action){
 				case aHIT:
-					actionHit(&table, &cardPile, PLAYER);
+					phase = actionHit(&table, &cardPile, PLAYER);
 					break;
 				case aDOUBLE:
-					actionDouble(&table, &cardPile);
+					phase = actionDouble(&table, &cardPile);
 					break;
 				case aSURRENDER:
-					actionSurrender(&table);
+					phase = actionSurrender(&table);
 					break;
 				case aSTAND:
-					actionStand(&table);
+					phase = actionStand(&table);
 					break;
+				default:
+					phase = actionStand(&table);
 			}
-			SDL_Delay(EADelayLevel * RENDER_DELAY);
+			SDL_Delay((EADelayLevel - 1)/2.0 * 1000);
 			printf ("EA done\n");
 		}
 
 		if (phase == HOUSE_TURN){
+			printf("house playing\n");
 			phase = houseTurn(&table, &house, &cardPile);
-			if (phase == COLECTING_BETS)
+			if (phase == COLECTING_BETS){
 				table.currentPlayer = 0;
+				printf ("house going to colect\n");
+			}
 		}
 
 		if (phase == COLECTING_BETS){
+			printf("clecting bets\n");
 			phase = colectBets(&table, &house);
 		}
 
