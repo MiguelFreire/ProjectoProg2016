@@ -56,6 +56,13 @@ int actionStand(GameTable *table) {
 int actionNewGame(GameTable *table, Pile *cardPile) {
 	Player *curPlayer = NULL;
 
+	// remove broke players from the table
+	for (int i = 0; i < TABLE_SLOTS; i++){
+		if (!slotIsEmpty(table->slots[i]) && table->slots[i]->player.state == BROKE){
+			table->slots[i] = NULL;
+		}
+	}
+
 	// empty house's hand
 	while (table->house->hand != NULL){
 		table->house->hand = popHand(table->house->hand, NULL, &table->house->numCards);
@@ -70,7 +77,7 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 			}
 		}
 	}
-
+	
 
 	// deal 2 cards to each player and house
 	for (int i = 0; i < 2; i++){
