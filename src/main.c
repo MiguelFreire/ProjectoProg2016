@@ -80,9 +80,9 @@ int main(int argc, char *argv[]){
 
     // clear the terminal
 	printf("\033[2J\033[1;1H");
-	
+
 	// inform the user to press n for new game
-	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "New Game", 
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "New Game",
 	"Press 'n' to start a new game", window);
 
 	while(!quit){
@@ -129,7 +129,7 @@ int main(int argc, char *argv[]){
 
 								if (phase == WAITING_FOR_NEW_GAME){
 									// warn user that input is needed at the terminal
-									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed", 
+									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
 									"Please check the terminal to provide some input", window);
 									actionBet(&table);
 
@@ -146,13 +146,13 @@ int main(int argc, char *argv[]){
 									if (emptySlots){
 										phase = ADDING_PLAYER;
 										// inform the user to click an empty slot
-										SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Adding Player", 
+										SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Adding Player",
 										"Please click an empty slot to add a player", window);
 							    		printf("Adding player\n");
 									} else {
 										phase = WAITING_FOR_NEW_GAME;
 										// inform the user that there are no empty slots
-										SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Adding Player", 
+										SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Adding Player",
 										"There are no empty slots for new players", window);
 										printf("There are no empty slots\n");
 									}
@@ -179,7 +179,7 @@ int main(int argc, char *argv[]){
 							if (slotClicked >= 0){
 								if (slotIsEmpty(table.slots[slotClicked])){
 									// warn user that input is needed at the terminal
-									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed", 
+									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
 									"Please check the terminal to provide some input", window);
 									printf("\033[2J\033[1;1H");
 									printf("Adding player at slot %d\n", slotClicked + 1);
@@ -251,7 +251,7 @@ int main(int argc, char *argv[]){
 	}
 
 	// write stats
-	//writeStats(playerList);
+	writeStats(playerList);
 	// free everything and quit the program
 	freeEverything(&playerList, &house, &cardPile, &settings, softMatrix, hardMatrix);
 	UnLoadCards(cards);
