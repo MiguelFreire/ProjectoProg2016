@@ -126,6 +126,7 @@ int main(int argc, char *argv[]){
 								}
 								break;
 							case SDLK_b: // bet
+
 								if (phase == WAITING_FOR_NEW_GAME){
 									// warn user that input is needed at the terminal
 									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed", 
@@ -184,9 +185,9 @@ int main(int argc, char *argv[]){
 									printf("Adding player at slot %d\n", slotClicked + 1);
 									phase = actionAddPlayer(slotClicked, &playerList, &table);
 								}
-								
+
 							}
-							
+
 						}
 						break;
 
@@ -250,9 +251,9 @@ int main(int argc, char *argv[]){
 	}
 
 	// write stats
-	writeStats(playerList);
+	//writeStats(playerList);
 	// free everything and quit the program
-	freeEverything(&playerList, &house, &cardPile, &settings);
+	freeEverything(&playerList, &house, &cardPile, &settings, softMatrix, hardMatrix);
 	UnLoadCards(cards);
 	TTF_CloseFont(serif);
 	SDL_FreeSurface(imgs[0]);
@@ -312,7 +313,7 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
  }
 
 
-void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, Settings *settings){
+void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, Settings *settings, int **softMatrix, int **hardMatrix){
 	CardNode *tmpCard = NULL;
 	// free players
 	while (playerList->head != NULL){
@@ -329,6 +330,9 @@ void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, Settin
 	while (cardPile->pileTop != NULL){
 		cardPile->pileTop = removeCardFromTop(cardPile);
 	}
+	//free EA matrixes
+	freeMatrixes(softMatrix, hardMatrix);
+
 	// free settings
 	freeSettingsStruct(settings);
 }

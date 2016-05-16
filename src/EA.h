@@ -15,6 +15,8 @@ int getAction(char action);
 
 int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table);
 
+void freeMatrixes(int **softMatrix, int **hardMatrix);
+
 int HiLoCounter(CardNode *node);
 
 

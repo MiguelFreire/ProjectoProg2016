@@ -26,6 +26,7 @@ int decreaseEADelay(int delayLevel){
 
 int **readSoftEAMatrix() {
     FILE *file = fopen(SOFT_EA_MATRIX, "r");
+    char c;
     if(file == NULL) fireFileNotFoundError(SOFT_EA_MATRIX);
 
     int **matrix = (int **) malloc(7*sizeof(int*));
@@ -36,15 +37,19 @@ int **readSoftEAMatrix() {
 
     for(int i = 0; i < 7; i++) {
         for(int j = 0; j < 10; j++) {
-            matrix[i][j] = getAction(fgetc(file));
+            c = fgetc(file);
+            if(c == '\n') c = fgetc(file);
+            matrix[i][j] = getAction(c);
         }
     }
     fclose(file);
+
     return matrix;
 }
 
 int **readHardEAMatrix() {
     FILE *file = fopen(HARD_EA_MATRIX, "r");
+    char c;
     if(file == NULL) fireFileNotFoundError(HARD_EA_MATRIX);
 
     int **matrix = (int **) malloc(10*sizeof(int*));
@@ -55,10 +60,13 @@ int **readHardEAMatrix() {
 
     for(int i = 0; i < 10; i++) {
         for(int j = 0; j < 10; j++) {
-            matrix[i][j] = getAction(fgetc(file));
+            c = fgetc(file);
+            if(c == '\n') c = fgetc(file);
+            matrix[i][j] = getAction(c);
         }
     }
     fclose(file);
+
     return matrix;
 }
 
@@ -77,16 +85,16 @@ void freeMatrixes(int **softMatrix, int **hardMatrix) {
 int getAction(char action) {
     switch (action) {
         case 'H':
-            return aHIT;
+            return 0;
             break;
         case 'D':
-            return aDOUBLE;
+            return 1;
             break;
         case 'S':
-            return aSTAND;
+            return 3;
             break;
         case 'R':
-            return aSURRENDER;
+            return 2;
             break;
         default:
             return -1;
