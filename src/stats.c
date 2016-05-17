@@ -24,7 +24,7 @@ void writeStats(PlayerList list) {
     while(node != NULL) {
         strcpy(name, node->player.name);
         if(node->player.type == HUMAN) strcpy(type, "HUMAN");
-        else if(node->player.type == CPU) strcpy(type, "CPU");
+        else if(node->player.type == CPU) strcpy(type, "EA");
 
         gameStats[0] = node->player.stats.won;  // Games Won
         gameStats[1] = node->player.stats.lost; // Games Loss
