@@ -42,6 +42,6 @@
 #define AUTHOR1_NAME	"Andre Agostinho"
 #define AUTHOR2_NAME	"Miguel Freire"
 #define AUTHOR1_NUMBER	"IST425301"
-#define AUTHOR2_NUMBER	"IST425301"
+#define AUTHOR2_NUMBER	"IST425445"
 
 #endif /* end include guard */

@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
 	GamePhase phase;
 
 	// Structures
-	Settings settings = {0};
+	Settings settings = {{0}};
 	GameTable  table = createGameTable();
 	House house = createHouse();
 	PlayerList playerList = createPlayerList();
