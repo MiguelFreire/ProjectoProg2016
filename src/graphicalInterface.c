@@ -320,7 +320,7 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     }
 
     // render house point counting
-    char housePointsStr[MAX_NAME_SIZE];
+    char housePointsStr[MAX_BUFFER_SIZE];
     sprintf(housePointsStr, "%d points", table->house->handValue);
     RenderText(WINDOW_WIDTH/1.5, WINDOW_HEIGHT/3, housePointsStr, _font, &white, _renderer);
 

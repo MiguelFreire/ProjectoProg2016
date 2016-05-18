@@ -30,6 +30,9 @@
 #define MAX_BUFFER_SIZE 100	// max size for some buffers
 #define MAX_PLAYER_TYPE_SIZE	2	// max string size for player type
 
+#define MIN_SEED_MONEY  10
+#define MAX_SEED_MONEY  500
+
 #define MIN_BET	2
 #define MAX_BET_FACTOR	0.25f
 #define BLACKJACK_MULTIPLIER	1.5	// bet multiplier for blackjack
