@@ -16,13 +16,13 @@ void writeStats(PlayerList list) {
     PlayerNode *node = list.head;
 
     char name[MAX_NAME_SIZE+1];
-    char type[3];
+    char type[6];
     int gameStats[3] = {0};
     int playerMoney = 0;
     int houseGains = 0;
-
     while(node != NULL) {
         strcpy(name, node->player.name);
+
         if(node->player.type == HUMAN) strcpy(type, "HUMAN");
         else if(node->player.type == CPU) strcpy(type, "CPU");
 
@@ -39,7 +39,7 @@ void writeStats(PlayerList list) {
                       "Games Won/Tied/Lost: %d/%d/%d\n"
                       "Final money: %d\n"
                       "House gains: %d\n\n",
-                       name, type, gameStats[0], gameStats[1], gameStats[2],
+                       name, type, gameStats[0], gameStats[2], gameStats[1],
                        playerMoney, houseGains);
 
         node = node->next;

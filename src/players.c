@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include "cards.h"
 #include "players.h"
+#include "util.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //								Players Funtions							//
@@ -208,10 +209,12 @@ int updatePlayerHandValue(Player *player) {
 	int handValue = getHandValue(curr, NULL);
 
 	if(handValue == 21 && player->numCards == 2){
+		logPlay(player->name, "has a blackjack!");
 		player->state = BLACKJACK;
 		return handValue;
 
 	} else if(handValue > 21) {
+		logPlay(player->name, "got busted!");
 		player->state = BUSTED;
 		return handValue;
 
@@ -263,7 +266,7 @@ int getHandValue(CardNode *hand, int *numAces) {
 		card = curr->card;
 
 		handValue += card.value;
-		if (card.rank == 13) aces ++; 
+		if (card.rank == 13) aces ++;
 
 		curr = curr->next;
 	}

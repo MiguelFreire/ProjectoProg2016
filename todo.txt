@@ -1,6 +1,6 @@
 TODO:
 @**important**
-@Correct read matrixes
+
 
 @Dos
 
@@ -9,7 +9,7 @@ TODO:
 @error check on add player
 @redo delay control
 @make a funtion to clear the terminal
-@change stats order to WIN/TIE/LOSS
+
 
 
 @maybes

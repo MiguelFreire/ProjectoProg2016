@@ -42,18 +42,17 @@ bool slotIsEmpty(PlayerNode *slot){
 //////////////////////////////////////////////////////////////////////////////
 
 int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
-	printf("Hits\n");
 	// player
 	if(subject == PLAYER) {
 		Player *player = &(table->slots[table->currentPlayer]->player);
+		logPlay(player->name, "Hit");
 		player->state = HIT;
 
 		// give a card
 		player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 		player->handValue = updatePlayerHandValue(player);
-
-		if (player->state == BUSTED 
-			|| player->state == BLACKJACK 
+		if (player->state == BUSTED
+			|| player->state == BLACKJACK
 			|| player->handValue == 21)
 		{
 			return (actionStand(table));
@@ -62,7 +61,7 @@ int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 	// house
 	} else if(subject == HOUSE) {
 		House *house = table->house;
-
+		logPlay("House", "hit!");
 		house->hand = pushToHand(house->hand, dealCard(cardPile), &house->numCards);
 		house->handValue = updateHouseHandValue(house);
 
@@ -74,13 +73,14 @@ int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 }
 
 int actionStand(GameTable *table) {
+	logPlay(table->slots[table->currentPlayer]->player.name, "stood!");
 	do {
 		table->currentPlayer++;
 		if (table->currentPlayer >= TABLE_SLOTS) return HOUSE_TURN;
 	} while (slotIsEmpty(table->slots[table->currentPlayer]) ||
 		table->slots[table->currentPlayer]->player.state != STANDARD); // next player has a BLACKJACK
 
-	printf("Stood\n");
+
 	return PLAYERS_PLAYING;
 }
 
@@ -108,7 +108,7 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 			}
 		}
 	}
-	
+
 
 	// deal 2 cards to each player and house
 	for (int i = 0; i < 2; i++){
@@ -145,8 +145,7 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 
 		table->currentPlayer ++;
 	}
-
-	printf ("Started a new game\n");
+	logPlay("\b","A New game has started!");
 	return PLAYERS_PLAYING;
 }
 
@@ -154,7 +153,7 @@ int actionDouble(GameTable *table, Pile *cardPile) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 
 	// check if double is valid
-	if(player->state == HIT || player->money < player->bet) 
+	if(player->state == HIT || player->money < player->bet)
 		return PLAYERS_PLAYING;
 
 	// handle money and state
@@ -169,7 +168,7 @@ int actionDouble(GameTable *table, Pile *cardPile) {
 	                            // so stand if the player isn't busted
 		newPhase = actionStand(table);
 
-	printf ("Doubled\n");
+	logPlay(player->name, "doubled!");
 	return newPhase;
 }
 
@@ -177,14 +176,15 @@ int actionSurrender(GameTable *table) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 
 	// check if surrender is valid
-	if(player->state == HIT) 
+	if(player->state == HIT)
 		return PLAYERS_PLAYING;
 
 	// handle money and state
 	updateMoney(player, player->bet/2);
 	player->state = SURRENDERED;
 
-	printf("Surrendered\n");
+	logPlay(player->name, "surrendered!");
+
 	return actionStand(table);
 }
 
@@ -194,9 +194,9 @@ void actionBet(GameTable *table) {
 	printf("What's the name of the player?\n");
 	printf("(Write CANCEL to quit)\n");
 
-	char playerName[MAX_BUFFER_SIZE];
+	char playerName[MAX_NAME_SIZE+1];
 
-	fgets(playerName, MAX_BUFFER_SIZE, stdin);
+	fgets(playerName, MAX_NAME_SIZE, stdin);
 	playerName[strlen(playerName)-1] = '\0';
 
 	Player *player = NULL;
@@ -220,7 +220,7 @@ void actionBet(GameTable *table) {
 
 	// check if the player is too broke
 	if (player->money < MIN_BET){
-		printf("Player has less money than the minimum bet (%d)." 
+		printf("Player has less money than the minimum bet (%d)."
 			"Can't change the bet\n", MIN_BET);
 		return;
 	}
@@ -230,13 +230,13 @@ void actionBet(GameTable *table) {
 	int newBet = 0;
 	bool error = false;
 	do {
-		if(error) 
-			printf("Player's bet value must be between: %d and %d\n", 
-			MIN_BET, player->money );
+		if(error)
+			printf("Player's bet value must be between: %d and %d\n",
+			MIN_BET, (int)MAX_BET_FACTOR*player->money );
 		printf("New bet?\n");
 		fgets(buffer, MAX_BUFFER_SIZE, stdin);
 		sscanf(buffer, "%d", &newBet);
-    } while(!(isBetween(newBet, MIN_BET, player->money)) 
+    } while(!(isBetween(newBet, MIN_BET, (int)MAX_BET_FACTOR*player->money))
     	&& (error = true) ); // set error the second time the loop runs
 
     player->bet = newBet;
@@ -244,9 +244,8 @@ void actionBet(GameTable *table) {
     printf("You can return to game window\n");
 
     // check if player was and is no longer broke
-    if (player->state == BROKE && player->money >= player->bet){
-    	player->state = STANDARD;
-    }
+    if (player->state == BROKE && player->money >= player->bet)
+		player->state = STANDARD;
 
     return;
 }
@@ -254,24 +253,37 @@ void actionBet(GameTable *table) {
 
 int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	Player newPlayer = {0};
-	char buffer[MAX_BUFFER_SIZE] = {0};
+	char buffer_money[MAX_BUFFER_SIZE] = {0};
+	char buffer_bet[MAX_BUFFER_SIZE] = {0};
 	// ask for new player's name
-	printf("What's the name of the player?\n");
 	printf("(Write CANCEL to quit)\n");
 
-	char playerName[MAX_BUFFER_SIZE]; // TODO mudar o tamanho disto para o maximo do nome
+	printf("What's the name of the player?\n");
+	char playerName[MAX_NAME_SIZE+1];
 
-	fgets(playerName, MAX_BUFFER_SIZE, stdin);
+	fgets(playerName, MAX_NAME_SIZE, stdin);
 	playerName[strlen(playerName)-1] = '\0';
+
+	if(strcmp("CANCEL",playerName) == 0) {
+		printf("You can return to game window\n");
+		return WAITING_FOR_NEW_GAME;
+	}
 
 	strcpy(newPlayer.name, playerName);
 
 	// ask for new player's type
-	printf("What's the type of the player (HU/EA)\n");
 	char playerType[MAX_PLAYER_TYPE_SIZE + 1];
+	bool error1 = false;
 
-	fgets(playerType, MAX_PLAYER_TYPE_SIZE + 2, stdin);
-	playerType[strlen(playerType)-1] = '\0';
+	printf("Player's type? HU or EA?\n");
+	do {
+		if(error1)
+			printf("Player's type must be HU or EA\n");
+		fgets(playerType, MAX_PLAYER_TYPE_SIZE + 1, stdin);
+		playerType[strlen(playerType)] = '\0';
+    } while((((strcmp(playerType, "HU") != 0) && (strcmp(playerType, "EA") != 0))
+		|| (!(strcmp(playerType, "HU") != 0) && !(strcmp(playerType, "EA") != 0)))
+    	&& (error1 = true) ); // set error the second time the loop runs
 
 	if(strcmp(playerType, "HU") == 0){
 		newPlayer.type = HUMAN;
@@ -279,26 +291,35 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 		newPlayer.type = CPU;
 	}
 
+
 	// ask for new player's money
-	printf("Introduce the initial money for this player\n");
-	int playerMoney;
+	int playerMoney = 0;
 
-	fgets(buffer, MAX_BUFFER_SIZE, stdin);
-	buffer[strlen(buffer)-1] = '\0';
-	printf("%s\n", buffer);
-
-	sscanf(buffer, "%d", &playerMoney);
+	bool error2 = false;
+	do {
+		if(error2)
+			printf("Player's money must be between: %d and %d\n",
+		MIN_SEED_MONEY, MAX_SEED_MONEY );
+		printf("Introduce the initial money for this player\n");
+		fgets(buffer_money, MAX_BUFFER_SIZE, stdin);
+		sscanf(buffer_money, "%d", &playerMoney);
+	} while(!(isBetween(playerMoney, MIN_SEED_MONEY, MAX_SEED_MONEY))
+		&& (error2 = true));
 
 	newPlayer.money = playerMoney;
 
-	// ask for new player's bet
-	printf("Introduce the initial bet for this player\n");
-	int playerBet;
-
-	fgets(buffer, MAX_BUFFER_SIZE, stdin);
-	buffer[strlen(buffer)-1] = '\0';
-
-	sscanf(buffer, "%d", &playerBet);
+	int playerBet = 0;
+	bool error3 = false;
+	do {
+		if(error3)
+			printf("Player's bet must be between: %d and %.0f\n",
+		MIN_BET, MAX_BET_FACTOR*playerMoney );
+		printf("Introduce the initial bet for this player\n");
+		fgets(buffer_bet, MAX_BUFFER_SIZE, stdin);
+		sscanf(buffer_bet, "%d", &playerBet);
+		printf("Bet set: %d\n", playerBet);
+	} while(!(isBetween(playerBet, MIN_BET, MAX_BET_FACTOR*playerMoney))
+		&& (error3 = true));
 
 	newPlayer.bet = playerBet;
 	newPlayer.betMultiplier = 1;
@@ -324,6 +345,7 @@ int houseTurn(GameTable *table, House *house, Pile *cardPile){
 		return actionHit(table, cardPile, HOUSE);
 	}
 	house->state = HOUSE_COLECTING;
+	logPlay("House","stood!");
 	return COLECTING_BETS;
 }
 
@@ -367,6 +389,7 @@ int colectBets(GameTable *table, House *house){
 		// update state and stats
 		if (player->money < player->bet){ // player has not enough money
 			player->state = BROKE;
+			logPlay(player->name, "is broke!");
 		} else if (player->state == SURRENDERED){
 			player->state = SURRENDERED; // keep state
 		} else if (player->state == BUSTED){
@@ -396,7 +419,7 @@ int colectBets(GameTable *table, House *house){
 		} else {
 			updateMoney(player, player->bet * (2 * player->betMultiplier));
 		}
-		
+
 	}
 
 	table->currentPlayer++;

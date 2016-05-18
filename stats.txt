@@ -1,0 +1,18 @@
+Player Name: André
+Player Type: HUMAN
+Games Won/Tied/Lost: 0/0/0
+Final money: 100
+House gains: 0
+
+Player Name: Miguel
+Player Type: CPU
+Games Won/Tied/Lost: 0/0/0
+Final money: 102
+House gains: 0
+
+Player Name: Diogo
+Player Type: HUMAN
+Games Won/Tied/Lost: 0/0/0
+Final money: 345
+House gains: 0
+
