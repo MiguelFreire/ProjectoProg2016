@@ -269,8 +269,13 @@ void actionBet(GameTable *table) {
 
 int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	Player newPlayer = {0};
+
 	char buffer_money[MAX_BUFFER_SIZE] = {0};
 	char buffer_bet[MAX_BUFFER_SIZE] = {0};
+
+	clearTerminal();
+	printf("Adding player at slot %d\n", slotClicked + 1);
+	
 	// ask for new player's name
 	printf("(Write CANCEL to quit)\n");
 

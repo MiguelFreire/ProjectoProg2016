@@ -16,4 +16,6 @@ void addNullByte(char *s);
 
 void logPlay(char const *, char const *);
 
+void clearTerminal();
+
 #endif /* end include guard */

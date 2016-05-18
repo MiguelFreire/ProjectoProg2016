@@ -70,6 +70,7 @@ int main(int argc, char *argv[]){
 	LoadCards(cards);
 
 	phase = WAITING_FOR_NEW_GAME;
+
 	// render for the first time
 	// render game table
 	RenderTable(serif, imgs, renderer, &table, phase, EADelayLevel);
@@ -78,8 +79,8 @@ int main(int argc, char *argv[]){
 	// add a delay
     SDL_Delay(RENDER_DELAY);
 
-    // clear the terminal
-	printf("\033[2J\033[1;1H");
+	clearTerminal();
+
 
 	// inform the user to press n for new game
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "New Game",
@@ -180,8 +181,7 @@ int main(int argc, char *argv[]){
 								// warn user that input is needed at the terminal
 								SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
 								"Please check the terminal to provide some input", window);
-								printf("\033[2J\033[1;1H");
-								printf("Adding player at slot %d\n", slotClicked + 1);
+								
 								phase = actionAddPlayer(slotClicked, &playerList, &table);
 							}
 
