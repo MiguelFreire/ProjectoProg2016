@@ -8,20 +8,36 @@
 #include "gameMechanics.h"
 #include "EA.h"
 
-int increaseEADelay(int delayLevel){
-    if (delayLevel < 5){
-        return delayLevel + 1;
-    } else {
-        return delayLevel;
+int increaseEADelay(int *speed){
+    int delay;
+
+    if ((*speed) < SPEED_LEVELS){
+        *speed += 1;
     }
+
+    // integer division truncation is intended so there is an integer speed 
+    // level that corresponds to a delay equal to 
+    // (EA_BASE_DELAY - RENDER_DELAY)
+    delay = (EA_BASE_DELAY - RENDER_DELAY) * 
+    (SPEED_LEVELS - *speed)/(SPEED_LEVELS/2);
+
+    return delay;
 }
 
-int decreaseEADelay(int delayLevel){
-    if (delayLevel > 1){
-        return delayLevel - 1;
-    } else {
-        return delayLevel;
+int decreaseEADelay(int *speed){
+    int delay;
+
+    if ((*speed) > 0){
+        *speed -= 1;
     }
+
+    // integer division truncation is intended so there is an integer speed 
+    // level that corresponds to a delay equal to 
+    // (EA_BASE_DELAY - RENDER_DELAY)
+    delay = (EA_BASE_DELAY - RENDER_DELAY) * 
+    (SPEED_LEVELS - *speed)/(SPEED_LEVELS/2);
+    
+    return delay;
 }
 
 int **readSoftEAMatrix() {

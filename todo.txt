@@ -1,13 +1,9 @@
 TODO:
 @**important**
-
+Redo EA matrix reading and decoding and EA double and surrender
 
 @Dos
-
-@redo delay control
-@make a funtion to clear the terminal
-
-
+Clean interface (phase, delay)
 
 @maybes
 @maybe update player hand value when a card is pushed to the hand

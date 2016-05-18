@@ -4,8 +4,8 @@
 #include "cards.h"
 #include "gameMechanics.h"
 
-int increaseEADelay(int delayLevel);
-int decreaseEADelay(int delayLevel);
+int increaseEADelay(int *speed);
+int decreaseEADelay(int *speed);
 
 int **readSoftEAMatrix();
 

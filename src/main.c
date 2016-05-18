@@ -61,7 +61,8 @@ int main(int argc, char *argv[]){
 	// EA
 	int **softMatrix = readSoftEAMatrix();
 	int **hardMatrix = readHardEAMatrix();
-	int EADelayLevel = 3;
+	int EASpeed = SPEED_LEVELS/2;
+	int EADelay = increaseEADelay(&EASpeed);
 
 	phase = initGame(&table, &playerList, &cardPile, &house, &settings, argv[1]);
 
@@ -73,14 +74,11 @@ int main(int argc, char *argv[]){
 
 	// render for the first time
 	// render game table
-	RenderTable(serif, imgs, renderer, &table, phase, EADelayLevel);
+	RenderTable(serif, imgs, renderer, &table, phase, EASpeed);
 	// put to screen all changes above
 	SDL_RenderPresent(renderer);
-	// add a delay
-    SDL_Delay(RENDER_DELAY);
 
 	clearTerminal();
-
 
 	// inform the user to press n for new game
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "New Game",
@@ -159,10 +157,10 @@ int main(int argc, char *argv[]){
 						    }
 						    break;
 						case SDLK_UP: // increase EA delay
-							EADelayLevel = increaseEADelay(EADelayLevel);
+							EADelay = increaseEADelay(&EASpeed);
 							break;
 						case SDLK_DOWN:	// decrease EA delay
-							EADelayLevel = decreaseEADelay(EADelayLevel);
+							EADelay = decreaseEADelay(&EASpeed);
 							break;
 					}
 
@@ -200,7 +198,7 @@ int main(int argc, char *argv[]){
 
 		if (phase == EA_PLAYING || phase == HOUSE_TURN || phase == COLECTING_BETS){
 			// render game table
-			RenderTable(serif, imgs, renderer, &table, phase, EADelayLevel);
+			RenderTable(serif, imgs, renderer, &table, phase, EASpeed);
 			// render the players cards
 			RenderPlayerCards(cards, renderer, &table);
 			// render house cards
@@ -210,7 +208,7 @@ int main(int argc, char *argv[]){
 			// put to screen all changes above
 			SDL_RenderPresent(renderer);
 	        // add a delay
-	        SDL_Delay(RENDER_DELAY);
+	        SDL_Delay(RENDER_DELAY/2);
 
 			// Let EA player make a decision
 			if (phase == EA_PLAYING){
@@ -233,8 +231,9 @@ int main(int argc, char *argv[]){
 					default:
 						phase = actionStand(&table);
 				}
-				SDL_Delay((EADelayLevel - 1)/2.0 * 1000);
+				SDL_Delay(EADelay);
 				printf ("EA done\n");
+
 			} else if (phase == HOUSE_TURN){
 				printf("house playing\n");
 				phase = houseTurn(&table, &house, &cardPile);
@@ -249,7 +248,7 @@ int main(int argc, char *argv[]){
 		}
 
 		// render game table
-		RenderTable(serif, imgs, renderer, &table, phase, EADelayLevel);
+		RenderTable(serif, imgs, renderer, &table, phase, EASpeed);
 		// render the players cards
 		RenderPlayerCards(cards, renderer, &table);
 		// render house cards
