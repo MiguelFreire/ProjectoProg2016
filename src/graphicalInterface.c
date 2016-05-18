@@ -124,10 +124,10 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     break;
                 case TIED: // yellow
                     // big rectangle
-                    SDL_SetRenderDrawColor(renderer, 200, 200, 50, 120);
+                    SDL_SetRenderDrawColor(renderer, 200, 200, 40, 120);
                     SDL_RenderFillRect(renderer, &stateRect);
                     // small rectangle
-                    SDL_SetRenderDrawColor(renderer, 240, 240, 60, 240);
+                    SDL_SetRenderDrawColor(renderer, 200, 180, 45, 240);
                     SDL_RenderFillRect(renderer, &textRect);
                     // state text
                     textX = textRect.x + textRect.w/3;

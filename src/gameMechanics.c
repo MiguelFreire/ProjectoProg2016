@@ -70,7 +70,15 @@ int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 		return HOUSE_TURN;
 	}
 
-	return PLAYERS_PLAYING;
+	if (table->slots[table->currentPlayer]->player.type == CPU){
+		printf("Next player is EA\n");
+		return EA_PLAYING;
+
+	} else {
+		printf("Next player is human\n");
+		return PLAYERS_PLAYING;
+
+	}
 }
 
 int actionStand(GameTable *table) {
@@ -81,7 +89,14 @@ int actionStand(GameTable *table) {
 		table->slots[table->currentPlayer]->player.state != STANDARD); // next player has a BLACKJACK
 
 	printf("Stood\n");
-	return PLAYERS_PLAYING;
+	// check for next player type
+	if (table->slots[table->currentPlayer]->player.type == CPU){
+		printf("Next player is EA\n");
+		return EA_PLAYING;
+	} else {
+		printf("Next player is human\n");
+		return PLAYERS_PLAYING;
+	}
 }
 
 int actionNewGame(GameTable *table, Pile *cardPile) {
@@ -138,16 +153,12 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 	table->house->handValue = getHandValue(table->house->hand, NULL);
 	table->house->state = HOUSE_WAITING;
 
-	// select first player
-	table->currentPlayer = 0;
-	while( slotIsEmpty(table->slots[table->currentPlayer])
-		|| table->slots[table->currentPlayer]->player.state == BLACKJACK){
-
-		table->currentPlayer ++;
-	}
+	// Chosse first player to play
+	table->currentPlayer = -1;
+	int newPhase = actionStand(table);
 
 	printf ("Started a new game\n");
-	return PLAYERS_PLAYING;
+	return newPhase;
 }
 
 int actionDouble(GameTable *table, Pile *cardPile) {

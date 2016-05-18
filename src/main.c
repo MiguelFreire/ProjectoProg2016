@@ -76,7 +76,7 @@ int main(int argc, char *argv[]){
 	// put to screen all changes above
 	SDL_RenderPresent(renderer);
 	// add a delay
-    SDL_Delay(2 * RENDER_DELAY);
+    SDL_Delay(RENDER_DELAY);
 
     // clear the terminal
 	printf("\033[2J\033[1;1H");
@@ -86,154 +86,166 @@ int main(int argc, char *argv[]){
 	"Press 'n' to start a new game", window);
 
 	while(!quit){
-		if (phase != PLAYERS_PLAYING || table.slots[table.currentPlayer]->player.type == HUMAN){
-			while(SDL_PollEvent(&event)){
-				switch (event.type){
+		while(SDL_PollEvent(&event)){
+			switch (event.type){
 
-					// check for key press
-					case SDL_KEYDOWN:
+				// check for key press
+				case SDL_KEYDOWN:
 
-						switch( event.key.keysym.sym){
+					switch( event.key.keysym.sym){
 
-							case SDLK_h: // hit
-							    if (phase == PLAYERS_PLAYING){
-							    	phase = actionHit(&table, &cardPile, PLAYER);
-							    }
-								break;
-							case SDLK_s: // stand
-							    if (phase == PLAYERS_PLAYING){
-							    	phase = actionStand(&table);
-							    }
-								break;
-							case SDLK_n: // new game
-								if (phase == WAITING_FOR_NEW_GAME){
-									phase = actionNewGame(&table, &cardPile);
-								}
-								break;
-							case SDLK_q: // quit
-							    if (phase == WAITING_FOR_NEW_GAME){
-									quit = true;
-								}
-								break;
-							case SDLK_d: // double
-							    if (phase == PLAYERS_PLAYING){
-							    	phase = actionDouble(&table, &cardPile);
-							    }
-								break;
-							case SDLK_r: // surrender
-								if (phase == PLAYERS_PLAYING){
-									phase = actionSurrender(&table);
-								}
-								break;
-							case SDLK_b: // bet
+						case SDLK_h: // hit
+						    if (phase == PLAYERS_PLAYING){
+						    	phase = actionHit(&table, &cardPile, PLAYER);
+						    }
+							break;
+						case SDLK_s: // stand
+						    if (phase == PLAYERS_PLAYING){
+						    	phase = actionStand(&table);
+						    }
+							break;
+						case SDLK_n: // new game
+							if (phase == WAITING_FOR_NEW_GAME){
+								phase = actionNewGame(&table, &cardPile);
+							}
+							break;
+						case SDLK_q: // quit
+						    if (phase == WAITING_FOR_NEW_GAME){
+								quit = true;
+							}
+							break;
+						case SDLK_d: // double
+						    if (phase == PLAYERS_PLAYING){
+						    	phase = actionDouble(&table, &cardPile);
+						    }
+							break;
+						case SDLK_r: // surrender
+							if (phase == PLAYERS_PLAYING){
+								phase = actionSurrender(&table);
+							}
+							break;
+						case SDLK_b: // bet
 
-								if (phase == WAITING_FOR_NEW_GAME){
-									// warn user that input is needed at the terminal
-									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
-									"Please check the terminal to provide some input", window);
-									actionBet(&table);
+							if (phase == WAITING_FOR_NEW_GAME){
+								// warn user that input is needed at the terminal
+								SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
+								"Please check the terminal to provide some input", window);
+								actionBet(&table);
 
-								}
-								break;
-							case SDLK_a: // add player
-							    if (phase == WAITING_FOR_NEW_GAME){
-							    	bool emptySlots = false;
-									for (int i = 0; i < TABLE_SLOTS; i++){
-										if (slotIsEmpty(table.slots[i])){
-											emptySlots = true;
-										}
+							}
+							break;
+						case SDLK_a: // add player
+						    if (phase == WAITING_FOR_NEW_GAME){
+						    	bool emptySlots = false;
+								for (int i = 0; i < TABLE_SLOTS; i++){
+									if (slotIsEmpty(table.slots[i])){
+										emptySlots = true;
 									}
-									if (emptySlots){
-										phase = ADDING_PLAYER;
-										// inform the user to click an empty slot
-										SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Adding Player",
-										"Please click an empty slot to add a player", window);
-							    		printf("Adding player\n");
-									} else {
-										phase = WAITING_FOR_NEW_GAME;
-										// inform the user that there are no empty slots
-										SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Adding Player",
-										"There are no empty slots for new players", window);
-										printf("There are no empty slots\n");
-									}
-							    }
-							    break;
-							case SDLK_UP: // increase EA delay
-								EADelayLevel = increaseEADelay(EADelayLevel);
-								break;
-							case SDLK_DOWN:	// decrease EA delay
-								EADelayLevel = decreaseEADelay(EADelayLevel);
-								break;
-						}
-
-						break;
-
-					// check for mouse button press
-					case SDL_MOUSEBUTTONDOWN:
-						if (phase == ADDING_PLAYER &&
-							event.button.button == SDL_BUTTON_LEFT){
-							// check position to add player
-							int mouseX, mouseY, slotClicked;
-							SDL_GetMouseState(&mouseX, &mouseY);
-							slotClicked = mouseIsOverSlot(&table, mouseX, mouseY);
-							if (slotClicked >= 0){
-								if (slotIsEmpty(table.slots[slotClicked])){
-									// warn user that input is needed at the terminal
-									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
-									"Please check the terminal to provide some input", window);
-									printf("\033[2J\033[1;1H");
-									printf("Adding player at slot %d\n", slotClicked + 1);
-									phase = actionAddPlayer(slotClicked, &playerList, &table);
 								}
+								if (emptySlots){
+									phase = ADDING_PLAYER;
+									// inform the user to click an empty slot
+									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Adding Player",
+									"Please click an empty slot to add a player", window);
+						    		printf("Adding player\n");
+								} else {
+									phase = WAITING_FOR_NEW_GAME;
+									// inform the user that there are no empty slots
+									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Adding Player",
+									"There are no empty slots for new players", window);
+									printf("There are no empty slots\n");
+								}
+						    }
+						    break;
+						case SDLK_UP: // increase EA delay
+							EADelayLevel = increaseEADelay(EADelayLevel);
+							break;
+						case SDLK_DOWN:	// decrease EA delay
+							EADelayLevel = decreaseEADelay(EADelayLevel);
+							break;
+					}
 
+					break;
+
+				// check for mouse button press
+				case SDL_MOUSEBUTTONDOWN:
+					if (phase == ADDING_PLAYER &&
+						event.button.button == SDL_BUTTON_LEFT){
+						// check position to add player
+						int mouseX, mouseY, slotClicked;
+						SDL_GetMouseState(&mouseX, &mouseY);
+						slotClicked = mouseIsOverSlot(&table, mouseX, mouseY);
+						if (slotClicked >= 0){
+							if (slotIsEmpty(table.slots[slotClicked])){
+								// warn user that input is needed at the terminal
+								SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
+								"Please check the terminal to provide some input", window);
+								printf("\033[2J\033[1;1H");
+								printf("Adding player at slot %d\n", slotClicked + 1);
+								phase = actionAddPlayer(slotClicked, &playerList, &table);
 							}
 
 						}
-						break;
 
-					// check for quit cross press
-					case SDL_QUIT:
-						quit = true;
+					}
+					break;
 
+				// check for quit cross press
+				case SDL_QUIT:
+					quit = true;
+
+					break;
+			}
+		}
+
+		if (phase == EA_PLAYING || phase == HOUSE_TURN || phase == COLECTING_BETS){
+			// render game table
+			RenderTable(serif, imgs, renderer, &table, phase, EADelayLevel);
+			// render the players cards
+			RenderPlayerCards(cards, renderer, &table);
+			// render house cards
+			RenderHouseCards(cards, renderer, &house);
+			// render info orverlays
+			renderStates(serif, renderer, &table, phase);
+			// put to screen all changes above
+			SDL_RenderPresent(renderer);
+	        // add a delay
+	        SDL_Delay(RENDER_DELAY);
+
+			// Let EA player make a decision
+			if (phase == EA_PLAYING){
+				printf ("EA playing\n");
+				EAAction action = actionDecoder(softMatrix, hardMatrix, &table);
+				printf ("action: %d\n", action);
+				switch (action){
+					case aHIT:
+						phase = actionHit(&table, &cardPile, PLAYER);
 						break;
+					case aDOUBLE:
+						phase = actionDouble(&table, &cardPile);
+						break;
+					case aSURRENDER:
+						phase = actionSurrender(&table);
+						break;
+					case aSTAND:
+						phase = actionStand(&table);
+						break;
+					default:
+						phase = actionStand(&table);
 				}
+				SDL_Delay((EADelayLevel - 1)/2.0 * 1000);
+				printf ("EA done\n");
+			} else if (phase == HOUSE_TURN){
+				printf("house playing\n");
+				phase = houseTurn(&table, &house, &cardPile);
+				if (phase == COLECTING_BETS){
+					table.currentPlayer = 0;
+					printf ("house going to colect\n");
+				}
+			} else if (phase == COLECTING_BETS){
+				printf("clecting bets\n");
+				phase = colectBets(&table, &house);
 			}
-		} else {
-			printf ("EA playing\n");
-			EAAction action = actionDecoder(softMatrix, hardMatrix, &table);
-			printf ("action: %d\n", action);
-			switch (action){
-				case aHIT:
-					phase = actionHit(&table, &cardPile, PLAYER);
-					break;
-				case aDOUBLE:
-					phase = actionDouble(&table, &cardPile);
-					break;
-				case aSURRENDER:
-					phase = actionSurrender(&table);
-					break;
-				case aSTAND:
-					phase = actionStand(&table);
-					break;
-				default:
-					phase = actionStand(&table);
-			}
-			SDL_Delay((EADelayLevel - 1)/2.0 * 1000);
-			printf ("EA done\n");
-		}
-
-		if (phase == HOUSE_TURN){
-			printf("house playing\n");
-			phase = houseTurn(&table, &house, &cardPile);
-			if (phase == COLECTING_BETS){
-				table.currentPlayer = 0;
-				printf ("house going to colect\n");
-			}
-		}
-
-		if (phase == COLECTING_BETS){
-			printf("clecting bets\n");
-			phase = colectBets(&table, &house);
 		}
 
 		// render game table
