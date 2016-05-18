@@ -344,8 +344,11 @@ int houseTurn(GameTable *table, House *house, Pile *cardPile){
 	if (house->handValue < 17){
 		return actionHit(table, cardPile, HOUSE);
 	}
-	house->state = HOUSE_COLECTING;
+
 	logPlay("House","stood!");
+
+	if (house->state != HOUSE_WAITING) house->state = HOUSE_COLECTING;
+
 	return COLECTING_BETS;
 }
 

@@ -114,6 +114,7 @@ int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
     if(hasAces(playerHand) > 0) {
         //soft
         if(playerHandValue >= 19) row = 6;
+        else if (playerHandValue == 12) row = 0; // player has two aces
         else row = playerHandValue - 13;
         printf ("row: %d, colummn: %d\n", row, col);
         return softMatrix[row][col];

@@ -44,6 +44,7 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
     char moneyStr[MAX_BUFFER_SIZE];
     Player *player;
 
+    // render player states
     for (int i = 0; i < TABLE_SLOTS; i++){
         // big rectangle dimensions
         stateRect.x = table->slotDim[i].x + 5;
@@ -63,15 +64,30 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
             switch (player->state){
                 case BUSTED: // red
                     // big rectangle
+                    SDL_SetRenderDrawColor(renderer, 200, 0, 0, 100);
+                    SDL_RenderFillRect(renderer, &stateRect);
+                    // small rectangle
+                    SDL_SetRenderDrawColor(renderer, 200, 0, 0, 220);
+                    SDL_RenderFillRect(renderer, &textRect);
+                    // state text
+                    textX = textRect.x + textRect.w/4;
+                    textY = textRect.y + textRect.h/8;
+                    textY += RenderText(textX, textY, "BUSTED", font, &white, renderer);
+                    // money text
+                    sprintf(moneyStr, "-%d€", (int)(player->bet * player->betMultiplier));
+                    RenderText(textX + textRect.w/8, textY, moneyStr, font, &white, renderer);
+                    break;
+                case LOST: // red
+                    // big rectangle
                     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 100);
                     SDL_RenderFillRect(renderer, &stateRect);
                     // small rectangle
                     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 220);
                     SDL_RenderFillRect(renderer, &textRect);
                     // state text
-                    textX = textRect.x + textRect.w/4;
+                    textX = textRect.x + textRect.w/3;
                     textY = textRect.y + textRect.h/8;
-                    textY += RenderText(textX, textY, "BUSTED", font, &white, renderer);
+                    textY += RenderText(textX, textY, "LOST", font, &white, renderer);
                     // money text
                     sprintf(moneyStr, "-%d€", (int)(player->bet * player->betMultiplier));
                     RenderText(textX + textRect.w/8, textY, moneyStr, font, &white, renderer);
@@ -88,15 +104,45 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     textY = textRect.y + textRect.h/8;
                     textY += RenderText(textX, textY, "BLACKJACK", font, &white, renderer);
                     // money text
+                    sprintf(moneyStr, "+%d€", (int)(player->bet * BLACKJACK_MULTIPLIER));
+                    RenderText(textX + textRect.w/3, textY, moneyStr, font, &white, renderer);
+                    break;
+                case WON: // green
+                    // big rectangle
+                    SDL_SetRenderDrawColor(renderer, 0, 200, 0, 100);
+                    SDL_RenderFillRect(renderer, &stateRect);
+                    // small rectangle
+                    SDL_SetRenderDrawColor(renderer, 0, 200, 0, 220);
+                    SDL_RenderFillRect(renderer, &textRect);
+                    // state text
+                    textX = textRect.x + textRect.w/3;
+                    textY = textRect.y + textRect.h/8;
+                    textY += RenderText(textX, textY, "WIN", font, &white, renderer);
+                    // money text
                     sprintf(moneyStr, "+%d€", (int)(player->bet * player->betMultiplier));
+                    RenderText(textX + textRect.w/3, textY, moneyStr, font, &white, renderer);
+                    break;
+                case TIED: // yellow
+                    // big rectangle
+                    SDL_SetRenderDrawColor(renderer, 200, 200, 50, 120);
+                    SDL_RenderFillRect(renderer, &stateRect);
+                    // small rectangle
+                    SDL_SetRenderDrawColor(renderer, 240, 240, 60, 240);
+                    SDL_RenderFillRect(renderer, &textRect);
+                    // state text
+                    textX = textRect.x + textRect.w/3;
+                    textY = textRect.y + textRect.h/8;
+                    textY += RenderText(textX, textY, "TIED", font, &white, renderer);
+                    // money text
+                    sprintf(moneyStr, "+0€");
                     RenderText(textX + textRect.w/3, textY, moneyStr, font, &white, renderer);
                     break;
                 case SURRENDERED: // blue
                     // big rectangle
-                    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 100);
+                    SDL_SetRenderDrawColor(renderer, 20, 40, 255, 100);
                     SDL_RenderFillRect(renderer, &stateRect);
                     // small rectangle
-                    SDL_SetRenderDrawColor(renderer, 0, 0, 255, 220);
+                    SDL_SetRenderDrawColor(renderer, 20, 40, 255, 220);
                     SDL_RenderFillRect(renderer, &textRect);
                     // state text
                     textX = textRect.x + textRect.w/10;
@@ -117,6 +163,7 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     textX = textRect.x + textRect.w/4;
                     textY = textRect.y + textRect.h/8;
                     RenderText(textX, textY, "BROKE", font, &white, renderer);
+
                 default:
                     break;
             }
@@ -135,6 +182,41 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
             }
         }
     }
+
+
+    // render house state
+    if (phase != PLAYERS_PLAYING){
+        textRect.x = WINDOW_WIDTH/10;
+        textRect.y = WINDOW_HEIGHT/3;
+        textRect.w = WINDOW_WIDTH/7;
+        textRect.h = WINDOW_HEIGHT/12;
+
+        switch(table->house->state) {
+            case HOUSE_BLACKJACK:
+                // rectangle
+                SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+                SDL_RenderFillRect(renderer, &textRect);
+                // state text
+                textX = textRect.x + textRect.w/8;
+                textY = textRect.y + textRect.h/8;
+                RenderText(textX, textY, "BLACKJACK", font, &white, renderer);
+                break;
+            case HOUSE_BUSTED:
+                // rectangle
+                SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+                SDL_RenderFillRect(renderer, &textRect);
+                // state text
+                textX = textRect.x + textRect.w/4;
+                textY = textRect.y + textRect.h/8;
+                RenderText(textX, textY, "BUSTED", font, &white, renderer);
+                break;
+             default:
+                break;
+        }
+    }
+    
+
+    
 }
 
 /**
@@ -237,6 +319,10 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
 
     }
 
+    // render house point counting
+    char housePointsStr[MAX_NAME_SIZE];
+    sprintf(housePointsStr, "%d points", table->house->handValue);
+    RenderText(WINDOW_WIDTH/1.5, WINDOW_HEIGHT/3, housePointsStr, _font, &white, _renderer);
 
     // destroy everything
     SDL_DestroyTexture(table_texture);
