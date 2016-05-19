@@ -9,6 +9,12 @@
  * Programação
  */
 
+////////////////////////////////////////////////////////////////////////////////
+// 									MAIN.C									  //
+// 																			  //
+// Program flow control funtions											  //
+////////////////////////////////////////////////////////////////////////////////
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -32,6 +38,19 @@
 #include "stats.h"
 #include "EA.h"
 
+/**
+ * @brief      Main program flow
+ *
+ * @param[in]  argc  Number of program arguments
+ * @param      argv  Program arguments
+ *
+ * @return     Program exit status
+ * 
+ * argc should be 3 and argv should contain:
+ * 		*[0] the name of the program
+ * 		*[1] the name of the game config file
+ * 		*[2] the name of the EA matrixes file
+ */
 int main(int argc, char *argv[]){
 	// Graphical interface variables
 	SDL_Window *window = NULL;
@@ -53,14 +72,14 @@ int main(int argc, char *argv[]){
 	Pile cardPile = createPile();
 
 	// EA
-
 	int **softMatrix = NULL;
 	int **hardMatrix = NULL;
 	readEAMatrix(argv[2], &softMatrix, &hardMatrix);
-
-
 	int EASpeed = SPEED_LEVELS/2;
 	int EADelay = increaseEADelay(&EASpeed);
+
+
+	// INITIALIZATION SEQUENCE
 
 	// game initialization
 	phase = initGame(&table, &playerList, &cardPile, &house, &settings, argv[1]);
@@ -83,6 +102,7 @@ int main(int argc, char *argv[]){
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "New Game",
 	"Press 'n' to start a new game", window);
 
+	// FLOW CONTROL
 	while(!quit){
 		while(SDL_PollEvent(&event)){
 			switch (event.type){
@@ -109,6 +129,7 @@ int main(int argc, char *argv[]){
 		}
 
 		if (phase == EA_PLAYING || phase == HOUSE_TURN || phase == COLECTING_BETS){
+
 			// render game table
 			RenderTable(serif, imgs, renderer, &table, phase, EASpeed);
 			// render the players cards
@@ -177,6 +198,8 @@ int main(int argc, char *argv[]){
         SDL_Delay(RENDER_DELAY);
 	}
 
+	// QUIT SEQUENCE
+
 	// write stats
 	writeStats(playerList);
 	// free everything and quit the program
@@ -194,6 +217,22 @@ int main(int argc, char *argv[]){
 }
 
 
+////////////////////////////////////////////////////////////////////////////////
+//						GAME FLOW CONTROL FUNTIONS							  //
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief      Initializes program variables
+ *
+ * @param      table       ptr to the table structure
+ * @param      playerList  ptr to the player list structure
+ * @param      pile        ptr to the card pile structure
+ * @param      house       ptr to the house structure
+ * @param      settings    ptr to the settings structure
+ * @param      argv1       argv[1] - config file name
+ *
+ * @return     new game phase (always START)
+ */
 GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 	House *house, Settings *settings, char *argv1){
 	// seed random number generator
@@ -232,12 +271,14 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 	// compute and store table slots dimensions
 	calcSlotDim(table);
 
-	// fill the pile
+	// fill the card pile
 	pile->numDecks = settings->gameStg.numDecks;
 	refillPile(pile);
 
 	return START;
  }
+
+
 
 
 
@@ -294,6 +335,7 @@ GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePha
 				// warn user that input is needed at the terminal
 				SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
 				"Please check the terminal to provide some input", NULL);
+
 				actionBet(table);
 
 			}
@@ -311,6 +353,7 @@ GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePha
 					// inform the user to click an empty slot
 					SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Adding Player",
 					"Please click an empty slot to add a player", NULL);
+
 		    		printf("Adding player\n");
 				} else {
 					phase = WAITING_FOR_NEW_GAME;
@@ -332,6 +375,17 @@ GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePha
 	return phase;
 }
 
+
+/**
+ * @brief      Handles mouse button presses
+ *
+ * @param      event       ptr to the SDL event structure
+ * @param      table       ptr to the table
+ * @param      playerList  ptr to the player list
+ * @param[in]  phase       current game phase
+ *
+ * @return     the new game phase
+ */
 GamePhase handleMousePress(SDL_Event *event, GameTable *table, PlayerList *playerList, GamePhase phase){
 	if (phase == ADDING_PLAYER &&
 		event->button.button == SDL_BUTTON_LEFT){
@@ -352,6 +406,17 @@ GamePhase handleMousePress(SDL_Event *event, GameTable *table, PlayerList *playe
 	return phase;
 }
 
+
+/**
+ * @brief      Frees all dinamically allocated memory
+ *
+ * @param      playerList  ptr to the player list structure
+ * @param      house       ptr to the house structure
+ * @param      cardPile    ptr to the card pile structure
+ * @param      settings    ptr to the settings structure
+ * @param      softMatrix  the EA soft hand matrix
+ * @param      hardMatrix  the EA hard hand matrix
+ */
 void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, Settings *settings, int **softMatrix, int **hardMatrix){
 	CardNode *tmpCard = NULL;
 	// free players

@@ -1,7 +1,14 @@
+////////////////////////////////////////////////////////////////////////////////
+//								GAMEMECHANICS.H								  //
+// Table structure and funtions related to table. Game actions funtions for   //
+// players(EA and HU) and house												  //
+////////////////////////////////////////////////////////////////////////////////
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <SDL2/SDL.h>
 
 #include "config.h"
 #include "players.h"
@@ -9,7 +16,6 @@
 #include "util.h"
 #include "main.h"
 #include "gameMechanics.h"
-#include "SDL2/SDL.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //							Game Table Funtions								//
@@ -41,6 +47,14 @@ bool slotIsEmpty(PlayerNode *slot){
 //								Action Funtions								//
 //////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief      Player action Hit
+ *
+ * @param      table     ptr to the table structure
+ * @param      cardPile  ptr to the card pile structure
+ *
+ * @return     new game phase
+ */
 int actionHit(GameTable *table, Pile *cardPile) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	logPlay(player->name, "Hit");
@@ -49,6 +63,8 @@ int actionHit(GameTable *table, Pile *cardPile) {
 	// give a card
 	player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 	player->handValue = updatePlayerHandValue(player);
+ 
+	// check if the player may hit again and stand if he doesn't
 	if (player->state == BUSTED
 		|| player->state == BLACKJACK
 		|| player->handValue == 21)
@@ -56,6 +72,7 @@ int actionHit(GameTable *table, Pile *cardPile) {
 		return (actionStand(table));
 	}
 
+	// check next player type
 	if (table->slots[table->currentPlayer]->player.type == CPU){
 		printf("Next player is EA\n");
 		return EA_PLAYING;
@@ -65,10 +82,24 @@ int actionHit(GameTable *table, Pile *cardPile) {
 
 }
 
+
+/**
+ * @brief      Player action stand
+ *
+ * @param      table  ptr to the game table structure
+ *
+ * @return     new game phase
+ *
+ *             altough actionStand() is a player action it is used by newGame to
+ *             choose the first player to play
+ */
 int actionStand(GameTable *table) {
+	// check if current player is not -1 because of newGame();
 	if (table->currentPlayer >= 0) {
 		logPlay(table->slots[table->currentPlayer]->player.name, "stood!");
 	}
+
+	// choose next player or let house play if there is none
 	do {
 		table->currentPlayer++;
 		if (table->currentPlayer >= TABLE_SLOTS) {
@@ -87,6 +118,15 @@ int actionStand(GameTable *table) {
 
 }
 
+
+/**
+ * @brief      Starts a new game
+ *
+ * @param      table     ptr to the table structure
+ * @param      cardPile  ptr to the card pile structure
+ *
+ * @return     new game phase
+ */
 int actionNewGame(GameTable *table, Pile *cardPile) {
 	Player *curPlayer = NULL;
 
@@ -142,7 +182,7 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 	table->house->state = HOUSE_WAITING;
 
 	printf("tudo bem\n");
-	// Chosse first player to play
+	// choose first player to play
 	table->currentPlayer = -1;
 	int newPhase = actionStand(table);
 
@@ -150,6 +190,17 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 	return newPhase;
 }
 
+
+/**
+ * @brief      Player action double
+ *
+ * @param      table     ptr to the game table structure
+ * @param      cardPile  ptr to the card pile structure
+ * @param[in]  action    the alternative action EA takes if double is not
+ *                       allowed
+ *
+ * @return     new game phase
+ */
 int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	int newPhase;
