@@ -16,7 +16,7 @@
  */
  Settings readSettings(const char *fileName) {
      FILE *settingsFile = fopen(fileName, "r");
-     if(settingsFile == NULL) fireCustomError("Game Settings file is missing");
+     if(settingsFile == NULL) fireMissingFileError("Game Settings");
 
 
      char buffer[MAX_BUFFER_SIZE];

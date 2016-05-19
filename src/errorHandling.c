@@ -33,7 +33,7 @@ void fireFileIsEmptyError(const char *s) {
     exit(EXIT_FAILURE);
 }
 
-void fireCustom(const char *s) {
-    printf("%s\n",s);
+void fireMissingFileError(const char *s) {
+    printf("%s is missing\n",s);
     exit(EXIT_FAILURE);
 }
