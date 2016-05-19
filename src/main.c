@@ -34,11 +34,6 @@
 #include "EA.h"
 
 int main(int argc, char *argv[]){
-	/**********************
-	 * READ SETTINGS BLOCK
-	 * Settings *stg = readSettings();
-	 * DONT FORGET TO FREE THE SETTINGS STRUCT!!!!!
-	 ***********************/
 	// Graphical interface variables
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
@@ -59,8 +54,12 @@ int main(int argc, char *argv[]){
 	Pile cardPile = createPile();
 
 	// EA
-	int **softMatrix = readSoftEAMatrix();
-	int **hardMatrix = readHardEAMatrix();
+
+	int **softMatrix = NULL;
+	int **hardMatrix = NULL;
+	readEAMatrix(argv[2], &softMatrix, &hardMatrix);
+
+
 	int EASpeed = SPEED_LEVELS/2;
 	int EADelay = increaseEADelay(&EASpeed);
 
@@ -97,7 +96,9 @@ int main(int argc, char *argv[]){
 
 				// check for mouse button press
 				case SDL_MOUSEBUTTONDOWN:
+
 					phase = handleMousePress(&event, &table, &playerList, phase);
+
 					break;
 
 				// check for quit cross press
@@ -129,10 +130,13 @@ int main(int argc, char *argv[]){
 				printf ("action: %d\n", action);
 				switch (action){
 					case aHIT:
-						phase = actionHit(&table, &cardPile, PLAYER);
+						phase = actionHit(&table, &cardPile);
 						break;
-					case aDOUBLE:
-						phase = actionDouble(&table, &cardPile);
+					case aDOUBLES:
+						phase = actionDouble(&table, &cardPile, aSTAND);
+						break;
+					case aDOUBLEH:
+						phase = actionDouble(&table, &cardPile, aHIT);
 						break;
 					case aSURRENDER:
 						phase = actionSurrender(&table);
@@ -148,6 +152,7 @@ int main(int argc, char *argv[]){
 
 			} else if (phase == HOUSE_TURN){
 				printf("house playing\n");
+				house.state = HOUSE_PLAYING;
 				phase = houseTurn(&table, &house, &cardPile);
 				if (phase == COLECTING_BETS){
 					table.currentPlayer = 0;
@@ -256,7 +261,7 @@ GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePha
 
 		case SDLK_h: // hit
 		    if (phase == PLAYERS_PLAYING){
-		    	phase = actionHit(table, pile, PLAYER);
+		    	phase = actionHit(table, pile);
 		    }
 			break;
 		case SDLK_s: // stand
@@ -276,7 +281,7 @@ GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePha
 			break;
 		case SDLK_d: // double
 		    if (phase == PLAYERS_PLAYING){
-		    	phase = actionDouble(table, pile);
+		    	phase = actionDouble(table, pile, 0);
 		    }
 			break;
 		case SDLK_r: // surrender

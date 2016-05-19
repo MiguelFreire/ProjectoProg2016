@@ -40,8 +40,6 @@
 #define DOUBLE_MULTIPLIER	2	// bet multiplier for double
 
 #define STATS_FILE_NAME "stats.txt"
-#define HARD_EA_MATRIX  "./config/EAHardMatrix.txt"
-#define SOFT_EA_MATRIX  "./config/EASoftMatrix.txt"
 
 #define AUTHOR1_NAME	"Andre Agostinho"
 #define AUTHOR2_NAME	"Miguel Freire"

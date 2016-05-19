@@ -94,7 +94,7 @@ void updateMoney(Player *player, int amount);
  * House possible states: STANDARD(no special state), has a BLACKJACK or is
  * BUSTED
  */
-typedef enum {HOUSE_WAITING, HOUSE_COLECTING, HOUSE_BLACKJACK, HOUSE_BUSTED} HouseState;
+typedef enum {HOUSE_WAITING, HOUSE_PLAYING, HOUSE_COLECTING, HOUSE_BLACKJACK, HOUSE_BUSTED} HouseState;
 
 /**
  * House structure (points to linked list)
