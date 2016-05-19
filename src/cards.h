@@ -1,6 +1,8 @@
-/**
- * Card related data structures and functions to handle this structures
- */
+////////////////////////////////////////////////////////////////////////////////
+//									CARDS.H									  //
+//																			  //
+// Card structures and functions to manipulate the card pile				  //
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef CARDS_H
 #define	CARDS_H
@@ -11,7 +13,13 @@
 /**
  * Enum type of suit
  */
-typedef enum {CLUBS, DIAMONDS, HEARTS, SPADES, NUM_SUITS, BACK} Suit;
+typedef enum {CLUBS, 
+	DIAMONDS,
+	HEARTS,
+	SPADES,
+	NUM_SUITS,	// number of suits
+	BACK	// card back
+} Suit;
 
 /**
  * Card is a ordinary struct
@@ -27,17 +35,17 @@ typedef struct {
  */
 typedef struct cardNode {
 	Card card;
-	struct cardNode *next;
+	struct cardNode *next;	// ptr to the next card node in the list
 } CardNode;
 
 
 /**
- *	Pile is a linked list
+ *	Pile is a linked list of card nodes
  */
 typedef struct {
 	int numCards;
 	int numDecks;
-	CardNode *pileTop, *pileBottom;
+	CardNode *pileTop, *pileBottom;	// ptrs to the pile top and bottom card nodes
 } Pile;
 
 

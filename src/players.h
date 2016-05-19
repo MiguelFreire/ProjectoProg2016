@@ -1,9 +1,8 @@
-/**
- * @file
- *
- * Player and House related structures and functions to manipulate these
- * structures
- */
+////////////////////////////////////////////////////////////////////////////////
+//								PLAYERS.H									  //
+// Player and House related structure and functions to manipulate these	  	  //
+// structures																  //
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef PLAYERS_H
 #define	PLAYERS_H
@@ -11,9 +10,9 @@
 #include "config.h"
 #include "cards.h"
 
-//////////////////////////////////////////////////////////////////////////////
-//									Players									//
-//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+//									Players									  //
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Player possible types: Human or CPU (AI)
@@ -21,43 +20,42 @@
 typedef enum {HUMAN, CPU} PlayerType;
 
 /**
- * Player possible states: STANDARD(no special state), has a BLACKJACK, is
- * BUSTED or is BROKE
+ * Player possible states
  */
 typedef enum {
-	STANDARD,
-	HIT,
-	BLACKJACK,
-	BUSTED,
-	BROKE,
-	SURRENDERED,
-	DOUBLED,
-	TIED,
-	WON,
-	LOST
+	STANDARD,	// player is "normal"
+	HIT,	// player has hit
+	BLACKJACK,	// player has a blackjack
+	BUSTED, // player has busted
+	BROKE,	// player is broke
+	SURRENDERED,	// player has surrendered
+	DOUBLED,	// player has doubled
+	TIED,	// player tied a game
+	WON,	// player won a game
+	LOST	// plyaer lost a game
 } PlayerState;
 
 /**
  * Player stats
  */
 typedef struct {
-	int won;
-	int lost;
-	int tied;
-	int houseGains;
+	int won;	// games won
+	int lost;	// games lost
+	int tied;	// games tied
+	int houseGains;	// money house won with this player
 } PlayerStats;
 
 /**
- * PLayer payload structure
+ * Player payload structure
  */
 typedef struct {
 	PlayerType type;
 	char name[MAX_NAME_SIZE + 1];
 	int money, bet;
-	float betMultiplier;
+	float betMultiplier;	// bet multiplier
 	PlayerState state;
 	int numCards, handValue;
-	CardNode *hand;
+	CardNode *hand;	// ptr to the player hand top card node
 	PlayerStats stats;
 } Player;
 
@@ -66,14 +64,14 @@ typedef struct {
  */
 typedef struct playerNode {
 	Player player;
-	struct playerNode *next;
+	struct playerNode *next; // ptr to the next player list node
 } PlayerNode;
 
 /**
  * The player list structure (points to linked list)
  */
 typedef struct {
-	PlayerNode *head, *tail;
+	PlayerNode *head, *tail;	// head and tail pointers to player node list
 	int totalPlayers;
 } PlayerList;
 
@@ -86,15 +84,21 @@ bool playerListIsEmpty(PlayerList *list);
 
 void updateMoney(Player *player, int amount);
 
-//////////////////////////////////////////////////////////////////////////////
-// 									House									//
-//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// 									House									  //
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * House possible states: STANDARD(no special state), has a BLACKJACK or is
  * BUSTED
  */
-typedef enum {HOUSE_WAITING, HOUSE_PLAYING, HOUSE_COLECTING, HOUSE_BLACKJACK, HOUSE_BUSTED} HouseState;
+typedef enum {
+	HOUSE_WAITING,	// house is waiting for players to finish playing
+	HOUSE_PLAYING,	// house is playing
+	HOUSE_COLECTING,	// house is colecting/paying bets
+	HOUSE_BLACKJACK,	// house has a blackjack
+	HOUSE_BUSTED	// house is busted
+} HouseState;
 
 /**
  * House structure (points to linked list)
@@ -102,16 +106,16 @@ typedef enum {HOUSE_WAITING, HOUSE_PLAYING, HOUSE_COLECTING, HOUSE_BLACKJACK, HO
 typedef struct {
  	HouseState state;
  	int numCards, handValue;
- 	CardNode *hand;
+ 	CardNode *hand;	// ptr to the house hand top card node
 } House;
 
 
 House createHouse();
 
 
-//////////////////////////////////////////////////////////////////////////////
-// 							Hand Functions									//
-//////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+// 							Hand Functions									  //
+////////////////////////////////////////////////////////////////////////////////
 
 CardNode *pushToHand(CardNode *hand, CardNode *newCard, int *numCards);
 CardNode *popHand(CardNode *hand, Card *cardContent, int *numCards);
