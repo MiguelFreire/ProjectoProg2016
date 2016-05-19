@@ -4,10 +4,10 @@
 #include "cards.h"
 #include "gameMechanics.h"
 
-int increaseEADelay(int delayLevel);
-int decreaseEADelay(int delayLevel);
+int increaseEADelay(int *speed);
+int decreaseEADelay(int *speed);
 
-void readEAMatrix(const char *fileName, int **softMatrixArg, int **hardMatrixArg);
+void readEAMatrix(const char *fileName, int ***softMatrixArg, int ***hardMatrixArg);
 
 int getAction(char action);
 

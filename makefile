@@ -13,9 +13,10 @@ FILES= ./src/*.c
 
 all:
 	@ echo "Compiling blackjack"
-	@ echo "	André Agostinho	| Miguel Freire"
-	@ echo "		84001	|	84145"
-	@ echo "_______________________________________________"
+	@ echo "---------------------------------------------------"
+	@ echo "	André Agostinho	|	Miguel Freire"
+	@ echo "	84001		|	84145"
+	@ echo "---------------------------------------------------"
 	@ echo ""
 
 	$(CC) $(CFLAGS) $(LIB) $(FILES) -o $(TARGET)

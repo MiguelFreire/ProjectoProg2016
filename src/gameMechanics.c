@@ -42,33 +42,49 @@ bool slotIsEmpty(PlayerNode *slot){
 //////////////////////////////////////////////////////////////////////////////
 
 int actionHit(GameTable *table, Pile *cardPile) {
-		Player *player = &(table->slots[table->currentPlayer]->player);
-		logPlay(player->name, "Hit");
-		player->state = HIT;
+	Player *player = &(table->slots[table->currentPlayer]->player);
+	logPlay(player->name, "Hit");
+	player->state = HIT;
 
-		// give a card
-		player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
-		player->handValue = updatePlayerHandValue(player);
-		if (player->state == BUSTED
-			|| player->state == BLACKJACK
-			|| player->handValue == 21)
-		{
-			return (actionStand(table));
-		}
+	// give a card
+	player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
+	player->handValue = updatePlayerHandValue(player);
+	if (player->state == BUSTED
+		|| player->state == BLACKJACK
+		|| player->handValue == 21)
+	{
+		return (actionStand(table));
+	}
 
+	if (table->slots[table->currentPlayer]->player.type == CPU){
+		printf("Next player is EA\n");
+		return EA_PLAYING;
+	}
+	printf("Next player is human\n");
 	return PLAYERS_PLAYING;
+
 }
 
 int actionStand(GameTable *table) {
-	logPlay(table->slots[table->currentPlayer]->player.name, "stood!");
+	if (table->currentPlayer >= 0) {
+		logPlay(table->slots[table->currentPlayer]->player.name, "stood!");
+	}
 	do {
 		table->currentPlayer++;
-		if (table->currentPlayer >= TABLE_SLOTS) return HOUSE_TURN;
+		if (table->currentPlayer >= TABLE_SLOTS) {
+			return HOUSE_TURN;
+		}
 	} while (slotIsEmpty(table->slots[table->currentPlayer]) ||
 		table->slots[table->currentPlayer]->player.state != STANDARD); // next player has a BLACKJACK
 
-
+	// check for next player type
+	if (table->slots[table->currentPlayer]->player.type == CPU){
+		printf("Next player is EA\n");
+		return EA_PLAYING;
+	}
+	printf("Next player is human\n");
 	return PLAYERS_PLAYING;
+
 }
 
 int actionNewGame(GameTable *table, Pile *cardPile) {
@@ -125,15 +141,13 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 	table->house->handValue = getHandValue(table->house->hand, NULL);
 	table->house->state = HOUSE_WAITING;
 
-	// select first player
-	table->currentPlayer = 0;
-	while( slotIsEmpty(table->slots[table->currentPlayer])
-		|| table->slots[table->currentPlayer]->player.state == BLACKJACK){
+	printf("tudo bem\n");
+	// Chosse first player to play
+	table->currentPlayer = -1;
+	int newPhase = actionStand(table);
 
-		table->currentPlayer ++;
-	}
 	logPlay("\b","A New game has started!");
-	return PLAYERS_PLAYING;
+	return newPhase;
 }
 
 int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
@@ -141,13 +155,13 @@ int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
 	int newPhase;
 
 	// check if double is valid
-	if((player->type == HUMAN && player->state == HIT) || player->money < player->bet) {
+	if(player->type == HUMAN && (player->state == HIT || player->money < player->bet)) {
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Double",
 		"Double not allowed the player has already hit or does not have enough money", NULL);
 
 		return PLAYERS_PLAYING;
 
-	} else if(player->type == CPU && player->state == HIT) {
+	} else if(player->type == CPU && (player->state == HIT || player->money < player->bet)) {
 		if(action == aHIT) {
 			newPhase = actionHit(table, cardPile);
 			return newPhase;
@@ -239,7 +253,7 @@ void actionBet(GameTable *table) {
 		printf("New bet?\n");
 		fgets(buffer, MAX_BUFFER_SIZE, stdin);
 		sscanf(buffer, "%d", &newBet);
-    } while(!(isBetween(newBet, MIN_BET, (int)MAX_BET_FACTOR*player->money))
+    } while(!(isBetween(newBet, MIN_BET, (int)(MAX_BET_FACTOR*player->money)))
     	&& (error = true) ); // set error the second time the loop runs
 
     player->bet = newBet;
@@ -256,8 +270,13 @@ void actionBet(GameTable *table) {
 
 int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	Player newPlayer = {0};
+
 	char buffer_money[MAX_BUFFER_SIZE] = {0};
 	char buffer_bet[MAX_BUFFER_SIZE] = {0};
+
+	clearTerminal();
+	printf("Adding player at slot %d\n", slotClicked + 1);
+
 	// ask for new player's name
 	printf("(Write CANCEL to quit)\n");
 

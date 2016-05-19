@@ -24,3 +24,8 @@ void logPlay(char const *player, char const *action) {
 	buff[10] = '\0';
 	printf("%s %s %s\n", buff, player, action);
 }
+
+void clearTerminal(){
+	// clear the terminal
+	printf("\033[2J\033[1;1H");
+}

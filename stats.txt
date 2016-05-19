@@ -1,24 +1,18 @@
-Player Name: André
+Player Name: JAscenso
 Player Type: HUMAN
-Games Won/Tied/Lost: 0/1/0
-Final money: 100
+Games Won/Tied/Lost: 0/0/0
+Final money: 200
 House gains: 0
 
-Player Name: Miguel
-Player Type: CPU
-Games Won/Tied/Lost: 0/0/1
-Final money: 87
-House gains: 15
-
-Player Name: Diogo
+Player Name: BCosta
 Player Type: HUMAN
-Games Won/Tied/Lost: 1/0/0
-Final money: 365
-House gains: -20
+Games Won/Tied/Lost: 0/0/0
+Final money: 200
+House gains: 0
 
-Player Name: Obama
+Player Name: CRibeiro
 Player Type: HUMAN
-Games Won/Tied/Lost: 0/0/1
-Final money: 480
-House gains: 20
+Games Won/Tied/Lost: 0/0/0
+Final money: 200
+House gains: 0
 
