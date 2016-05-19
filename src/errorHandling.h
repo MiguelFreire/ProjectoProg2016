@@ -17,4 +17,6 @@ void fireFormatError(const char *s);
 void fireFileNotFoundError(const char *s);
 
 void fireFileIsEmptyError(const char *s);
+
+void fireCustomError(const char *s);
 #endif /* end include guard */

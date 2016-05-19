@@ -43,7 +43,7 @@ int decreaseEADelay(int *speed){
 void readEAMatrix(const char *fileName, int ***softMatrixArg, int ***hardMatrixArg) {
     FILE *file = fopen(fileName, "r");
     char c;
-    if(file == NULL) fireFileNotFoundError(fileName);
+    if(file == NULL) fireCustomError("EA config file is missing");
 
     int **hardMatrix = (int **) malloc(10*sizeof(int*));
     if(hardMatrix == NULL) fireNotEnoughMemoryError("Hard Matrix");

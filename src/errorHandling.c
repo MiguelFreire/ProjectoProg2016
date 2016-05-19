@@ -32,3 +32,8 @@ void fireFileIsEmptyError(const char *s) {
     printf("File: %s is empty\n", s);
     exit(EXIT_FAILURE);
 }
+
+void fireCustom(const char *s) {
+    printf("%s\n",s);
+    exit(EXIT_FAILURE);
+}
