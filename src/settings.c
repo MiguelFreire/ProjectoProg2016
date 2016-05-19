@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "fileIO.h"
 #include "config.h"
 #include "players.h"
 #include "settings.h"
@@ -17,7 +16,7 @@
  */
  Settings readSettings(const char *fileName) {
      FILE *settingsFile = fopen(fileName, "r");
-     if(settingsFile == NULL) fireCustomError("Game settings file is missing");
+     if(settingsFile == NULL) fireCustomError("Game Settings file is missing");
 
 
      char buffer[MAX_BUFFER_SIZE];
