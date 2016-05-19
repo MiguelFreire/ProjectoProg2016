@@ -54,6 +54,4 @@ int colectBets(GameTable *table, House *house);
 
 void modifyBet(GameTable *);
 
-void executeEAAction(GameTable *, Pile *pile, EAAction action);
-
 #endif /* end include guard */

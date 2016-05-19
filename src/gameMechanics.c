@@ -45,7 +45,6 @@ int actionHit(GameTable *table, Pile *cardPile) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	logPlay(player->name, "Hit");
 	player->state = HIT;
-
 	// give a card
 	player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 	player->handValue = updatePlayerHandValue(player);
@@ -154,10 +153,11 @@ int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	int newPhase;
 
+	logPlay(player->name, "doubled!");
+
 	// check if double is valid
 	if(player->type == HUMAN && (player->state == HIT || player->money < player->bet)) {
-		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Double",
-		"Double not allowed the player has already hit or does not have enough money", NULL);
+		logPlay(player->name, "is not allowed to double because he already hit or has not enough money");
 
 		return PLAYERS_PLAYING;
 
@@ -178,11 +178,7 @@ int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
 
 	// mandatory hit
 	newPhase = actionHit(table, cardPile);
-	if(player->state != BUSTED) // hit only stands when the player is busted
-	                            // so stand if the player isn't busted
-		newPhase = actionStand(table);
 
-	logPlay(player->name, "doubled!");
 	return newPhase;
 }
 
@@ -249,7 +245,7 @@ void actionBet(GameTable *table) {
 	do {
 		if(error)
 			printf("Player's bet value must be between: %d and %d\n",
-			MIN_BET, (int)MAX_BET_FACTOR*player->money );
+			MIN_BET, (int)(MAX_BET_FACTOR*player->money));
 		printf("New bet?\n");
 		fgets(buffer, MAX_BUFFER_SIZE, stdin);
 		sscanf(buffer, "%d", &newBet);
