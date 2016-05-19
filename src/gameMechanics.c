@@ -403,8 +403,9 @@ int colectBets(GameTable *table, House *house){
 	// test WIN, LOSS or TIE and colect or pay bets
 	if ( // TIE
 		(house->state == HOUSE_BLACKJACK && player->state == BLACKJACK) // both have blackjack
-		|| ( house->handValue == player->handValue && 					// both have the same points ..
-		house->state != HOUSE_BLACKJACK && player->state != BLACKJACK ) // .. and none has blackjack
+		|| ( house->handValue == player->handValue	// both have the same points ..
+		&& player->state != BUSTED	// .. but player isn't busted ..
+		&& house->state != HOUSE_BLACKJACK && player->state != BLACKJACK ) // .. and none has blackjack
 	){
 
 		// update state and stats
