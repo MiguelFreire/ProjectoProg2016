@@ -22,7 +22,6 @@
 
 #include "main.h"
 #include "config.h"
-#include "fileIO.h"
 #include "gameMechanics.h"
 #include "graphicalInterface.h"
 #include "players.h"

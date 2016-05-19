@@ -12,6 +12,7 @@
 #include "config.h"
 #include "errorHandling.h"
 #include "cards.h"
+#include "util.h"
 
 int cardValues[CARD_RANKS] = {2,3,4,5,6,7,8,9,10,10,10,10,11}; // card values
 /**
@@ -31,7 +32,7 @@ Pile createPile(){
  */
 void refillPile(Pile *pile){
 	Card tmpCard;
-	printf("Refiling pile\n");
+	logPlay("\b", "Refilled pile");
 	for (int deck = 0; deck < pile->numDecks; deck++){ // decks
 
 		for (int suit = 0; suit < NUM_SUITS; suit++){ // suits
@@ -42,8 +43,6 @@ void refillPile(Pile *pile){
 				tmpCard.value = cardValues[rank-1];
 
 				pile->pileBottom = insertCardOnBottom(pile, tmpCard);
-
-				printf("[%d] [%d] [%d] [%d] - %d\n", pile->numCards, deck, suit, rank, tmpCard.value);
 			}
 		}
 	}

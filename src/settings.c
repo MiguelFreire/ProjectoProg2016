@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-#include "fileIO.h"
 #include "config.h"
 #include "players.h"
 #include "settings.h"
