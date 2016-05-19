@@ -89,7 +89,6 @@ void freeMatrixes(int **softMatrix, int **hardMatrix) {
     free(softMatrix);
 
     for(int j = 0; j < 10; j++) {
-        printf("J: %d\n", j);
         free(hardMatrix[j]);
     }
     free(hardMatrix);
