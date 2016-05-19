@@ -64,6 +64,7 @@ int main(int argc, char *argv[]){
 	int EASpeed = SPEED_LEVELS/2;
 	int EADelay = increaseEADelay(&EASpeed);
 
+	// game initialization
 	phase = initGame(&table, &playerList, &cardPile, &house, &settings, argv[1]);
 
 	// initialize graphics
@@ -90,102 +91,13 @@ int main(int argc, char *argv[]){
 
 				// check for key press
 				case SDL_KEYDOWN:
-
-					switch( event.key.keysym.sym){
-
-						case SDLK_h: // hit
-						    if (phase == PLAYERS_PLAYING){
-						    	phase = actionHit(&table, &cardPile, PLAYER);
-						    }
-							break;
-						case SDLK_s: // stand
-						    if (phase == PLAYERS_PLAYING){
-						    	phase = actionStand(&table);
-						    }
-							break;
-						case SDLK_n: // new game
-							if (phase == WAITING_FOR_NEW_GAME){
-								phase = actionNewGame(&table, &cardPile);
-							}
-							break;
-						case SDLK_q: // quit
-						    if (phase == WAITING_FOR_NEW_GAME){
-								quit = true;
-							}
-							break;
-						case SDLK_d: // double
-						    if (phase == PLAYERS_PLAYING){
-						    	phase = actionDouble(&table, &cardPile);
-						    }
-							break;
-						case SDLK_r: // surrender
-							if (phase == PLAYERS_PLAYING){
-								phase = actionSurrender(&table);
-							}
-							break;
-						case SDLK_b: // bet
-
-							if (phase == WAITING_FOR_NEW_GAME){
-								// warn user that input is needed at the terminal
-								SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
-								"Please check the terminal to provide some input", window);
-								actionBet(&table);
-
-							}
-							break;
-						case SDLK_a: // add player
-						    if (phase == WAITING_FOR_NEW_GAME){
-						    	bool emptySlots = false;
-								for (int i = 0; i < TABLE_SLOTS; i++){
-									if (slotIsEmpty(table.slots[i])){
-										emptySlots = true;
-									}
-								}
-								if (emptySlots){
-									phase = ADDING_PLAYER;
-									// inform the user to click an empty slot
-									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Adding Player",
-									"Please click an empty slot to add a player", window);
-						    		printf("Adding player\n");
-								} else {
-									phase = WAITING_FOR_NEW_GAME;
-									// inform the user that there are no empty slots
-									SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Adding Player",
-									"There are no empty slots for new players", window);
-									printf("There are no empty slots\n");
-								}
-						    }
-						    break;
-						case SDLK_UP: // increase EA delay
-							EADelay = increaseEADelay(&EASpeed);
-							break;
-						case SDLK_DOWN:	// decrease EA delay
-							EADelay = decreaseEADelay(&EASpeed);
-							break;
-					}
-
+					phase = handleKeyPress(&event, &table, &cardPile, 
+						phase, &quit, &EASpeed, &EADelay);
 					break;
 
 				// check for mouse button press
 				case SDL_MOUSEBUTTONDOWN:
-					if (phase == ADDING_PLAYER &&
-						event.button.button == SDL_BUTTON_LEFT){
-						// check position to add player
-						int mouseX, mouseY, slotClicked;
-						SDL_GetMouseState(&mouseX, &mouseY);
-						slotClicked = mouseIsOverSlot(&table, mouseX, mouseY);
-						if (slotClicked >= 0){
-							if (slotIsEmpty(table.slots[slotClicked])){
-								// warn user that input is needed at the terminal
-								SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
-								"Please check the terminal to provide some input", window);
-								
-								phase = actionAddPlayer(slotClicked, &playerList, &table);
-							}
-
-						}
-
-					}
+					phase = handleMousePress(&event, &table, &playerList, phase);
 					break;
 
 				// check for quit cross press
@@ -323,6 +235,118 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 	return START;
  }
 
+
+
+/**
+ * @brief      Handles keybooard keys
+ *
+ * @param      event    ptr to the SDL event
+ * @param      table    ptr to the game table
+ * @param      pile     ptr to the card pile
+ * @param[in]  phase    current game phase
+ * @param      quit     ptr to the quit control variable
+ * @param      EASpeed  ptr to the EA speed variable
+ * @param      EADelay  ptr to the EA delay variable
+ *
+ * @return     the new game phase
+ */
+GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePhase phase, bool *quit, int *EASpeed, int *EADelay){
+
+	switch( event->key.keysym.sym){
+
+		case SDLK_h: // hit
+		    if (phase == PLAYERS_PLAYING){
+		    	phase = actionHit(table, pile, PLAYER);
+		    }
+			break;
+		case SDLK_s: // stand
+		    if (phase == PLAYERS_PLAYING){
+		    	phase = actionStand(table);
+		    }
+			break;
+		case SDLK_n: // new game
+			if (phase == WAITING_FOR_NEW_GAME){
+				phase = actionNewGame(table, pile);
+			}
+			break;
+		case SDLK_q: // quit
+		    if (phase == WAITING_FOR_NEW_GAME){
+				*quit = true;
+			}
+			break;
+		case SDLK_d: // double
+		    if (phase == PLAYERS_PLAYING){
+		    	phase = actionDouble(table, pile);
+		    }
+			break;
+		case SDLK_r: // surrender
+			if (phase == PLAYERS_PLAYING){
+				phase = actionSurrender(table);
+			}
+			break;
+		case SDLK_b: // bet
+
+			if (phase == WAITING_FOR_NEW_GAME){
+				// warn user that input is needed at the terminal
+				SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
+				"Please check the terminal to provide some input", NULL);
+				actionBet(table);
+
+			}
+			break;
+		case SDLK_a: // add player
+		    if (phase == WAITING_FOR_NEW_GAME){
+		    	bool emptySlots = false;
+				for (int i = 0; i < TABLE_SLOTS; i++){
+					if (slotIsEmpty(table->slots[i])){
+						emptySlots = true;
+					}
+				}
+				if (emptySlots){
+					phase = ADDING_PLAYER;
+					// inform the user to click an empty slot
+					SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Adding Player",
+					"Please click an empty slot to add a player", NULL);
+		    		printf("Adding player\n");
+				} else {
+					phase = WAITING_FOR_NEW_GAME;
+					// inform the user that there are no empty slots
+					SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Adding Player",
+					"There are no empty slots for new players", NULL);
+					printf("There are no empty slots\n");
+				}
+		    }
+		    break;
+		case SDLK_UP: // increase EA delay
+			*EADelay = increaseEADelay(EASpeed);
+			break;
+		case SDLK_DOWN:	// decrease EA delay
+			*EADelay = decreaseEADelay(EASpeed);
+			break;
+	}
+
+	return phase;
+}
+
+GamePhase handleMousePress(SDL_Event *event, GameTable *table, PlayerList *playerList, GamePhase phase){
+	if (phase == ADDING_PLAYER &&
+		event->button.button == SDL_BUTTON_LEFT){
+		// check position to add player
+		int mouseX, mouseY, slotClicked;
+		SDL_GetMouseState(&mouseX, &mouseY);
+		slotClicked = mouseIsOverSlot(table, mouseX, mouseY);
+		if (slotClicked >= 0){
+			if (slotIsEmpty(table->slots[slotClicked])){
+				// warn user that input is needed at the terminal
+				SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
+				"Please check the terminal to provide some input", NULL);
+				
+				phase = actionAddPlayer(slotClicked, playerList, table);
+			}
+		}
+	}
+	return phase;
+}
 
 void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, Settings *settings, int **softMatrix, int **hardMatrix){
 	CardNode *tmpCard = NULL;

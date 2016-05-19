@@ -233,7 +233,7 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     SDL_Color black = { 0, 0, 0 }; // black
     SDL_Color white = { 255, 255, 255 }; // white
 
-    char nameMoneyStr[MAX_BUFFER_SIZE];
+    char strBuffer[MAX_BUFFER_SIZE];
     SDL_Texture *table_texture;
     SDL_Rect tableSrc, tableDest, playerRect;
     int separatorPos = (int)(0.95f*WINDOW_WIDTH); // seperates the left from the right part of the window
@@ -279,11 +279,11 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     height += RenderText(separatorPos+3*MARGIN, height, "==================", _font, &black, _renderer);
     for (int i = 0; i < TABLE_SLOTS; i++){
         if (!slotIsEmpty(table->slots[i])){
-            sprintf(nameMoneyStr, "%s(%s) - %d€", 
+            sprintf(strBuffer, "%s(%s) - %d€", 
                 table->slots[i]->player.name,
                 table->slots[i]->player.type == 0 ? "HU" : "EA", 
                 table->slots[i]->player.money);
-            height += RenderText(separatorPos+3*MARGIN, height, nameMoneyStr, _font, &black, _renderer);
+            height += RenderText(separatorPos+3*MARGIN, height, strBuffer, _font, &black, _renderer);
         }
     }
     RenderText(separatorPos+3*MARGIN, height, "==================", _font, &black, _renderer);
@@ -297,6 +297,7 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
             playerRect.y = table->slotDim[i].y;
             playerRect.w = table->slotDim[i].w;
             playerRect.h = table->slotDim[i].h;
+            height = playerRect.y - 30;
 
             // Draw the player area
             SDL_SetRenderDrawColor(_renderer, 80, 255, 40, 50);
@@ -310,11 +311,13 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
                 SDL_RenderDrawRect(_renderer, &playerRect);
             }
 
-            sprintf(nameMoneyStr,"%s -- %d bet -- %d points",
-                table->slots[i]->player.name,
+            sprintf(strBuffer,"bet: %d € -- %d points",
                 (int)(table->slots[i]->player.bet * table->slots[i]->player.betMultiplier),
-                table->slots[i]->player.handValue);
-            RenderText(playerRect.x+20, playerRect.y-30, nameMoneyStr, _font, &white, _renderer);
+                table->slots[i]->player.handValue );
+            height -= RenderText(playerRect.x+20, height, strBuffer, _font, &white, _renderer) - 10;
+
+            sprintf(strBuffer,"%s", table->slots[i]->player.name);
+            RenderText(playerRect.x+20, height, strBuffer, _font, &white, _renderer);
         }
 
     }
