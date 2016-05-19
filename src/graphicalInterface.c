@@ -214,9 +214,9 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                 break;
         }
     }
-    
 
-    
+
+
 }
 
 /**
@@ -263,7 +263,7 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     // render the IST Logo
     height = RenderLogo(separatorPos, 0, _img[1], _renderer);
 
-   
+
     height += 50;
     // render phase
     char phaseStr[10];
@@ -279,9 +279,9 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     height += RenderText(separatorPos+3*MARGIN, height, "==================", _font, &black, _renderer);
     for (int i = 0; i < TABLE_SLOTS; i++){
         if (!slotIsEmpty(table->slots[i])){
-            sprintf(nameMoneyStr, "%s(%s) - %d€", 
+            sprintf(nameMoneyStr, "%s(%s) - %d€",
                 table->slots[i]->player.name,
-                table->slots[i]->player.type == 0 ? "HU" : "EA", 
+                table->slots[i]->player.type == 0 ? "HU" : "EA",
                 table->slots[i]->player.money);
             height += RenderText(separatorPos+3*MARGIN, height, nameMoneyStr, _font, &black, _renderer);
         }
@@ -320,7 +320,7 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     }
 
     // render house point counting
-    char housePointsStr[MAX_NAME_SIZE];
+    char housePointsStr[MAX_BUFFER_SIZE];
     sprintf(housePointsStr, "%d points", table->house->handValue);
     RenderText(WINDOW_WIDTH/1.5, WINDOW_HEIGHT/3, housePointsStr, _font, &white, _renderer);
 

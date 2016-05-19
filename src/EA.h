@@ -7,9 +7,7 @@
 int increaseEADelay(int delayLevel);
 int decreaseEADelay(int delayLevel);
 
-int **readSoftEAMatrix();
-
-int **readHardEAMatrix();
+void readEAMatrix(const char *fileName, int **softMatrixArg, int **hardMatrixArg);
 
 int getAction(char action);
 

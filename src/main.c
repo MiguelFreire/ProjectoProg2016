@@ -34,11 +34,6 @@
 #include "EA.h"
 
 int main(int argc, char *argv[]){
-	/**********************
-	 * READ SETTINGS BLOCK
-	 * Settings *stg = readSettings();
-	 * DONT FORGET TO FREE THE SETTINGS STRUCT!!!!!
-	 ***********************/
 	// Graphical interface variables
 	SDL_Window *window = NULL;
 	SDL_Renderer *renderer = NULL;
@@ -59,8 +54,9 @@ int main(int argc, char *argv[]){
 	Pile cardPile = createPile();
 
 	// EA
-	int **softMatrix = readSoftEAMatrix();
-	int **hardMatrix = readHardEAMatrix();
+	int **softMatrix = NULL;
+	int **hardMatrix = NULL;
+	readEAMatrix(argv[2], softMatrix, hardMatrix);
 	int EADelayLevel = 3;
 
 	phase = initGame(&table, &playerList, &cardPile, &house, &settings, argv[1]);
@@ -97,7 +93,7 @@ int main(int argc, char *argv[]){
 
 							case SDLK_h: // hit
 							    if (phase == PLAYERS_PLAYING){
-							    	phase = actionHit(&table, &cardPile, PLAYER);
+							    	phase = actionHit(&table, &cardPile);
 							    }
 								break;
 							case SDLK_s: // stand
@@ -117,7 +113,7 @@ int main(int argc, char *argv[]){
 								break;
 							case SDLK_d: // double
 							    if (phase == PLAYERS_PLAYING){
-							    	phase = actionDouble(&table, &cardPile);
+							    	phase = actionDouble(&table, &cardPile, 0);
 							    }
 								break;
 							case SDLK_r: // surrender
@@ -204,10 +200,13 @@ int main(int argc, char *argv[]){
 			printf ("action: %d\n", action);
 			switch (action){
 				case aHIT:
-					phase = actionHit(&table, &cardPile, PLAYER);
+					phase = actionHit(&table, &cardPile);
 					break;
-				case aDOUBLE:
-					phase = actionDouble(&table, &cardPile);
+				case aDOUBLES:
+					phase = actionDouble(&table, &cardPile, aSTAND);
+					break;
+				case aDOUBLEH:
+					phase = actionDouble(&table, &cardPile, aHIT);
 					break;
 				case aSURRENDER:
 					phase = actionSurrender(&table);

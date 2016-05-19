@@ -24,51 +24,47 @@ int decreaseEADelay(int delayLevel){
     }
 }
 
-int **readSoftEAMatrix() {
-    FILE *file = fopen(SOFT_EA_MATRIX, "r");
+void readEAMatrix(const char *fileName, int **softMatrixArg, int **hardMatrixArg) {
+    FILE *file = fopen(fileName, "r");
     char c;
-    if(file == NULL) fireFileNotFoundError(SOFT_EA_MATRIX);
+    if(file == NULL) fireFileNotFoundError(fileName);
 
-    int **matrix = (int **) malloc(7*sizeof(int*));
-    if(matrix == NULL) fireNotEnoughMemoryError("Hard Matrix");
-    for(int l = 0; l < 7; l++) {
-        if((matrix[l] = (int *) malloc(10*sizeof(int))) == NULL) fireNotEnoughMemoryError("Soft Matrix element");
-    }
-
-    for(int i = 0; i < 7; i++) {
-        for(int j = 0; j < 10; j++) {
-            c = fgetc(file);
-            if(c == '\n') c = fgetc(file);
-            matrix[i][j] = getAction(c);
-        }
-    }
-    fclose(file);
-
-    return matrix;
-}
-
-int **readHardEAMatrix() {
-    FILE *file = fopen(HARD_EA_MATRIX, "r");
-    char c;
-    if(file == NULL) fireFileNotFoundError(HARD_EA_MATRIX);
-
-    int **matrix = (int **) malloc(10*sizeof(int*));
-    if(matrix == NULL) fireNotEnoughMemoryError("Hard Matrix");
+    int **hardMatrix = (int **) malloc(10*sizeof(int*));
+    if(hardMatrix == NULL) fireNotEnoughMemoryError("Hard Matrix");
     for(int l = 0; l < 10; l++) {
-        if((matrix[l] = (int *) malloc(10*sizeof(int))) == NULL) fireNotEnoughMemoryError("Hard Matrix element");
+        if((hardMatrix[l] = (int *) malloc(10*sizeof(int))) == NULL) fireNotEnoughMemoryError("Hard Matrix element");
     }
 
     for(int i = 0; i < 10; i++) {
         for(int j = 0; j < 10; j++) {
             c = fgetc(file);
             if(c == '\n') c = fgetc(file);
-            matrix[i][j] = getAction(c);
+            hardMatrix[i][j] = getAction(c);
         }
     }
-    fclose(file);
 
-    return matrix;
+    hardMatrixArg = hardMatrix;
+
+    //Soft Matrix reader
+    int **softMatrix = (int **) malloc(7*sizeof(int*));
+    if(softMatrix == NULL) fireNotEnoughMemoryError("Soft Matrix");
+    for(int l = 0; l < 7; l++) {
+        if((softMatrix[l] = (int *) malloc(10*sizeof(int))) == NULL) fireNotEnoughMemoryError("Soft Matrix element");
+    }
+
+    for(int i = 0; i < 7; i++) {
+        for(int j = 0; j < 10; j++) {
+            c = fgetc(file+1);
+            if(c == '\n') c = fgetc(file);
+            softMatrix[i][j] = getAction(c);
+        }
+    }
+
+    softMatrixArg = softMatrix;
+
+    fclose(file);
 }
+
 
 void freeMatrixes(int **softMatrix, int **hardMatrix) {
     for(int i = 0; i < 7; i ++) {
@@ -85,16 +81,18 @@ void freeMatrixes(int **softMatrix, int **hardMatrix) {
 int getAction(char action) {
     switch (action) {
         case 'H':
-            return 0;
+            return aHIT;
             break;
         case 'D':
-            return 1;
+            return aDOUBLEH;
             break;
+        case 'T':
+            return aDOUBLES;
         case 'S':
-            return 3;
+            return aSTAND;
             break;
         case 'R':
-            return 2;
+            return aSURRENDER;
             break;
         default:
             return -1;

@@ -41,9 +41,7 @@ bool slotIsEmpty(PlayerNode *slot){
 //								Action Funtions								//
 //////////////////////////////////////////////////////////////////////////////
 
-int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
-	// player
-	if(subject == PLAYER) {
+int actionHit(GameTable *table, Pile *cardPile) {
 		Player *player = &(table->slots[table->currentPlayer]->player);
 		logPlay(player->name, "Hit");
 		player->state = HIT;
@@ -57,17 +55,6 @@ int actionHit(GameTable *table, Pile *cardPile, ActionSubject subject) {
 		{
 			return (actionStand(table));
 		}
-
-	// house
-	} else if(subject == HOUSE) {
-		House *house = table->house;
-		logPlay("House", "hit!");
-		house->hand = pushToHand(house->hand, dealCard(cardPile), &house->numCards);
-		house->handValue = updateHouseHandValue(house);
-
-		if(house->state == HOUSE_BUSTED || house->state == HOUSE_BLACKJACK) return COLECTING_BETS;
-		return HOUSE_TURN;
-	}
 
 	return PLAYERS_PLAYING;
 }
@@ -149,12 +136,26 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 	return PLAYERS_PLAYING;
 }
 
-int actionDouble(GameTable *table, Pile *cardPile) {
+int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
+	int newPhase;
 
 	// check if double is valid
-	if(player->state == HIT || player->money < player->bet)
+	if((player->type == HUMAN && player->state == HIT) || player->money < player->bet) {
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Double",
+		"Double not allowed the player has already hit or does not have enough money", NULL);
+
 		return PLAYERS_PLAYING;
+
+	} else if(player->type == CPU && player->state == HIT) {
+		if(action == aHIT) {
+			newPhase = actionHit(table, cardPile);
+			return newPhase;
+		} else if(action == aSTAND) {
+			newPhase = actionStand(table);
+			return newPhase;
+		}
+	}
 
 	// handle money and state
 	updateMoney(player, -player->bet);
@@ -162,8 +163,7 @@ int actionDouble(GameTable *table, Pile *cardPile) {
 	player->state = DOUBLED;
 
 	// mandatory hit
-	int newPhase;
-	newPhase = actionHit(table, cardPile, PLAYER);
+	newPhase = actionHit(table, cardPile);
 	if(player->state != BUSTED) // hit only stands when the player is busted
 	                            // so stand if the player isn't busted
 		newPhase = actionStand(table);
@@ -176,8 +176,11 @@ int actionSurrender(GameTable *table) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 
 	// check if surrender is valid
-	if(player->state == HIT)
+	if(player->state == HIT && player->type == HUMAN)
 		return PLAYERS_PLAYING;
+	else if(player->state == HIT && player->type == CPU) {
+		return actionStand(table);
+	}
 
 	// handle money and state
 	updateMoney(player, player->bet/2);
@@ -340,9 +343,19 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 //							House Mechanics Funtions						//
 //////////////////////////////////////////////////////////////////////////////
 
+int houseHit(GameTable *table, Pile *cardPile) {
+	House *house = table->house;
+	logPlay("House", "hit!");
+	house->hand = pushToHand(house->hand, dealCard(cardPile), &house->numCards);
+	house->handValue = updateHouseHandValue(house);
+
+	if(house->state == HOUSE_BUSTED || house->state == HOUSE_BLACKJACK) return COLECTING_BETS;
+	return HOUSE_TURN;
+}
+
 int houseTurn(GameTable *table, House *house, Pile *cardPile){
 	if (house->handValue < 17){
-		return actionHit(table, cardPile, HOUSE);
+		return houseHit(table, cardPile);
 	}
 
 	logPlay("House","stood!");
