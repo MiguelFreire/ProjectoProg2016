@@ -86,7 +86,6 @@ CardNode *dealCard(Pile *pile){
 	// reffil if needed
 	if (pileIsEmpty(pile)) refillPile(pile);
 
-	printf("Dealt a [%d] [%d] - %d\n", cur->card.suit, cur->card.rank, cur->card.value);
 	return cur;
 }
 

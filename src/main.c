@@ -182,7 +182,6 @@ int main(int argc, char *argv[]){
 					table.currentPlayer = 0;
 				}
 			} else if (phase == COLECTING_BETS){
-				printf("clecting bets\n");
 				phase = colectBets(&table, &house);
 			}
 		}
@@ -262,8 +261,6 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 		// assign the player to a table slot
 		table->slots[i] = playerList->tail;
 	}
-	listPlayers(playerList);
-
 
 
 	// set the table pointer to the house

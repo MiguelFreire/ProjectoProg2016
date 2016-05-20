@@ -499,10 +499,16 @@ int houseTurn(GameTable *table, House *house, Pile *cardPile){
 	// stand otherwise
 	logPlay("House","stood!");
 
+
 	if (house->state != HOUSE_WAITING) house->state = HOUSE_COLECTING;
+
+	// check for blackjack
+	updateHouseHandValue(house);
 
 	return COLECTING_BETS;
 }
+
+
 
 /**
  * @brief      Performs bet collection/paying
