@@ -2,9 +2,9 @@
 
 CC=gcc
 
-CFLAGS= -g -I/usr/local/include -Wall -pedantic -std=c99
+CFLAGS= -g  -Wall -pedantic -std=c99
 
-LIB= -L/usr/local/lib -lm -lSDL2 -lSDL2_ttf -lSDL2_image
+LIB= -I/usr/local/include -L/usr/local/lib -lm -lSDL2 -lSDL2_ttf -lSDL2_image
 
 
 TARGET= blackjack
