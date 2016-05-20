@@ -16,6 +16,12 @@
 #include "main.h"
 
 
+/**
+ * @brief      Computes table slots dimensions and stores them on game table
+ *             structure
+ *
+ * @param      table  ptr to the game table structure
+ */
 void calcSlotDim(GameTable *table){
     int separatorPos = (int)(0.95f*WINDOW_WIDTH);
 
@@ -27,18 +33,37 @@ void calcSlotDim(GameTable *table){
     }
 }
 
+/**
+ * @brief      Tests if the mouse is over one of the table slots
+ *
+ * @param      table   ptr to the game table strcture
+ * @param[in]  mouseX  mouse x position
+ * @param[in]  mouseY  mouse y position
+ *
+ * @return     the numberm of the slot being hovered or -1 if the mouse isn't
+ *             over any table slot
+ */
 int mouseIsOverSlot(GameTable *table, int mouseX, int mouseY){
     SlotDim slot;
     for (int i = 0; i < TABLE_SLOTS; i++){
         slot = table->slotDim[i];
         if (mouseX > slot.x && mouseX < slot.x + slot.w
             && mouseY > slot.y && mouseY < slot.y + slot.h){
+
             return i;
         }
     }
     return (-1);
 }
 
+/**
+ * @brief      Render player and house state overlays
+ *
+ * @param      font      ptr to the text font
+ * @param      renderer  ptr to the renderer
+ * @param      table     ptr to the game table structure
+ * @param[in]  phase     current phase of the game
+ */
 void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int phase){
     SDL_Rect stateRect, textRect;
     int textX, textY;
@@ -47,7 +72,7 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
     char moneyStr[MAX_BUFFER_SIZE];
     Player *player;
 
-    // render player states
+    // PLAYER STATES
     for (int i = 0; i < TABLE_SLOTS; i++){
         // big rectangle dimensions
         stateRect.x = table->slotDim[i].x + 5;
@@ -73,7 +98,7 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     SDL_SetRenderDrawColor(renderer, 200, 0, 0, 220);
                     SDL_RenderFillRect(renderer, &textRect);
                     // state text
-                    textX = textRect.x + textRect.w/4;
+                    textX = textRect.x + textRect.w/3.5;
                     textY = textRect.y + textRect.h/8;
                     textY += RenderText(textX, textY, "BUSTED", font, &white, renderer);
                     // money text
@@ -88,12 +113,12 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 220);
                     SDL_RenderFillRect(renderer, &textRect);
                     // state text
-                    textX = textRect.x + textRect.w/3;
+                    textX = textRect.x + textRect.w/2.8;
                     textY = textRect.y + textRect.h/8;
                     textY += RenderText(textX, textY, "LOST", font, &white, renderer);
                     // money text
                     sprintf(moneyStr, "-%d€", (int)(player->bet * player->betMultiplier));
-                    RenderText(textX + textRect.w/8, textY, moneyStr, font, &white, renderer);
+                    RenderText(textX + textRect.w/15, textY, moneyStr, font, &white, renderer);
                     break;
                 case BLACKJACK: // green
                     // big rectangle
@@ -103,12 +128,12 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 220);
                     SDL_RenderFillRect(renderer, &textRect);
                     // state text
-                    textX = textRect.x + textRect.w/10;
+                    textX = textRect.x + textRect.w/8;
                     textY = textRect.y + textRect.h/8;
                     textY += RenderText(textX, textY, "BLACKJACK", font, &white, renderer);
                     // money text
                     sprintf(moneyStr, "+%d€", (int)(player->bet * BLACKJACK_MULTIPLIER));
-                    RenderText(textX + textRect.w/3, textY, moneyStr, font, &white, renderer);
+                    RenderText(textX + textRect.w/4, textY, moneyStr, font, &white, renderer);
                     break;
                 case WON: // green
                     // big rectangle
@@ -118,12 +143,12 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     SDL_SetRenderDrawColor(renderer, 0, 200, 0, 220);
                     SDL_RenderFillRect(renderer, &textRect);
                     // state text
-                    textX = textRect.x + textRect.w/3;
+                    textX = textRect.x + textRect.w/2.5;
                     textY = textRect.y + textRect.h/8;
                     textY += RenderText(textX, textY, "WIN", font, &white, renderer);
                     // money text
                     sprintf(moneyStr, "+%d€", (int)(player->bet * player->betMultiplier));
-                    RenderText(textX + textRect.w/3, textY, moneyStr, font, &white, renderer);
+                    RenderText(textX, textY, moneyStr, font, &white, renderer);
                     break;
                 case TIED: // yellow
                     // big rectangle
@@ -133,12 +158,12 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
                     SDL_SetRenderDrawColor(renderer, 200, 180, 45, 240);
                     SDL_RenderFillRect(renderer, &textRect);
                     // state text
-                    textX = textRect.x + textRect.w/3;
+                    textX = textRect.x + textRect.w/2.7;
                     textY = textRect.y + textRect.h/8;
                     textY += RenderText(textX, textY, "TIED", font, &white, renderer);
                     // money text
                     sprintf(moneyStr, "+0€");
-                    RenderText(textX + textRect.w/3, textY, moneyStr, font, &white, renderer);
+                    RenderText(textX + textRect.w/20, textY, moneyStr, font, &white, renderer);
                     break;
                 case SURRENDERED: // blue
                     // big rectangle
@@ -187,7 +212,7 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
     }
 
 
-    // render house state
+    // HOUSE STATE
     if (phase != PLAYERS_PLAYING){
         textRect.x = WINDOW_WIDTH/10;
         textRect.y = WINDOW_HEIGHT/3;
@@ -223,16 +248,26 @@ void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int 
 }
 
 /**
- * RenderTable: Draws the table where the game will be played, namely:
- * -  some texture for the background
- * -  the right part with the IST logo and the student name and number
- * -  squares to define the playing positions of each player
- * -  names and the available money for each player
- * \param _money amount of money of each player
- * \param _img surfaces where the table background and IST logo were loaded
- * \param _renderer renderer to handle all rendering in a window
+ * @brief Renders the whole game area
+ * 
+ * @param      _font      ptr to the text font
+ * @param      _img       surfaces where the table background and IST logo were
+ *                        loaded
+ * @param      _renderer  renderer to handle all rendering in a window
+ * @param      table      ptr to the game table structure
+ * @param[in]  phase      current game phase
+ * @param[in]  EASpeed    current EA speed
+ * 
+ * Draws the table where the game will be played, namely:
+ * - some texture for the background
+ * - the right part with the IST logo and the student name and number
+ * - squares to define the playing positions of each player
+ * - names, type and the available money for each player
+ * - player bet amount and hand value
+ * - house hand value
+ *
  */
-void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable *table, int phase, int delayLevel){
+void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable *table, int phase, int EASpeed){
     SDL_Color black = { 0, 0, 0 }; // black
     SDL_Color white = { 255, 255, 255 }; // white
 
@@ -268,15 +303,6 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
 
 
     height += 50;
-    // render phase
-    char phaseStr[10];
-    sprintf(phaseStr, "Phase %d", phase);
-    height += RenderText(separatorPos+3*MARGIN, height, phaseStr, _font, &black, _renderer);
-
-    // render delay level
-    char delayStr[10];
-    sprintf(delayStr, "Delay %d", delayLevel);
-    height += RenderText(separatorPos+3*MARGIN, height, delayStr, _font, &black, _renderer);
 
     // render player names and money
     height += RenderText(separatorPos+3*MARGIN, height, "==================", _font, &black, _renderer);
@@ -292,7 +318,10 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
     }
     RenderText(separatorPos+3*MARGIN, height, "==================", _font, &black, _renderer);
 
-
+    // render delay level
+    char delayStr[MAX_BUFFER_SIZE];
+    sprintf(delayStr, "EA speed: %d", EASpeed);
+    RenderText(separatorPos+3*MARGIN, WINDOW_HEIGHT - 40, delayStr, _font, &black, _renderer);
 
     // render player areas
     for ( int i = 0; i < TABLE_SLOTS; i++)
@@ -328,8 +357,13 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
 
     // render house point counting
     char housePointsStr[MAX_BUFFER_SIZE];
-    sprintf(housePointsStr, "%d points", table->house->handValue);
-    RenderText(WINDOW_WIDTH/1.5, WINDOW_HEIGHT/3, housePointsStr, _font, &white, _renderer);
+
+    if (table->house->state == HOUSE_WAITING){
+        RenderText(WINDOW_WIDTH/9, WINDOW_HEIGHT/4, "House points: ??", _font, &white, _renderer);
+    } else {
+        sprintf(housePointsStr, "House points: %d", table->house->handValue);
+        RenderText(WINDOW_WIDTH/9, WINDOW_HEIGHT/4, housePointsStr, _font, &white, _renderer);
+    }
 
     // destroy everything
     SDL_DestroyTexture(table_texture);
@@ -337,11 +371,11 @@ void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
 
 
 /**
- * RenderPlayerCards: Renders the hand, i.e. the cards, for each player
- * \param _player_cards 2D array with the player cards, 1st dimension is the player ID
- * \param _pos_player_hand array with the positions of the valid card IDs for each player
- * \param _cards vector with all loaded card images
- * \param _renderer renderer to handle all rendering in a window
+ * @brief      Renders players cards on the table
+ *
+ * @param      _cards     vector with all loaded card images
+ * @param      _renderer  renderer to handle all rendering in a window
+ * @param      table      ptr to the game table structure
  */
 void RenderPlayerCards(SDL_Surface **_cards, SDL_Renderer* _renderer, GameTable *table)
 {
@@ -371,14 +405,11 @@ void RenderPlayerCards(SDL_Surface **_cards, SDL_Renderer* _renderer, GameTable 
 
 
 /**
- * RenderHouseCards: Renders cards of the house
+ * @brief      Renders the cards of the house
  *
- * @param      house            vector with the house cards
- * @param      _pos_house_hand  position of the vector _house with valid card
- *                              IDs
- * @param      _cards           vector with all loaded card images
- * @param      _renderer        renderer to handle all rendering in a window
- * @param[in]  gameHasEnded     flag to know if it is time for the house to play
+ * @param      _cards     vector with all loaded card images
+ * @param      _renderer  renderer to handle all rendering in a window
+ * @param      house      ptr to the house structure
  */
 void RenderHouseCards(SDL_Surface **_cards, SDL_Renderer* _renderer, House *house)
 {
@@ -409,12 +440,14 @@ void RenderHouseCards(SDL_Surface **_cards, SDL_Renderer* _renderer, House *hous
 
 
 /**
- * RenderCard: Draws one card at a certain position of the window, based on the card code
- * \param _x X coordinate of the card position in the window
- * \param _y Y coordinate of the card position in the window
- * \param _num_card card code that identifies each card
- * \param _cards vector with all loaded card images
- * \param _renderer renderer to handle all rendering in a window
+ * @brief      Draws one card at a certain position of the window, based on the
+ * card rank and suit
+ *
+ * @param      _x         X coordinate of the card position in the window
+ * @param      _y         Y coordinate of the card position in the window
+ * @param      card       card structure to render
+ * @param      _cards     vector with all loaded card images
+ * @param      _renderer  renderer to handle all rendering in a window
  */
 void RenderCard(int _x, int _y, Card card ,SDL_Surface **_cards, SDL_Renderer* _renderer)
 {
@@ -445,7 +478,8 @@ void RenderCard(int _x, int _y, Card card ,SDL_Surface **_cards, SDL_Renderer* _
 
 /**
  * LoadCards: Loads all images of the cards
- * \param _cards vector with all loaded card images
+ *
+ * @param      _cards  vector with all loaded card images
  */
 void LoadCards(SDL_Surface **_cards)
 {
@@ -478,7 +512,8 @@ void LoadCards(SDL_Surface **_cards)
 
 /**
  * UnLoadCards: unloads all card images of the memory
- * \param _cards vector with all loaded card images
+ *
+ * @param      _array_of_cards  vector with all loaded card images
  */
 void UnLoadCards(SDL_Surface **_array_of_cards)
 {
@@ -491,11 +526,14 @@ void UnLoadCards(SDL_Surface **_array_of_cards)
 
 
 /**
- * RenderLogo function: Renders the IST Logo on the window screen
- * \param x X coordinate of the Logo
- * \param y Y coordinate of the Logo
- * \param _logoIST surface with the IST logo image to render
- * \param _renderer renderer to handle all rendering in a window
+ * @brief      Renders the IST Logo on the window screen
+ *
+ * @param      x          X coordinate of the Logo
+ * @param      y          Y coordinate of the Logo
+ * @param      _logoIST   surface with the IST logo image to render
+ * @param      _renderer  renderer to handle all rendering in a window
+ *
+ * @return     height of the logo
  */
 int RenderLogo(int x, int y, SDL_Surface *_logoIST, SDL_Renderer* _renderer)
 {
@@ -520,11 +558,15 @@ int RenderLogo(int x, int y, SDL_Surface *_logoIST, SDL_Renderer* _renderer)
 
 /**
  * RenderText function: Renders the IST Logo on the window screen
- * \param x X coordinate of the text
- * \param y Y coordinate of the text
- * \param text string where the text is written
- * \param font TTF font used to render the text
- * \param _renderer renderer to handle all rendering in a window
+ *
+ * @param      x          X coordinate of the text
+ * @param      y          Y coordinate of the text
+ * @param      text       string where the text is written
+ * @param      _font      TTF font used to render the text
+ * @param      _color     color of the text
+ * @param      _renderer  renderer to handle all rendering in a window
+ *
+ * @return     height of the text
  */
 int RenderText(int x, int y, const char *text, TTF_Font *_font, SDL_Color *_color, SDL_Renderer* _renderer)
 {
@@ -560,14 +602,19 @@ int RenderText(int x, int y, const char *text, TTF_Font *_font, SDL_Color *_colo
  ******************************************************************/
 
 /**
- * InitEverything: Initializes the SDL2 library and all graphical components: font, window, renderer
- * \param width width in px of the window
- * \param height height in px of the window
- * \param _img surface to be created with the table background and IST logo
- * \param _window represents the window of the application
- * \param _renderer renderer to handle all rendering in a window
+ * InitEverything: Initializes the SDL2 library and all graphical components:
+ * font, window, renderer
+ *
+ * @param      width      width in px of the window
+ * @param      height     height in px of the window
+ * @param      _font      ptr to the text font
+ * @param      _img       surface to be created with the table background and
+ *                        IST logo
+ * @param      _window    represents the window of the application
+ * @param      _renderer  renderer to handle all rendering in a window
  */
-void InitEverything(int width, int height, TTF_Font **_font, SDL_Surface *_img[], SDL_Window** _window, SDL_Renderer** _renderer)
+void InitEverything(int width, int height, TTF_Font **_font, 
+    SDL_Surface *_img[], SDL_Window** _window, SDL_Renderer** _renderer)
 {
 	InitSDL();
 	InitFont();
@@ -629,9 +676,11 @@ void InitFont()
 
 /**
  * CreateWindow: Creates a window for the application
- * \param width width in px of the window
- * \param height height in px of the window
- * \return pointer to the window created
+ *
+ * @param      width   width in px of the window
+ * @param      height  height in px of the window
+ *
+ * @return     pointer to the window created
  */
 SDL_Window* CreateWindow(int width, int height)
 {
@@ -650,10 +699,13 @@ SDL_Window* CreateWindow(int width, int height)
 
 /**
  * CreateRenderer: Creates a renderer for the application
- * \param width width in px of the window
- * \param height height in px of the window
- * \param _window represents the window for which the renderer is associated
- * \return pointer to the renderer created
+ *
+ * @param      width    width in px of the window
+ * @param      height   height in px of the window
+ * @param      _window  represents the window for which the renderer is
+ *                      associated
+ *
+ * @return     pointer to the renderer created
  */
 SDL_Renderer* CreateRenderer(int width, int height, SDL_Window *_window)
 {

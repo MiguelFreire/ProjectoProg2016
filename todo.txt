@@ -11,4 +11,4 @@ Clean interface (phase, delay)
 
 Fazer uma função para tirar jogadores da mesa e outra para por e contar o numero de jogadores a jogar
 
-Estado game over, meter os pontos da casa a aparecer apenas quando ela está a jogar, meter os pontos da casa para para  direita ou à esqueda, alinhar corrigir cenas do bet do add e verificar se há 2 nomes iguais
+alinhar corrigir cenas do bet do add e verificar se há 2 nomes iguais
