@@ -213,6 +213,7 @@ int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
 		return PLAYERS_PLAYING;
 
 	} else if(player->type == CPU && (player->state == HIT || player->money < player->bet)) {
+		// chosse the alternative EA action
 		if(action == aHIT) { // Dh
 			newPhase = actionHit(table, cardPile);
 			return newPhase;
@@ -229,13 +230,22 @@ int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
 
 	// mandatory hit and stand
 	newPhase = actionHit(table, cardPile);
-	if (player->state != BUSTED){
-		newPhase = stand(table, cardPile);
+	// hit only stands when the player is busted or has 21 points 
+	// so stand if he doesn't
+	if (player->state != BUSTED && player->handValue != 21){ 
+		newPhase = actionStand(table);
 	}
 
 	return newPhase;
 }
 
+/**
+ * @brief      Player action surrender
+ *
+ * @param      table  ptr to the game table structure
+ *
+ * @return     new game phase
+ */
 int actionSurrender(GameTable *table) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 

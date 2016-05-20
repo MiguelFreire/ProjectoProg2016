@@ -1,6 +1,6 @@
 TODO:
 @**important**
-Redo EA matrix reading and decoding and EA double and surrender
+
 
 @Dos
 Clean interface (phase, delay)
@@ -8,3 +8,7 @@ Clean interface (phase, delay)
 @maybes
 @maybe update player hand value when a card is pushed to the hand
 @maybe put parts of main in funtions
+
+
+
+Estado game over, meter os pontos da casa a aparecer apenas quando ela está a jogar, meter os pontos da casa para para  direita ou à esqueda, alinhar corrigir cenas do bet do add e verificar se há 2 nomes iguais
