@@ -1,8 +1,9 @@
-/**
- * @file
- *
- * Error handling goes here!
- */
+////////////////////////////////////////////////////////////////////////////////
+//                              ERRORHANDLING.H                               //
+//                                                                            //
+// Funtions used to print messages to terminal when an error occurs in the    //
+// program                                                                    //
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef ERROR_H
 #define	ERROR_H

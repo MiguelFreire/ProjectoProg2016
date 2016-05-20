@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
-//								GAMEMECHANICS.H								  //
+//								GAMEMECHANICS.C								  //
+//																			  //
 // Table structure and funtions related to table. Game actions funtions for   //
-// players(EA and HU) and house												  //
+// players(EA and HU), house and bet colecting								  //
 ////////////////////////////////////////////////////////////////////////////////
 
 #include <stdio.h>
@@ -108,10 +109,8 @@ int actionStand(GameTable *table) {
 
 	// check for next player type
 	if (table->slots[table->currentPlayer]->player.type == CPU){
-		printf("Next player is EA\n");
 		return EA_PLAYING;
 	}
-	printf("Next player is human\n");
 	return PLAYERS_PLAYING;
 
 }
@@ -179,7 +178,6 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 	table->house->handValue = getHandValue(table->house->hand, NULL);
 	table->house->state = HOUSE_WAITING;
 
-	printf("tudo bem\n");
 	// choose first player to play
 	table->currentPlayer = -1;
 	int newPhase = actionStand(table);
@@ -194,10 +192,12 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
  *
  * @param      table     ptr to the game table structure
  * @param      cardPile  ptr to the card pile structure
- * @param[in]  action    the alternative action EA takes if double is not
- *                       allowed
+ * @param[in]  action    alternative EA action
  *
  * @return     new game phase
+ *
+ *             Performs double validity check and in case the player is an EA
+ *             takes action based on the parameter "action"
  */
 int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
@@ -265,19 +265,24 @@ int actionSurrender(GameTable *table) {
 	return actionStand(table);
 }
 
+/**
+ * @brief      Changes a player's bet
+ *
+ * @param      table  ptr to the game table structure
+ */
 void actionBet(GameTable *table) {
+	Player *player = NULL;
 
 	// get player name
+	char playerName[MAX_NAME_SIZE+1];
+
 	printf("What's the name of the player?\n");
 	printf("(Write CANCEL to quit)\n");
-
-	char playerName[MAX_NAME_SIZE+1];
 
 	fgets(playerName, MAX_NAME_SIZE, stdin);
 	playerName[strlen(playerName)-1] = '\0';
 
-	Player *player = NULL;
-
+	// check for abort
 	if(strcmp("CANCEL",playerName) == 0) {
 		printf("You can return to game window\n");
 		return;
@@ -286,6 +291,7 @@ void actionBet(GameTable *table) {
 	for(int i = 0; i < TABLE_SLOTS; i++) {
 		if(!slotIsEmpty(table->slots[i]) && strcmp(table->slots[i]->player.name, playerName) == 0) {
 			player = &(table->slots[i]->player);
+			break;
 		}
 	}
 
@@ -299,6 +305,7 @@ void actionBet(GameTable *table) {
 	if (player->money < MIN_BET){
 		printf("Player has less money than the minimum bet (%d)."
 			"Can't change the bet\n", MIN_BET);
+		printf("You can return to game window\n");
 		return;
 	}
 
@@ -314,7 +321,7 @@ void actionBet(GameTable *table) {
 		fgets(buffer, MAX_BUFFER_SIZE, stdin);
 		sscanf(buffer, "%d", &newBet);
     } while(!(isBetween(newBet, MIN_BET, (int)(MAX_BET_FACTOR*player->money)))
-    	&& (error = true) ); // set error the second time the loop runs
+    	&& (error = true) ); // set error for the second time the loop runs
 
     player->bet = newBet;
     printf("Bet set\n");
@@ -328,6 +335,15 @@ void actionBet(GameTable *table) {
 }
 
 
+/**
+ * @brief      Adds a player to the table
+ *
+ * @param[in]  slotClicked  the number of slot clicked [0-3]
+ * @param      playerList   ptr tot he player list structure
+ * @param      table        ptr to the game table structure
+ *
+ * @return     new game phase
+ */
 int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	Player newPlayer = {0};
 
@@ -338,10 +354,10 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	printf("Adding player at slot %d\n", slotClicked + 1);
 
 	// ask for new player's name
-	printf("(Write CANCEL to quit)\n");
+	char playerName[MAX_NAME_SIZE+1];
 
 	printf("What's the name of the player?\n");
-	char playerName[MAX_NAME_SIZE+1];
+	printf("(Write CANCEL to quit)\n");
 
 	fgets(playerName, MAX_NAME_SIZE, stdin);
 	playerName[strlen(playerName)-1] = '\0';
@@ -351,6 +367,7 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 		return WAITING_FOR_NEW_GAME;
 	}
 
+	// assign name to player
 	strcpy(newPlayer.name, playerName);
 
 	// ask for new player's type
@@ -363,10 +380,13 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 			printf("Player's type must be HU or EA\n");
 		fgets(playerType, MAX_PLAYER_TYPE_SIZE + 1, stdin);
 		playerType[strlen(playerType)] = '\0';
+
+	// check input was one the possible types
     } while((((strcmp(playerType, "HU") != 0) && (strcmp(playerType, "EA") != 0))
 		|| (!(strcmp(playerType, "HU") != 0) && !(strcmp(playerType, "EA") != 0)))
-    	&& (error1 = true) ); // set error the second time the loop runs
+    	&& (error1 = true) ); // set error for the second time the loop runs
 
+    // assign type to player
 	if(strcmp(playerType, "HU") == 0){
 		newPlayer.type = HUMAN;
 	} else if (strcmp(playerType, "EA") == 0){
@@ -385,11 +405,14 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 		printf("Introduce the initial money for this player\n");
 		fgets(buffer_money, MAX_BUFFER_SIZE, stdin);
 		sscanf(buffer_money, "%d", &playerMoney);
+
 	} while(!(isBetween(playerMoney, MIN_SEED_MONEY, MAX_SEED_MONEY))
 		&& (error2 = true));
 
+	// assign money to new player
 	newPlayer.money = playerMoney;
 
+	// ask for new player's bet
 	int playerBet = 0;
 	bool error3 = false;
 	do {
@@ -399,16 +422,16 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 		printf("Introduce the initial bet for this player\n");
 		fgets(buffer_bet, MAX_BUFFER_SIZE, stdin);
 		sscanf(buffer_bet, "%d", &playerBet);
-		printf("Bet set: %d\n", playerBet);
+
 	} while(!(isBetween(playerBet, MIN_BET, MAX_BET_FACTOR*playerMoney))
 		&& (error3 = true));
 
+	// assign bet to new player
 	newPlayer.bet = playerBet;
 	newPlayer.betMultiplier = 1;
 
-	// add player to the player list
+	// add player to the player list and to the game table
 	playerList->tail = createPlayer(playerList, newPlayer);
-
 	table->slots[slotClicked] = playerList->tail;
 
 	printf("New player added\n");
@@ -422,21 +445,43 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 //							House Mechanics Funtions						//
 //////////////////////////////////////////////////////////////////////////////
 
+/**
+ * @brief      House hit action
+ *
+ * @param      table     ptr to the house structure
+ * @param      cardPile  ptr to the card pile structure
+ *
+ * @return     new game phase
+ */
 int houseHit(GameTable *table, Pile *cardPile) {
 	House *house = table->house;
 	logPlay("House", "hit!");
+	// give house a card
 	house->hand = pushToHand(house->hand, dealCard(cardPile), &house->numCards);
 	house->handValue = updateHouseHandValue(house);
 
+	// check house busted or has a blackjack
 	if(house->state == HOUSE_BUSTED || house->state == HOUSE_BLACKJACK) return COLECTING_BETS;
 	return HOUSE_TURN;
 }
 
+
+/**
+ * @brief      Decides house actions
+ *
+ * @param      table     ptr to the game table structure
+ * @param      house     ptr to the house structure
+ * @param      cardPile  ptr to the card pile structure
+ *
+ * @return     new game phase
+ */
 int houseTurn(GameTable *table, House *house, Pile *cardPile){
+	// house hits till it has more than 16 points
 	if (house->handValue < 17){
 		return houseHit(table, cardPile);
 	}
 
+	// stand otherwise
 	logPlay("House","stood!");
 
 	if (house->state != HOUSE_WAITING) house->state = HOUSE_COLECTING;
@@ -444,6 +489,14 @@ int houseTurn(GameTable *table, House *house, Pile *cardPile){
 	return COLECTING_BETS;
 }
 
+/**
+ * @brief      Performs bet collection/paying
+ *
+ * @param      table  prt to he game table structure
+ * @param      house  ptr to the house structure
+ *
+ * @return     new game phase
+ */
 int colectBets(GameTable *table, House *house){
 	Player *player = NULL;
 
@@ -452,6 +505,7 @@ int colectBets(GameTable *table, House *house){
 
 		table->currentPlayer++;
 
+		// finish clecting if there are no players left
 		if (table->currentPlayer >= TABLE_SLOTS){
 			return WAITING_FOR_NEW_GAME;
 		}
@@ -518,6 +572,7 @@ int colectBets(GameTable *table, House *house){
 
 	}
 
+	// colect the next player or finish if there are no more players
 	table->currentPlayer++;
 	if (table->currentPlayer >= TABLE_SLOTS)
 		return WAITING_FOR_NEW_GAME;

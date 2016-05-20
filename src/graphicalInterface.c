@@ -1,6 +1,9 @@
-/**
- * Graphical interface functions implementation
- */
+////////////////////////////////////////////////////////////////////////////////
+//                             GRAPHICALINTERFACE.C                           //
+//                                                                            //
+// Funtions used to control de program interface                              //
+////////////////////////////////////////////////////////////////////////////////
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>

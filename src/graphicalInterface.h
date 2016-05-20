@@ -1,6 +1,8 @@
-/**
- * Graphical interface funtions
- */
+////////////////////////////////////////////////////////////////////////////////
+//                             GRAPHICALINTERFACE.H                           //
+//                                                                            //
+// Funtions used to control de program interface                              //
+////////////////////////////////////////////////////////////////////////////////
 
 #ifndef GRAPHICAL_INTERFACE_H
 #define	GRAPHICAL_INTERFACE_H

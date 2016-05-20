@@ -1,3 +1,10 @@
+////////////////////////////////////////////////////////////////////////////////
+//                              ERRORHANDLING.C                               //
+//                                                                            //
+// Funtions used to print messages to terminal when an error occurs in the    //
+// program                                                                    //
+////////////////////////////////////////////////////////////////////////////////
+
 #include <stdlib.h>
 #include <stdio.h>
 

@@ -50,6 +50,13 @@
  * 		*[0] the name of the program
  * 		*[1] the name of the game config file
  * 		*[2] the name of the EA matrixes file
+ * 
+ * The program is controled using the vaiable quit to determine when the program
+ * should quit and the variable phase to determine what is the program is
+ * currently doing.
+ * 
+ * The varaible event is used with SDL_PollEvent to colect user input trough
+ * keyboard and mouse
  */
 int main(int argc, char *argv[]){
 	// Graphical interface variables
@@ -75,8 +82,8 @@ int main(int argc, char *argv[]){
 	int **softMatrix = NULL;
 	int **hardMatrix = NULL;
 	readEAMatrix(argv[2], &softMatrix, &hardMatrix);
-	int EASpeed = SPEED_LEVELS/2;
-	int EADelay = increaseEADelay(&EASpeed);
+	int EASpeed = SPEED_LEVELS/2 - 1;
+	int EADelay = increaseEASpeed(&EASpeed);
 
 
 	// INITIALIZATION SEQUENCE
@@ -145,9 +152,7 @@ int main(int argc, char *argv[]){
 
 			// Let EA player make a decision
 			if (phase == EA_PLAYING){
-				printf ("EA playing\n");
 				EAAction action = actionDecoder(softMatrix, hardMatrix, &table);
-				printf ("action: %d\n", action);
 				switch (action){
 					case aHIT:
 						phase = actionHit(&table, &cardPile);
@@ -168,15 +173,13 @@ int main(int argc, char *argv[]){
 						phase = actionStand(&table);
 				}
 				SDL_Delay(EADelay);
-				printf ("EA done\n");
 
 			} else if (phase == HOUSE_TURN){
-				printf("house playing\n");
 				house.state = HOUSE_PLAYING;
 				phase = houseTurn(&table, &house, &cardPile);
+				// set current player to the first player to start collecting bets
 				if (phase == COLECTING_BETS){
 					table.currentPlayer = 0;
-					printf ("house going to colect\n");
 				}
 			} else if (phase == COLECTING_BETS){
 				printf("clecting bets\n");
@@ -364,11 +367,11 @@ GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePha
 				}
 		    }
 		    break;
-		case SDLK_UP: // increase EA delay
-			*EADelay = increaseEADelay(EASpeed);
+		case SDLK_UP: // increase EA speed
+			*EADelay = increaseEASpeed(EASpeed);
 			break;
-		case SDLK_DOWN:	// decrease EA delay
-			*EADelay = decreaseEADelay(EASpeed);
+		case SDLK_DOWN:	// decrease EA speed
+			*EADelay = decreaseEASpeed(EASpeed);
 			break;
 	}
 

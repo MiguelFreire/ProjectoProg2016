@@ -1,7 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 //								GAMEMECHANICS.H								  //
+//																			  //
 // Table structure and funtions related to table. Game actions funtions for   //
-// players(EA and HU) and house												  //
+// players(EA and HU), house and bet colecting								  //
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef GAME_MECHANICS_H

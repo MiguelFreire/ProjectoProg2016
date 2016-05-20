@@ -1,3 +1,9 @@
+////////////////////////////////////////////////////////////////////////////////
+//                                      EA.C                                  //
+//                                                                            //
+// EA config matrix file reading, EA decision making and delay control        //
+////////////////////////////////////////////////////////////////////////////////
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -9,7 +15,14 @@
 #include "EA.h"
 
 
-int increaseEADelay(int *speed){
+/**
+ * @brief      Increases EA speed/ decreases EA delay
+ *
+ * @param      speed  ptr to EA speed
+ *
+ * @return     new EA delay
+ */
+int increaseEASpeed(int *speed){
     int delay;
 
     if ((*speed) < SPEED_LEVELS){
@@ -25,7 +38,14 @@ int increaseEADelay(int *speed){
     return delay;
 }
 
-int decreaseEADelay(int *speed){
+/**
+ * @brief      Decreases EA speed/ increses EA delay
+ *
+ * @param      speed  ptr to EA speed
+ *
+ * @return     new EA delay
+ */
+int decreaseEASpeed(int *speed){
     int delay;
 
     if ((*speed) > 0){
@@ -40,6 +60,7 @@ int decreaseEADelay(int *speed){
 
     return delay;
 }
+
 /**
  * @brief      Reads the EA matrixes from file and points them to the function
  *             arguments
@@ -114,6 +135,7 @@ void freeMatrixes(int **softMatrix, int **hardMatrix) {
     }
     free(hardMatrix);
 }
+
 /**
  * @brief      Transform a given char from the EA config file into a specific
  *             action
@@ -142,6 +164,7 @@ int getAction(char action) {
             return -1;
     }
 }
+
 /**
  * @brief      Depending on house's hand and player's hand, actionDecoder
  *             returns the action for the EA player to execute, from the hard
@@ -177,12 +200,4 @@ int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
 
         return hardMatrix[row][col];
     }
-}
-
-int HiLoCounter(CardNode *node) {
-    int HiLoMatrix[CARD_RANKS] = {1,1,1,1,1,0,0,0,-1,-1,-1,-1,-1};
-
-    int value = HiLoMatrix[node->card.rank];
-
-    return value;
 }
