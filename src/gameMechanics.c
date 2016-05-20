@@ -205,18 +205,18 @@ int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	int newPhase;
 
-	// check if double is valid
+	// check if double is valid and take action acording to player type
 	if(player->type == HUMAN && (player->state == HIT || player->money < player->bet)) {
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Double",
-		"Double not allowed the player has already hit or does not have enough money", NULL);
+		"Double not allowed. The player has already hit or does not have enough money", NULL);
 
 		return PLAYERS_PLAYING;
 
 	} else if(player->type == CPU && (player->state == HIT || player->money < player->bet)) {
-		if(action == aHIT) {
+		if(action == aHIT) { // Dh
 			newPhase = actionHit(table, cardPile);
 			return newPhase;
-		} else if(action == aSTAND) {
+		} else if(action == aSTAND) { // Ds
 			newPhase = actionStand(table);
 			return newPhase;
 		}
