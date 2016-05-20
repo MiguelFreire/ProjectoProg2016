@@ -8,6 +8,7 @@
 #include "gameMechanics.h"
 #include "EA.h"
 
+
 int increaseEADelay(int *speed){
     int delay;
 
@@ -39,11 +40,22 @@ int decreaseEADelay(int *speed){
 
     return delay;
 }
-
+/**
+ * @brief      Reads the EA matrixes from file and points them to the function
+ *             arguments
+ *
+ * @param      *fileName - a string with the file name containing the Matrixes
+ * @param      ***SoftMatrixArg - a pointer to a 2D array that will point to
+ *                                the soft matrix read from the config file
+ * @param      ***hardMatrixArg - a pointer to a 2D array that will point to
+ *                                the hard matrix read from the config file
+ *
+ * @return     void
+ */
 void readEAMatrix(const char *fileName, int ***softMatrixArg, int ***hardMatrixArg) {
     FILE *file = fopen(fileName, "r");
     char c;
-    if(file == NULL) fireMissingFileError("EA config file");
+    if(file == NULL) fireMissingFileError("config file");
 
     int **hardMatrix = (int **) malloc(10*sizeof(int*));
     if(hardMatrix == NULL) fireNotEnoughMemoryError("Hard Matrix");
@@ -81,7 +93,16 @@ void readEAMatrix(const char *fileName, int ***softMatrixArg, int ***hardMatrixA
     fclose(file);
 }
 
-
+/**
+ * @brief      Frees the matrixes allocated dynamic memory
+ *
+ * @param      **softMatrix - the 2D array that contains the allocated
+ *                            soft matrix
+ * @param      **hardMatrix - the 2D array that contains the allocated
+ *                            hard matrix
+ *
+ * @return     void
+ */
 void freeMatrixes(int **softMatrix, int **hardMatrix) {
     for(int i = 0; i < 7; i ++) {
         free(softMatrix[i]);
@@ -93,7 +114,14 @@ void freeMatrixes(int **softMatrix, int **hardMatrix) {
     }
     free(hardMatrix);
 }
-
+/**
+ * @brief      Transform a given char from the EA config file into a specific
+ *             action
+ *
+ * @param      action - a char from the EA config file
+ *
+ * @return     int/EAAction
+ */
 int getAction(char action) {
     switch (action) {
         case 'H':
@@ -114,7 +142,17 @@ int getAction(char action) {
             return -1;
     }
 }
-
+/**
+ * @brief      Depending on house's hand and player's hand, actionDecoder
+ *             returns the action for the EA player to execute, from the hard
+ *             or from the soft matrix
+ *
+ * @param      **softMatrix - the EA soft matrix
+ * @param      **hardMatrix - the EA hard matrix
+ * @param      *table - pointer to the table structure
+ *
+ * @return     int/EAAction
+ */
 int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
     CardNode *playerHand =  table->slots[table->currentPlayer]->player.hand;
     CardNode *houseHand = table->house->hand;
@@ -130,13 +168,13 @@ int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
         if(playerHandValue >= 19) row = 6;
         else if (playerHandValue == 12) row = 0; // player has two aces
         else row = playerHandValue - 13;
-        printf ("row: %d, colummn: %d\n", row, col);
+
         return softMatrix[row][col];
     } else {
         if(playerHandValue >= 17) row = 9;
         else if(isBetween(playerHandValue, 4,8)) row = 0;
         else row = playerHandValue - 8;
-        printf ("row: %d, colummn: %d\n", row, col);
+
         return hardMatrix[row][col];
     }
 }

@@ -59,7 +59,6 @@ int actionHit(GameTable *table, Pile *cardPile) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	logPlay(player->name, "Hit");
 	player->state = HIT;
-
 	// give a card
 	player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 	player->handValue = updatePlayerHandValue(player);
@@ -72,12 +71,11 @@ int actionHit(GameTable *table, Pile *cardPile) {
 		return (actionStand(table));
 	}
 
-	// check next player type
+	// player may hit again
+	// check current player type
 	if (table->slots[table->currentPlayer]->player.type == CPU){
-		printf("Next player is EA\n");
 		return EA_PLAYING;
 	}
-	printf("Next player is human\n");
 	return PLAYERS_PLAYING;
 
 }
@@ -95,7 +93,7 @@ int actionHit(GameTable *table, Pile *cardPile) {
  */
 int actionStand(GameTable *table) {
 	// check if current player is not -1 because of newGame();
-	if (table->currentPlayer >= 0) {
+	if (table->currentPlayer >= 0 && table->currentPlayer < TABLE_SLOTS) {
 		logPlay(table->slots[table->currentPlayer]->player.name, "stood!");
 	}
 
@@ -210,6 +208,8 @@ int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Double",
 		"Double not allowed. The player has already hit or does not have enough money", NULL);
 
+		logPlay(player->name, "doubled!");
+
 		return PLAYERS_PLAYING;
 
 	} else if(player->type == CPU && (player->state == HIT || player->money < player->bet)) {
@@ -227,13 +227,12 @@ int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
 	player->betMultiplier = DOUBLE_MULTIPLIER;
 	player->state = DOUBLED;
 
-	// mandatory hit
+	// mandatory hit and stand
 	newPhase = actionHit(table, cardPile);
-	if(player->state != BUSTED) // hit only stands when the player is busted
-	                            // so stand if the player isn't busted
-		newPhase = actionStand(table);
+	if (player->state != BUSTED){
+		newPhase = stand(table, cardPile);
+	}
 
-	logPlay(player->name, "doubled!");
 	return newPhase;
 }
 
@@ -300,7 +299,7 @@ void actionBet(GameTable *table) {
 	do {
 		if(error)
 			printf("Player's bet value must be between: %d and %d\n",
-			MIN_BET, (int)MAX_BET_FACTOR*player->money );
+			MIN_BET, (int)(MAX_BET_FACTOR*player->money));
 		printf("New bet?\n");
 		fgets(buffer, MAX_BUFFER_SIZE, stdin);
 		sscanf(buffer, "%d", &newBet);

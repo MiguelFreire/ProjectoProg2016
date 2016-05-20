@@ -1,24 +1,24 @@
 Player Name: Jonas
 Player Type: EA
 Games Won/Tied/Lost: 0/0/1
-Final money: 300
-House gains: 25
+Final money: 225
+House gains: 100
 
 Player Name: Salvio
 Player Type: EA
-Games Won/Tied/Lost: 1/0/0
-Final money: 300
-House gains: -50
+Games Won/Tied/Lost: 0/0/1
+Final money: 150
+House gains: 100
 
 Player Name: Gaitan
 Player Type: EA
-Games Won/Tied/Lost: 1/0/0
-Final money: 400
-House gains: -50
+Games Won/Tied/Lost: 0/0/1
+Final money: 250
+House gains: 100
 
 Player Name: RSanches
 Player Type: EA
-Games Won/Tied/Lost: 1/0/0
-Final money: 600
-House gains: -100
+Games Won/Tied/Lost: 0/0/1
+Final money: 400
+House gains: 100
 

@@ -1,4 +1,8 @@
-
+////////////////////////////////////////////////////////////////////////////////
+//                                STATS.C                                     //
+//                                                                            //
+// Game stats related functions                                               //
+////////////////////////////////////////////////////////////////////////////////
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,6 +13,13 @@
 #include "errorHandling.h"
 #include "stats.h"
 
+/**
+ * @brief      Writes the game stats to file
+ *
+ * @param      *list - a PlayerList struct
+ *
+ * @return     void
+ */
 void writeStats(PlayerList list) {
     FILE *file = fopen(STATS_FILE_NAME, "w");
     if(file == NULL) fireFileNotFoundError(STATS_FILE_NAME);
