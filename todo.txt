@@ -3,7 +3,7 @@ TODO:
 
 
 @Dos
-Clean interface (phase, delay)
+corrigir cenas do bet do add e verificar se há 2 nomes iguais
 
 @maybes
 @maybe update player hand value when a card is pushed to the hand
@@ -11,4 +11,6 @@ Clean interface (phase, delay)
 
 Fazer uma função para tirar jogadores da mesa e outra para por e contar o numero de jogadores a jogar
 
-corrigir cenas do bet do add e verificar se há 2 nomes iguais
+
+
+
