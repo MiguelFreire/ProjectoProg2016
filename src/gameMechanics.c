@@ -134,6 +134,21 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 		}
 	}
 
+	// check if there are players to play
+	bool thereArePlayers = false;
+	for (int i = 0; i < TABLE_SLOTS; i++){
+		if (!slotIsEmpty(table->slots[i])){
+			thereArePlayers = true;
+			break;
+		}
+	}
+	if (!thereArePlayers){
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "New Game",
+	"Can't start a new game. There are players to play," 
+	" please add some players to start a new game", NULL);
+		return WAITING_FOR_NEW_GAME;
+	}
+
 	// empty house's hand
 	while (table->house->hand != NULL){
 		table->house->hand = popHand(table->house->hand, NULL, &table->house->numCards);
