@@ -44,6 +44,28 @@ bool slotIsEmpty(PlayerNode *slot){
 	return (slot == NULL);
 }
 
+/**
+ * @brief      Assigns a player to a table slot
+ *
+ * @param      player  ptr to the player node to assign to the slot
+ * @param[in]  slot    number fo the slot to assign the player to
+ * @param      house   ptr to the house structure
+ */
+void assignPlayerToSlot(PlayerNode *player, int slot, GameTable *table){
+	table->slots[slot] = player;
+	table->numPlayersInGame ++;
+}
+
+/**
+ * @brief      Removes a player from a table slot
+ *
+ * @param[in]  slot   number fo the slot to remove the player from
+ * @param      house  ptr to the house structure
+ */
+void removePlayerFromSlot(int slot, GameTable *table){
+	table->slots[slot] = NULL;
+	table->numPlayersInGame --;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //								Action Funtions								//
@@ -131,21 +153,14 @@ int actionNewGame(SDL_Window *window, GameTable *table, Pile *cardPile) {
 	// remove broke players from the table
 	for (int i = 0; i < TABLE_SLOTS; i++){
 		if (!slotIsEmpty(table->slots[i]) && table->slots[i]->player.state == BROKE){
-			table->slots[i] = NULL;
+			removePlayerFromSlot(i, table);
 		}
 	}
 
 	// check if there are players to play
-	bool thereArePlayers = false;
-	for (int i = 0; i < TABLE_SLOTS; i++){
-		if (!slotIsEmpty(table->slots[i])){
-			thereArePlayers = true;
-			break;
-		}
-	}
-	if (!thereArePlayers){
+	if (table->numPlayersInGame == 0){
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "New Game",
-	"Can't start a new game. There are players to play," 
+	"Can't start a new game. There are no players to play," 
 	" please add some players to start a new game", window);
 		return WAITING_FOR_NEW_GAME;
 	}
@@ -451,6 +466,7 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	// add player to the player list and to the game table
 	playerList->tail = createPlayer(playerList, newPlayer);
 	table->slots[slotClicked] = playerList->tail;
+	assignPlayerToSlot(playerList->tail, slotClicked, table);
 
 	printf("New player added\n");
 	printf("You can return to the game window\n");

@@ -14,7 +14,7 @@
 #define EXTRASPACE	150
 #define MARGIN	5
 
-#define RENDER_DELAY	200	// delay between renders (ms)
+#define RENDER_DELAY	300	// delay between renders (ms)
 #define EA_BASE_DELAY	1000 	// EA action delay (ms)
 #define SPEED_LEVELS	5	// number of EA speed levels
 

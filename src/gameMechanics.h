@@ -49,6 +49,8 @@ typedef struct {
 
 GameTable createGameTable();
 bool slotIsEmpty(PlayerNode *slot);
+void assignPlayerToSlot(PlayerNode *player, int slot, GameTable *table);
+void removePlayerFromSlot(int slot, GameTable *table);
 
 int actionHit(GameTable *table, Pile *cardPile);
 int actionStand(GameTable *);

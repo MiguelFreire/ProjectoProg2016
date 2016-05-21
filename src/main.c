@@ -138,18 +138,8 @@ int main(int argc, char *argv[]){
 
 		if (phase == EA_PLAYING || phase == HOUSE_TURN || phase == COLECTING_BETS){
 
-			// render game table
-			RenderTable(serif, imgs, renderer, &table, phase, EASpeed);
-			// render the players cards
-			RenderPlayerCards(cards, renderer, &table);
-			// render house cards
-			RenderHouseCards(cards, renderer, &house);
-			// render info orverlays
-			renderStates(serif, renderer, &table, phase);
-			// put to screen all changes above
-			SDL_RenderPresent(renderer);
-	        // add a delay
-	        SDL_Delay(RENDER_DELAY/2);
+			renderEverything(serif, imgs, renderer, cards, &table, 
+				phase, EASpeed);
 
 			// Let EA player make a decision
 			if (phase == EA_PLAYING){
@@ -190,16 +180,8 @@ int main(int argc, char *argv[]){
 			}
 		}
 
-		// render game table
-		RenderTable(serif, imgs, renderer, &table, phase, EASpeed);
-		// render the players cards
-		RenderPlayerCards(cards, renderer, &table);
-		// render house cards
-		RenderHouseCards(cards, renderer, &house);
-		// render info orverlays
-		renderStates(serif, renderer, &table, phase);
-		// put to screen all changes above
-		SDL_RenderPresent(renderer);
+		renderEverything(serif, imgs, renderer, cards, &table, 
+				phase, EASpeed);
         // add a delay
         SDL_Delay(RENDER_DELAY);
 	}
@@ -263,7 +245,7 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 		playerList->tail = createPlayer(playerList, newPlayer);
 
 		// assign the player to a table slot
-		table->slots[i] = playerList->tail;
+		assignPlayerToSlot(playerList->tail, i, table);
 	}
 
 

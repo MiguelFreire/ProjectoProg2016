@@ -57,6 +57,36 @@ int mouseIsOverSlot(GameTable *table, int mouseX, int mouseY){
     return (-1);
 }
 
+////////////////////////////////////////////////////////////////////////////////
+//                          RENDER FUNTIONS                                   //
+////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @brief      { function_description }
+ *
+ * @param      font      The font
+ * @param      img       The img
+ * @param      renderer  The renderer
+ * @param      cards     The cards
+ * @param      table     The table
+ * @param[in]  phase     The phase
+ * @param[in]  EASpeed   The ea speed
+ */
+void renderEverything(TTF_Font *font, SDL_Surface *imgs[], 
+    SDL_Renderer* renderer, SDL_Surface **cards, GameTable *table, 
+    int phase, int EASpeed){
+    // render game table
+    RenderTable(font, imgs, renderer, table, phase, EASpeed);
+    // render the players cards
+    RenderPlayerCards(cards, renderer, table);
+    // render house cards
+    RenderHouseCards(cards, renderer, table->house);
+    // render info orverlays
+    renderStates(font, renderer, table, phase);
+    // put to screen all changes above
+    SDL_RenderPresent(renderer);
+}
+
 /**
  * @brief      Render player and house state overlays
  *

@@ -17,9 +17,14 @@ void calcSlotDim(GameTable *table);
 
 
 // Render functions
+void renderEverything(TTF_Font *font, SDL_Surface *imgs[], 
+    SDL_Renderer* renderer, SDL_Surface **cards, GameTable *table, 
+    int phase, int EASpeed);
+
 void renderStates(TTF_Font *font, SDL_Renderer* renderer, GameTable *table, int phase);
 
-void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, GameTable *table, int phase, int EASpeed);
+void RenderTable(TTF_Font *_font, SDL_Surface *_img[], SDL_Renderer* _renderer, 
+	GameTable *table, int phase, int EASpeed);
 
 void RenderHouseCards(SDL_Surface **_cards, SDL_Renderer* _renderer, House *house);
 
@@ -33,7 +38,8 @@ void UnLoadCards(SDL_Surface **_array_of_cards);
 
 int RenderLogo(int x, int y, SDL_Surface *_logoIST, SDL_Renderer* _renderer);
 
-int RenderText(int x, int y, const char *text, TTF_Font *_font, SDL_Color *_color, SDL_Renderer* _renderer);
+int RenderText(int x, int y, const char *text, TTF_Font *_font, 
+	SDL_Color *_color, SDL_Renderer* _renderer);
 
 // initialization funtions
 void InitEverything(
