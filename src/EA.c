@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-//                                      EA.C                                  //
+//                                  EA.C                                      //
 //                                                                            //
 // EA config matrix file reading, EA decision making and delay control        //
 ////////////////////////////////////////////////////////////////////////////////
@@ -15,6 +15,9 @@
 #include "gameMechanics.h"
 #include "EA.h"
 
+////////////////////////////////////////////////////////////////////////////////
+//                          DELAY CONTROL FUNTIONS                            //
+////////////////////////////////////////////////////////////////////////////////
 
 /**
  * @brief      Increases EA speed/ decreases EA delay
@@ -61,6 +64,11 @@ int decreaseEASpeed(int *speed){
 
     return delay;
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//                          MATRIX FUNTIONS                                   //
+////////////////////////////////////////////////////////////////////////////////
+
 
 /**
  * @brief      Reads the EA matrixes from file and points them to the function
@@ -116,28 +124,6 @@ void readEAMatrix(const char *fileName, int ***softMatrixArg, int ***hardMatrixA
 }
 
 /**
- * @brief      Frees the matrixes allocated dynamic memory
- *
- * @param      **softMatrix - the 2D array that contains the allocated
- *                            soft matrix
- * @param      **hardMatrix - the 2D array that contains the allocated
- *                            hard matrix
- *
- * @return     void
- */
-void freeMatrixes(int **softMatrix, int **hardMatrix) {
-    for(int i = 0; i < 7; i ++) {
-        free(softMatrix[i]);
-    }
-    free(softMatrix);
-
-    for(int j = 0; j < 10; j++) {
-        free(hardMatrix[j]);
-    }
-    free(hardMatrix);
-}
-
-/**
  * @brief      Transform a given char from the EA config file into a specific
  *             action
  *
@@ -164,6 +150,62 @@ int getAction(char action) {
         default:
             return -1;
     }
+}
+
+
+/**
+ * @brief      Frees the matrixes allocated dynamic memory
+ *
+ * @param      **softMatrix - the 2D array that contains the allocated
+ *                            soft matrix
+ * @param      **hardMatrix - the 2D array that contains the allocated
+ *                            hard matrix
+ *
+ * @return     void
+ */
+void freeMatrixes(int **softMatrix, int **hardMatrix) {
+    for(int i = 0; i < 7; i ++) {
+        free(softMatrix[i]);
+    }
+    free(softMatrix);
+
+    for(int j = 0; j < 10; j++) {
+        free(hardMatrix[j]);
+    }
+    free(hardMatrix);
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+//                          EA DECISION FUNTIONS                              //
+////////////////////////////////////////////////////////////////////////////////
+
+int EAMakeDecision(SDL_Window *window, int **softMatrix, int **hardMatrix, 
+    GameTable *table, Pile *pile){
+
+    int newPhase;
+    EAAction action = actionDecoder(softMatrix, hardMatrix, table);
+    switch (action){
+        case aHIT:
+            newPhase = actionHit(table, pile);
+            break;
+        case aDOUBLES:
+            newPhase = actionDouble(window, table, pile, aSTAND);
+            break;
+        case aDOUBLEH:
+            newPhase = actionDouble(window, table, pile, aHIT);
+            break;
+        case aSURRENDER:
+            newPhase = actionSurrender(window, table);
+            break;
+        case aSTAND:
+            newPhase = actionStand(table);
+            break;
+        default:
+            newPhase = actionStand(table);
+    }
+
+    return newPhase;
 }
 
 /**
@@ -202,3 +244,5 @@ int actionDecoder(int **softMatrix, int **hardMatrix, GameTable *table) {
         return hardMatrix[row][col];
     }
 }
+
+

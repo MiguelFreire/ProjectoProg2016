@@ -114,9 +114,9 @@ int main(int argc, char *argv[]){
 	while(!quit){
 		while(SDL_PollEvent(&event)){
 			switch (event.type){
-
 				// check for key press
 				case SDL_KEYDOWN:
+
 					phase = handleKeyPress(window, &event, &table, &cardPile, 
 						phase, &quit, &EASpeed, &EADelay);
 					break;
@@ -125,44 +125,25 @@ int main(int argc, char *argv[]){
 				case SDL_MOUSEBUTTONDOWN:
 
 					phase = handleMousePress(window, &event, &table, &playerList, phase);
-
 					break;
 
 				// check for quit cross press
 				case SDL_QUIT:
 					quit = true;
-
 					break;
 			}
 		}
 
+		// special phases
 		if (phase == EA_PLAYING || phase == HOUSE_TURN || phase == COLECTING_BETS){
 
 			renderEverything(serif, imgs, renderer, cards, &table, 
 				phase, EASpeed);
 
-			// Let EA player make a decision
+			// let EA player make a decision
 			if (phase == EA_PLAYING){
-				EAAction action = actionDecoder(softMatrix, hardMatrix, &table);
-				switch (action){
-					case aHIT:
-						phase = actionHit(&table, &cardPile);
-						break;
-					case aDOUBLES:
-						phase = actionDouble(window, &table, &cardPile, aSTAND);
-						break;
-					case aDOUBLEH:
-						phase = actionDouble(window, &table, &cardPile, aHIT);
-						break;
-					case aSURRENDER:
-						phase = actionSurrender(window, &table);
-						break;
-					case aSTAND:
-						phase = actionStand(&table);
-						break;
-					default:
-						phase = actionStand(&table);
-				}
+				phase = EAMakeDecision(window, softMatrix, hardMatrix, &table, 
+					&cardPile);
 				SDL_Delay(EADelay);
 
 			// let house make a decision
@@ -182,7 +163,7 @@ int main(int argc, char *argv[]){
 
 		renderEverything(serif, imgs, renderer, cards, &table, 
 				phase, EASpeed);
-        // add a delay
+
         SDL_Delay(RENDER_DELAY);
 	}
 
@@ -203,6 +184,8 @@ int main(int argc, char *argv[]){
 	return EXIT_SUCCESS;
 
 }
+
+
 
 
 ////////////////////////////////////////////////////////////////////////////////
