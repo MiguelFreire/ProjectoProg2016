@@ -86,7 +86,7 @@ int actionHit(GameTable *table, Pile *cardPile) {
 	// give a card
 	player->hand = pushToHand(player->hand, dealCard(cardPile), &player->numCards);
 	player->handValue = updatePlayerHandValue(player);
- 
+
 	// check if the player may hit again and stand if he doesn't
 	if (player->state == BUSTED
 		|| player->state == BLACKJACK
@@ -160,7 +160,7 @@ int actionNewGame(SDL_Window *window, GameTable *table, Pile *cardPile) {
 	// check if there are players to play
 	if (table->numPlayersInGame == 0){
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "New Game",
-	"Can't start a new game. There are no players to play," 
+	"Can't start a new game. There are no players to play,"
 	" please add some players to start a new game", window);
 		return WAITING_FOR_NEW_GAME;
 	}
@@ -261,9 +261,9 @@ int actionDouble(SDL_Window *window, GameTable *table, Pile *cardPile, EAAction 
 
 	// mandatory hit and stand
 	newPhase = actionHit(table, cardPile);
-	// hit only stands when the player is busted or has 21 points 
+	// hit only stands when the player is busted or has 21 points
 	// so stand if he doesn't
-	if (player->state != BUSTED && player->handValue != 21){ 
+	if (player->state != BUSTED && player->handValue != 21){
 		newPhase = actionStand(table);
 	}
 
@@ -307,7 +307,7 @@ void actionBet(GameTable *table) {
 	Player *player = NULL;
 	clearTerminal();
 	// get player name
-	char playerName[MAX_NAME_SIZE+1];
+	char playerName[MAX_NAME_SIZE+1] = {0};
 
 	printf("What's the name of the player?\n");
 	printf("(Write CANCEL to quit)\n");
@@ -317,7 +317,7 @@ void actionBet(GameTable *table) {
 
 	// check for abort
 	if(strcmp("CANCEL",playerName) == 0) {
-		printf("You can return to game window\n");
+		printf("You canceled the action! You can now return to game window\n");
 		return;
 	}
 	// search for player
@@ -343,15 +343,26 @@ void actionBet(GameTable *table) {
 	}
 
 	// get new bet for player
-	char buffer[MAX_BUFFER_SIZE];
+	char buffer[MAX_BUFFER_SIZE] = {0};
 	int newBet = 0;
 	bool error = false;
+
+	printf("New bet?\n");
+	printf("Player's bet value must be between: %d and %d\n",
+	MIN_BET, (int)(MAX_BET_FACTOR*player->money));
+
 	do {
 		if(error)
 			printf("Player's bet value must be between: %d and %d\n",
 			MIN_BET, (int)(MAX_BET_FACTOR*player->money));
-		printf("New bet?\n");
 		fgets(buffer, MAX_BUFFER_SIZE, stdin);
+
+		buffer[strlen(buffer)-1] = '\0';
+		if(strcmp("CANCEL",buffer) == 0) {
+			printf("You canceled the action! You can now return to game window\n");
+			return;
+		}
+
 		sscanf(buffer, "%d", &newBet);
     } while(!(isBetween(newBet, MIN_BET, (int)(MAX_BET_FACTOR*player->money)))
     	&& (error = true) ); // set error for the second time the loop runs
@@ -380,29 +391,40 @@ void actionBet(GameTable *table) {
 int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	Player newPlayer = {0};
 
-	char buffer_money[MAX_BUFFER_SIZE] = {0};
-	char buffer_bet[MAX_BUFFER_SIZE] = {0};
+	char bufferName[MAX_BUFFER_SIZE] = {0};
+	char bufferType[MAX_BUFFER_SIZE] = {0};
+
+	char bufferMoney[MAX_BUFFER_SIZE] = {0};
+	char bufferBet[MAX_BUFFER_SIZE] = {0};
+
 
 	clearTerminal();
 	printf("Adding player at slot %d\n", slotClicked + 1);
+	printf("(Write CANCEL to quit)\n");
 
 	// ask for new player's name
+
+	//PLAYER NAME INPUT
 	char playerName[MAX_NAME_SIZE+1];
 
 	printf("What's the name of the player?\n");
-	printf("(Write CANCEL to quit)\n");
 
-	fgets(playerName, MAX_NAME_SIZE, stdin);
-	playerName[strlen(playerName)-1] = '\0';
+	fgets(bufferName, MAX_BUFFER_SIZE, stdin);
 
-	if(strcmp("CANCEL",playerName) == 0) {
-		printf("You can return to game window\n");
+	bufferName[strlen(bufferName)-1] = '\0';
+	if(strcmp("CANCEL",bufferName) == 0) {
+		printf("You canceled the action! You can now return to game window\n");
 		return WAITING_FOR_NEW_GAME;
 	}
+	strncpy(playerName, bufferName, MAX_NAME_SIZE); //using strncpy to prevent buffer overflows
+	playerName[strlen(playerName)] = '\0';
+
+
 
 	// assign name to player
 	strcpy(newPlayer.name, playerName);
 
+	//PLAYER TYPE
 	// ask for new player's type
 	char playerType[MAX_PLAYER_TYPE_SIZE + 1];
 	bool error1 = false;
@@ -411,7 +433,17 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	do {
 		if(error1)
 			printf("Player's type must be HU or EA\n");
-		fgets(playerType, MAX_PLAYER_TYPE_SIZE + 1, stdin);
+
+		fgets(bufferType, MAX_BUFFER_SIZE, stdin);
+		bufferType[strlen(bufferType)-1] = '\0'; //remove new line
+
+		if(strcmp("CANCEL",bufferType) == 0) {
+			printf("You canceled the action! You can now return to game window\n");
+			return WAITING_FOR_NEW_GAME;
+		}
+
+		strncpy(playerType, bufferType, MAX_PLAYER_TYPE_SIZE);
+
 		playerType[strlen(playerType)] = '\0';
 
 	// check input was one the possible types
@@ -426,18 +458,29 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 		newPlayer.type = CPU;
 	}
 
-
+	// MONEY
 	// ask for new player's money
 	int playerMoney = 0;
 
 	bool error2 = false;
+
+	printf("Introduce the initial money for this player\n");
+	printf("Player's money must be between: %d and %d\n",
+			MIN_SEED_MONEY, MAX_SEED_MONEY );
 	do {
 		if(error2)
 			printf("Player's money must be between: %d and %d\n",
 		MIN_SEED_MONEY, MAX_SEED_MONEY );
-		printf("Introduce the initial money for this player\n");
-		fgets(buffer_money, MAX_BUFFER_SIZE, stdin);
-		sscanf(buffer_money, "%d", &playerMoney);
+
+		fgets(bufferMoney, MAX_BUFFER_SIZE, stdin);
+		bufferMoney[strlen(bufferMoney)-1] = '\0'; //remove new line
+
+		if(strcmp("CANCEL",bufferMoney) == 0) {
+			printf("You canceled the action! You can now return to game window\n");
+			return WAITING_FOR_NEW_GAME;
+		}
+
+		sscanf(bufferMoney, "%d", &playerMoney);
 
 	} while(!(isBetween(playerMoney, MIN_SEED_MONEY, MAX_SEED_MONEY))
 		&& (error2 = true));
@@ -448,13 +491,26 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	// ask for new player's bet
 	int playerBet = 0;
 	bool error3 = false;
+
+	printf("Introduce the initial bet for this player\n");
+	printf("Player's bet must be between: %d and %.0f\n",
+			MIN_BET, MAX_BET_FACTOR*playerMoney );
+
 	do {
 		if(error3)
 			printf("Player's bet must be between: %d and %.0f\n",
-		MIN_BET, MAX_BET_FACTOR*playerMoney );
-		printf("Introduce the initial bet for this player\n");
-		fgets(buffer_bet, MAX_BUFFER_SIZE, stdin);
-		sscanf(buffer_bet, "%d", &playerBet);
+					MIN_BET, MAX_BET_FACTOR*playerMoney );
+
+		fgets(bufferBet, MAX_BUFFER_SIZE, stdin);
+		bufferBet[strlen(bufferBet)-1] = '\0'; //remove new line
+
+
+		if(strcmp("CANCEL",bufferBet) == 0) {
+			printf("You canceled the action! You can now return to game window\n");
+			return WAITING_FOR_NEW_GAME;
+		}
+
+		sscanf(bufferBet, "%d", &playerBet);
 
 	} while(!(isBetween(playerBet, MIN_BET, MAX_BET_FACTOR*playerMoney))
 		&& (error3 = true));
