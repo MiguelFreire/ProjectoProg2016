@@ -12,9 +12,10 @@
 #include <stdbool.h>
 
 #include "config.h"
-#include "errorHandling.h"
-#include "cards.h"
 #include "util.h"
+#include "errorHandling.h"
+
+#include "cards.h"
 
 int cardValues[CARD_RANKS] = {2,3,4,5,6,7,8,9,10,10,10,10,11}; // card values
 /**

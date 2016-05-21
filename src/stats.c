@@ -9,9 +9,10 @@
 #include <string.h>
 
 #include "config.h"
+#include "errorHandling.h"
+
 #include "players.h"
 #include "gameMechanics.h"
-#include "errorHandling.h"
 #include "stats.h"
 
 /**

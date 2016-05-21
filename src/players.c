@@ -9,9 +9,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "util.h"
+
 #include "cards.h"
 #include "players.h"
-#include "util.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //								Players Funtions							  //

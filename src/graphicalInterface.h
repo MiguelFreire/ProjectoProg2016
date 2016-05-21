@@ -9,6 +9,7 @@
 
 #include <stdbool.h>
 
+#include "gameMechanics.h"
 
 int mouseIsOverSlot(GameTable *table, int mouseX, int mouseY);
 

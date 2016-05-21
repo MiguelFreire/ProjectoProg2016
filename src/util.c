@@ -11,11 +11,13 @@
 #include <time.h>
 
 #include "config.h"
+
 #include "players.h"
 #include "cards.h"
 #include "settings.h"
 #include "EA.h"
 #include "util.h"
+
 
 /**
  * @brief      Checks if a given variable is between two values

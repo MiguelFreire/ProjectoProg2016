@@ -7,7 +7,6 @@
 #ifndef CARDS_H
 #define	CARDS_H
 
-
 #include <stdbool.h>
 
 /**

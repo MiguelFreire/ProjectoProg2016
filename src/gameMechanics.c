@@ -12,9 +12,10 @@
 #include <SDL2/SDL.h>
 
 #include "config.h"
+#include "util.h"
+
 #include "players.h"
 #include "cards.h"
-#include "util.h"
 #include "main.h"
 #include "gameMechanics.h"
 

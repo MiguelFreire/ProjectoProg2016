@@ -26,17 +26,18 @@
 #include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_image.h>
 
-#include "main.h"
 #include "config.h"
-#include "gameMechanics.h"
+#include "util.h"
+#include "errorHandling.h"
+
 #include "graphicalInterface.h"
+#include "gameMechanics.h"
 #include "players.h"
 #include "cards.h"
-#include "util.h"
 #include "settings.h"
-#include "errorHandling.h"
 #include "stats.h"
 #include "EA.h"
+#include "main.h"
 
 /**
  * @brief      Main program flow

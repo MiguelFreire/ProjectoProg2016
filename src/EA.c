@@ -9,8 +9,9 @@
 #include <stdbool.h>
 
 #include "config.h"
-#include "errorHandling.h"
 #include "util.h"
+#include "errorHandling.h"
+
 #include "gameMechanics.h"
 #include "EA.h"
 

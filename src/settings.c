@@ -10,10 +10,13 @@
 #include <stdbool.h>
 
 #include "config.h"
+#include "util.h"
+#include "errorHandling.h"
+
 #include "players.h"
 #include "settings.h"
-#include "errorHandling.h"
-#include "util.h"
+
+
 
 /**
  * @brief      Calls readGameSettings and readPlayerSettings and creates a

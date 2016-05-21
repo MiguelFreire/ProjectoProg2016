@@ -10,10 +10,11 @@
 #include <stdbool.h>
 
 #include "config.h"
-#include "gameMechanics.h"
-#include "graphicalInterface.h"
-#include "players.h"
 #include "main.h"
+
+#include "gameMechanics.h"
+#include "players.h"
+#include "graphicalInterface.h"
 
 
 /**
