@@ -8,6 +8,8 @@
 #ifndef GAME_MECHANICS_H
 #define	GAME_MECHANICS_H
 
+#include <SDL2/SDL.h>
+
 #include "config.h"
 #include "players.h"
 #include "cards.h"
@@ -50,9 +52,9 @@ bool slotIsEmpty(PlayerNode *slot);
 
 int actionHit(GameTable *table, Pile *cardPile);
 int actionStand(GameTable *);
-int actionNewGame(GameTable *table, Pile *cardPile);
-int actionDouble(GameTable *, Pile *, EAAction);
-int actionSurrender(GameTable *);
+int actionNewGame(SDL_Window *window, GameTable *table, Pile *cardPile);
+int actionDouble(SDL_Window *window, GameTable *, Pile *, EAAction);
+int actionSurrender(SDL_Window *window, GameTable *table);
 void actionBet(GameTable *);
 int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table);
 

@@ -10,8 +10,13 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "util.h"
 #include "config.h"
+#include "players.h"
+#include "cards.h"
+#include "settings.h"
+#include "EA.h"
+#include "util.h"
+
 /**
  * @brief      Checks if a given variable is between two values
  *
@@ -49,4 +54,39 @@ void logPlay(char const *player, char const *action) {
  */
 void clearTerminal(){
 	printf("\033[2J\033[1;1H");
+}
+
+
+/**
+ * @brief      Frees all dinamically allocated memory
+ *
+ * @param      playerList  ptr to the player list structure
+ * @param      house       ptr to the house structure
+ * @param      cardPile    ptr to the card pile structure
+ * @param      settings    ptr to the settings structure
+ * @param      softMatrix  the EA soft hand matrix
+ * @param      hardMatrix  the EA hard hand matrix
+ */
+void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, Settings *settings, int **softMatrix, int **hardMatrix){
+	CardNode *tmpCard = NULL;
+	// free players
+	while (playerList->head != NULL){
+		// remove player frees the player hand and the player
+		playerList->head = removePlayer(playerList);
+	}
+	// free house hand
+	tmpCard = house->hand;
+	while (tmpCard != NULL){
+		tmpCard = popHand(tmpCard, NULL, &house->numCards);
+	}
+	// free card pile
+
+	while (cardPile->pileTop != NULL){
+		cardPile->pileTop = removeCardFromTop(cardPile);
+	}
+	//free EA matrixes
+	freeMatrixes(softMatrix, hardMatrix);
+
+	// free settings
+	freeSettingsStruct(settings);
 }

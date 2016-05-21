@@ -28,13 +28,11 @@ typedef enum {
 GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 	House *house, Settings *settings, char *argv1);
 
-GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, 
-	GamePhase phase, bool *quit, int *EASpeed, int *EADelay);
+GamePhase handleKeyPress(SDL_Window *window, SDL_Event *event, GameTable *table,
+	Pile *pile, GamePhase phase, bool *quit, int *EASpeed, int *EADelay);
 
-GamePhase handleMousePress(SDL_Event *event, GameTable *table, 
+GamePhase handleMousePress(SDL_Window *window, SDL_Event *event, GameTable *table, 
 	PlayerList *playerList, GamePhase phase);
 
-void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, 
-	Settings *settings, int **softMatrix, int **hardMatrix);
 
 #endif /* end include guard */

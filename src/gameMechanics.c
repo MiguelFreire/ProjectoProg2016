@@ -124,7 +124,7 @@ int actionStand(GameTable *table) {
  *
  * @return     new game phase
  */
-int actionNewGame(GameTable *table, Pile *cardPile) {
+int actionNewGame(SDL_Window *window, GameTable *table, Pile *cardPile) {
 	Player *curPlayer = NULL;
 
 	// remove broke players from the table
@@ -145,7 +145,7 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
 	if (!thereArePlayers){
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "New Game",
 	"Can't start a new game. There are players to play," 
-	" please add some players to start a new game", NULL);
+	" please add some players to start a new game", window);
 		return WAITING_FOR_NEW_GAME;
 	}
 
@@ -214,14 +214,14 @@ int actionNewGame(GameTable *table, Pile *cardPile) {
  *             Performs double validity check and in case the player is an EA
  *             takes action based on the parameter "action"
  */
-int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
+int actionDouble(SDL_Window *window, GameTable *table, Pile *cardPile, EAAction action) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 	int newPhase;
 
 	// check if double is valid and take action acording to player type
 	if(player->type == HUMAN && (player->state == HIT || player->money < player->bet)) {
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Double",
-		"Double not allowed. The player has already hit or does not have enough money", NULL);
+		"Double not allowed. The player has already hit or does not have enough money", window);
 
 		logPlay(player->name, "doubled!");
 
@@ -261,13 +261,15 @@ int actionDouble(GameTable *table, Pile *cardPile, EAAction action) {
  *
  * @return     new game phase
  */
-int actionSurrender(GameTable *table) {
+int actionSurrender(SDL_Window *window, GameTable *table) {
 	Player *player = &(table->slots[table->currentPlayer]->player);
 
 	// check if surrender is valid
-	if(player->state == HIT && player->type == HUMAN)
+	if(player->state == HIT && player->type == HUMAN){
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Surrender",
+		"Surrender not allowed. The player has already hit.", window);
 		return PLAYERS_PLAYING;
-	else if(player->state == HIT && player->type == CPU) {
+	} else if(player->state == HIT && player->type == CPU) {
 		return actionStand(table);
 	}
 
@@ -287,7 +289,7 @@ int actionSurrender(GameTable *table) {
  */
 void actionBet(GameTable *table) {
 	Player *player = NULL;
-
+	clearTerminal();
 	// get player name
 	char playerName[MAX_NAME_SIZE+1];
 

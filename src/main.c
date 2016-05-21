@@ -55,7 +55,7 @@
  * should quit and the variable phase to determine what is the program is
  * currently doing.
  * 
- * The varaible event is used with SDL_PollEvent to colect user input trough
+ * The variable event is used with SDL_PollEvent to colect user input trough
  * keyboard and mouse
  */
 int main(int argc, char *argv[]){
@@ -95,8 +95,6 @@ int main(int argc, char *argv[]){
 	InitEverything(WINDOW_WIDTH,WINDOW_HEIGHT, &serif, imgs, &window, &renderer);
 	LoadCards(cards);
 
-	phase = WAITING_FOR_NEW_GAME;
-
 	// render for the first time
 	// render game table
 	RenderTable(serif, imgs, renderer, &table, phase, EASpeed);
@@ -109,6 +107,8 @@ int main(int argc, char *argv[]){
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "New Game",
 	"Press 'n' to start a new game", window);
 
+	phase = WAITING_FOR_NEW_GAME;
+
 	// FLOW CONTROL
 	while(!quit){
 		while(SDL_PollEvent(&event)){
@@ -116,14 +116,14 @@ int main(int argc, char *argv[]){
 
 				// check for key press
 				case SDL_KEYDOWN:
-					phase = handleKeyPress(&event, &table, &cardPile, 
+					phase = handleKeyPress(window, &event, &table, &cardPile, 
 						phase, &quit, &EASpeed, &EADelay);
 					break;
 
 				// check for mouse button press
 				case SDL_MOUSEBUTTONDOWN:
 
-					phase = handleMousePress(&event, &table, &playerList, phase);
+					phase = handleMousePress(window, &event, &table, &playerList, phase);
 
 					break;
 
@@ -158,13 +158,13 @@ int main(int argc, char *argv[]){
 						phase = actionHit(&table, &cardPile);
 						break;
 					case aDOUBLES:
-						phase = actionDouble(&table, &cardPile, aSTAND);
+						phase = actionDouble(window, &table, &cardPile, aSTAND);
 						break;
 					case aDOUBLEH:
-						phase = actionDouble(&table, &cardPile, aHIT);
+						phase = actionDouble(window, &table, &cardPile, aHIT);
 						break;
 					case aSURRENDER:
-						phase = actionSurrender(&table);
+						phase = actionSurrender(window, &table);
 						break;
 					case aSTAND:
 						phase = actionStand(&table);
@@ -174,6 +174,7 @@ int main(int argc, char *argv[]){
 				}
 				SDL_Delay(EADelay);
 
+			// let house make a decision
 			} else if (phase == HOUSE_TURN){
 				house.state = HOUSE_PLAYING;
 				phase = houseTurn(&table, &house, &cardPile);
@@ -181,6 +182,8 @@ int main(int argc, char *argv[]){
 				if (phase == COLECTING_BETS){
 					table.currentPlayer = 0;
 				}
+
+			// colect bets
 			} else if (phase == COLECTING_BETS){
 				phase = colectBets(&table, &house);
 			}
@@ -213,7 +216,7 @@ int main(int argc, char *argv[]){
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();
-	printf("Exited sucessfully\n");
+	logPlay("\b", "Exited sucessfully");
 	return EXIT_SUCCESS;
 
 }
@@ -280,8 +283,6 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
 
 
 
-
-
 /**
  * @brief      Handles keybooard keys
  *
@@ -295,7 +296,8 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
  *
  * @return     the new game phase
  */
-GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePhase phase, bool *quit, int *EASpeed, int *EADelay){
+GamePhase handleKeyPress(SDL_Window *window, SDL_Event *event, GameTable *table, 
+	Pile *pile, GamePhase phase, bool *quit, int *EASpeed, int *EADelay){
 
 	switch( event->key.keysym.sym){
 
@@ -311,7 +313,7 @@ GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePha
 			break;
 		case SDLK_n: // new game
 			if (phase == WAITING_FOR_NEW_GAME){
-				phase = actionNewGame(table, pile);
+				phase = actionNewGame(window, table, pile);
 			}
 			break;
 		case SDLK_q: // quit
@@ -321,12 +323,12 @@ GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePha
 			break;
 		case SDLK_d: // double
 		    if (phase == PLAYERS_PLAYING){
-		    	phase = actionDouble(table, pile, 0);
+		    	phase = actionDouble(window, table, pile, 0);
 		    }
 			break;
 		case SDLK_r: // surrender
 			if (phase == PLAYERS_PLAYING){
-				phase = actionSurrender(table);
+				phase = actionSurrender(window, table);
 			}
 			break;
 		case SDLK_b: // bet
@@ -334,7 +336,7 @@ GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePha
 			if (phase == WAITING_FOR_NEW_GAME){
 				// warn user that input is needed at the terminal
 				SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
-				"Please check the terminal to provide some input", NULL);
+				"Please check the terminal to provide some input", window);
 
 				actionBet(table);
 
@@ -352,15 +354,13 @@ GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePha
 					phase = ADDING_PLAYER;
 					// inform the user to click an empty slot
 					SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Adding Player",
-					"Please click an empty slot to add a player", NULL);
+					"Please click an empty slot to add a player", window);
 
-		    		printf("Adding player\n");
 				} else {
 					phase = WAITING_FOR_NEW_GAME;
 					// inform the user that there are no empty slots
 					SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Adding Player",
-					"There are no empty slots for new players", NULL);
-					printf("There are no empty slots\n");
+					"There are no empty slots for new players", window);
 				}
 		    }
 		    break;
@@ -386,7 +386,7 @@ GamePhase handleKeyPress(SDL_Event *event, GameTable *table, Pile *pile, GamePha
  *
  * @return     the new game phase
  */
-GamePhase handleMousePress(SDL_Event *event, GameTable *table, PlayerList *playerList, GamePhase phase){
+GamePhase handleMousePress(SDL_Window *window, SDL_Event *event, GameTable *table, PlayerList *playerList, GamePhase phase){
 	if (phase == ADDING_PLAYER &&
 		event->button.button == SDL_BUTTON_LEFT){
 		// check position to add player
@@ -397,7 +397,7 @@ GamePhase handleMousePress(SDL_Event *event, GameTable *table, PlayerList *playe
 			if (slotIsEmpty(table->slots[slotClicked])){
 				// warn user that input is needed at the terminal
 				SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
-				"Please check the terminal to provide some input", NULL);
+				"Please check the terminal to provide some input", window);
 				
 				phase = actionAddPlayer(slotClicked, playerList, table);
 			}
@@ -407,36 +407,3 @@ GamePhase handleMousePress(SDL_Event *event, GameTable *table, PlayerList *playe
 }
 
 
-/**
- * @brief      Frees all dinamically allocated memory
- *
- * @param      playerList  ptr to the player list structure
- * @param      house       ptr to the house structure
- * @param      cardPile    ptr to the card pile structure
- * @param      settings    ptr to the settings structure
- * @param      softMatrix  the EA soft hand matrix
- * @param      hardMatrix  the EA hard hand matrix
- */
-void freeEverything(PlayerList *playerList, House *house, Pile *cardPile, Settings *settings, int **softMatrix, int **hardMatrix){
-	CardNode *tmpCard = NULL;
-	// free players
-	while (playerList->head != NULL){
-		// remove player frees the player hand and the player
-		playerList->head = removePlayer(playerList);
-	}
-	// free house hand
-	tmpCard = house->hand;
-	while (tmpCard != NULL){
-		tmpCard = popHand(tmpCard, NULL, &house->numCards);
-	}
-	// free card pile
-
-	while (cardPile->pileTop != NULL){
-		cardPile->pileTop = removeCardFromTop(cardPile);
-	}
-	//free EA matrixes
-	freeMatrixes(softMatrix, hardMatrix);
-
-	// free settings
-	freeSettingsStruct(settings);
-}
