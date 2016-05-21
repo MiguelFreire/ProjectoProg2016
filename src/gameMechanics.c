@@ -305,21 +305,24 @@ int actionSurrender(SDL_Window *window, GameTable *table) {
  */
 void actionBet(GameTable *table) {
 	Player *player = NULL;
-	clearTerminal();
 	// get player name
+	char bufferName[MAX_BUFFER_SIZE] = {0};
 	char playerName[MAX_NAME_SIZE+1] = {0};
 
 	printf("What's the name of the player?\n");
 	printf("(Write CANCEL to quit)\n");
 
-	fgets(playerName, MAX_NAME_SIZE, stdin);
-	playerName[strlen(playerName)-1] = '\0';
+	fgets(bufferName, MAX_BUFFER_SIZE, stdin);
+	bufferName[strlen(bufferName)-1] = '\0';
 
 	// check for abort
-	if(strcmp("CANCEL",playerName) == 0) {
+	if(strcmp("CANCEL",bufferName) == 0) {
 		printf("You canceled the action! You can now return to game window\n");
 		return;
 	}
+
+	strncpy(playerName, bufferName, MAX_NAME_SIZE);
+
 	// search for player
 	for(int i = 0; i < TABLE_SLOTS; i++) {
 		if(!slotIsEmpty(table->slots[i]) && strcmp(table->slots[i]->player.name, playerName) == 0) {
@@ -397,8 +400,6 @@ int actionAddPlayer(int slotClicked, PlayerList *playerList, GameTable *table){
 	char bufferMoney[MAX_BUFFER_SIZE] = {0};
 	char bufferBet[MAX_BUFFER_SIZE] = {0};
 
-
-	clearTerminal();
 	printf("Adding player at slot %d\n", slotClicked + 1);
 	printf("(Write CANCEL to quit)\n");
 

@@ -46,16 +46,16 @@
  * @param      argv  Program arguments
  *
  * @return     Program exit status
- * 
+ *
  * argc should be 3 and argv should contain:
  * 		*[0] the name of the program
  * 		*[1] the name of the game config file
  * 		*[2] the name of the EA matrixes file
- * 
+ *
  * The program is controled using the vaiable quit to determine when the program
  * should quit and the variable phase to determine what is the program is
  * currently doing.
- * 
+ *
  * The variable event is used with SDL_PollEvent to colect user input trough
  * keyboard and mouse
  */
@@ -117,7 +117,7 @@ int main(int argc, char *argv[]){
 				// check for key press
 				case SDL_KEYDOWN:
 
-					phase = handleKeyPress(window, &event, &table, &cardPile, 
+					phase = handleKeyPress(window, &event, &table, &cardPile,
 						phase, &quit, &EASpeed, &EADelay);
 					break;
 
@@ -137,12 +137,12 @@ int main(int argc, char *argv[]){
 		// special phases
 		if (phase == EA_PLAYING || phase == HOUSE_TURN || phase == COLECTING_BETS){
 
-			renderEverything(serif, imgs, renderer, cards, &table, 
+			renderEverything(serif, imgs, renderer, cards, &table,
 				phase, EASpeed);
 
 			// let EA player make a decision
 			if (phase == EA_PLAYING){
-				phase = EAMakeDecision(window, softMatrix, hardMatrix, &table, 
+				phase = EAMakeDecision(window, softMatrix, hardMatrix, &table,
 					&cardPile);
 				SDL_Delay(EADelay);
 
@@ -161,7 +161,7 @@ int main(int argc, char *argv[]){
 			}
 		}
 
-		renderEverything(serif, imgs, renderer, cards, &table, 
+		renderEverything(serif, imgs, renderer, cards, &table,
 				phase, EASpeed);
 
         SDL_Delay(RENDER_DELAY);
@@ -262,7 +262,7 @@ GamePhase initGame (GameTable *table, PlayerList *playerList, Pile *pile,
  *
  * @return     the new game phase
  */
-GamePhase handleKeyPress(SDL_Window *window, SDL_Event *event, GameTable *table, 
+GamePhase handleKeyPress(SDL_Window *window, SDL_Event *event, GameTable *table,
 	Pile *pile, GamePhase phase, bool *quit, int *EASpeed, int *EADelay){
 
 	switch( event->key.keysym.sym){
@@ -364,12 +364,10 @@ GamePhase handleMousePress(SDL_Window *window, SDL_Event *event, GameTable *tabl
 				// warn user that input is needed at the terminal
 				SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Input Needed",
 				"Please check the terminal to provide some input", window);
-				
+
 				phase = actionAddPlayer(slotClicked, playerList, table);
 			}
 		}
 	}
 	return phase;
 }
-
-
